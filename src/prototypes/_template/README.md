@@ -33,6 +33,13 @@ This will:
 2. Replace the starter screen with the Figma-driven implementation.
 3. Keep shared UI in `src/system/*`.
 4. Keep prototype-specific copy, assets, and layout logic inside the prototype folder.
+
+### Scroll behavior
+
+- `PrototypeScreen` is a fixed device frame and should not scroll.
+- Put scrolling on an inner region such as `.prototype-screen__scroll-region`.
+- For tall screens, keep the outer frame locked and let only the in-screen content move.
+
 Use this folder shape when adding a new prototype module.
 
 ## Suggested structure

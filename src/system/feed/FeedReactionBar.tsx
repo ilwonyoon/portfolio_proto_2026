@@ -5,7 +5,7 @@ export type FeedReactionMetric = {
   iconSrc: string
   iconWidth?: number
   iconHeight?: number
-  count: number
+  count?: number | string
 }
 
 export type FeedReactionBarProps = {
@@ -13,7 +13,8 @@ export type FeedReactionBarProps = {
   saveIconSrc: string
   saveIconWidth?: number
   saveIconHeight?: number
-  saveCount: number
+  saveCount?: number | string
+  topPadding?: number
 }
 
 export function FeedReactionBar({
@@ -22,16 +23,19 @@ export function FeedReactionBar({
   saveIconWidth,
   saveIconHeight,
   saveCount,
+  topPadding = 0,
 }: FeedReactionBarProps) {
   return (
-    <section className="ds-feed-reaction-bar">
+    <section className="ds-feed-reaction-bar" style={{ paddingTop: topPadding }}>
       <div className="ds-feed-reaction-bar__metrics">
         {metrics.map((metric) => (
           <button
             key={metric.id}
             type="button"
             className="ds-feed-reaction-bar__metric"
-            aria-label={`${metric.id} ${metric.count}`}
+            aria-label={
+              metric.count !== undefined ? `${metric.id} ${metric.count}` : metric.id
+            }
           >
             <span className="ds-feed-reaction-bar__icon" aria-hidden="true">
               <FigmaAsset
@@ -42,7 +46,7 @@ export function FeedReactionBar({
                 className="ds-feed-reaction-bar__icon-asset"
               />
             </span>
-            <span>{metric.count}</span>
+            {metric.count !== undefined ? <span>{metric.count}</span> : null}
           </button>
         ))}
       </div>
@@ -50,7 +54,7 @@ export function FeedReactionBar({
       <button
         type="button"
         className="ds-feed-reaction-bar__metric ds-feed-reaction-bar__metric--save"
-        aria-label={`Scrap ${saveCount}`}
+        aria-label={saveCount !== undefined ? `Scrap ${saveCount}` : 'Scrap'}
       >
         <span className="ds-feed-reaction-bar__icon" aria-hidden="true">
           <FigmaAsset
@@ -61,7 +65,7 @@ export function FeedReactionBar({
             className="ds-feed-reaction-bar__icon-asset"
           />
         </span>
-        <span>{saveCount}</span>
+        {saveCount !== undefined ? <span>{saveCount}</span> : null}
       </button>
     </section>
   )

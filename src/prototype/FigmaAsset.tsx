@@ -9,6 +9,8 @@ type FigmaAssetProps = {
   className?: string
   exportScale?: 1 | 2
   loading?: 'eager' | 'lazy'
+  decoding?: 'async' | 'sync' | 'auto'
+  fetchPriority?: 'high' | 'low' | 'auto'
   draggable?: boolean
 }
 
@@ -20,6 +22,8 @@ export function FigmaAsset({
   className,
   exportScale = DEFAULT_EXPORT_SCALE,
   loading = 'eager',
+  decoding = 'async',
+  fetchPriority = 'auto',
   draggable = false,
 }: FigmaAssetProps) {
   const style = {
@@ -35,7 +39,8 @@ export function FigmaAsset({
       width={displayWidth}
       height={displayHeight}
       loading={loading}
-      decoding="async"
+      decoding={decoding}
+      fetchPriority={fetchPriority}
       draggable={draggable}
       data-export-scale={exportScale}
       className={className}

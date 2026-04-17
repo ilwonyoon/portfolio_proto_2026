@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 
@@ -19,11 +20,15 @@ type FeedMediaCarouselProps = {
   slides: FeedMediaSlide[]
   onSlideChange?: (index: number) => void
   onSelectTag?: (productId: string) => void
+  overlay?: ReactNode
+  imageHeight?: number
+  topPadding?: number
 }
 
 const SWIPE_THRESHOLD = 36
 const TAG_REVEAL_BASE_DELAY = 240
 const TAG_REVEAL_STAGGER = 150
+const TAG_REVEAL_VISIBILITY_THRESHOLD = 0.45
 const DOT_GAP = 7
 
 type DotVariant = 'active' | 'normal' | 'small' | 'tiny'
@@ -41,28 +46,107 @@ export function FeedMediaCarousel({
   slides,
   onSlideChange,
   onSelectTag,
+  overlay,
+  imageHeight = 375,
+  topPadding = 16,
 }: FeedMediaCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isViewportVisible, setIsViewportVisible] = useState(false)
   const [visibleTagCount, setVisibleTagCount] = useState(0)
+  const revealedSlideIdsRef = useRef<Set<string>>(new Set())
+  const viewportRef = useRef<HTMLDivElement | null>(null)
   const pointerIdRef = useRef<number | null>(null)
   const startXRef = useRef<number | null>(null)
   const timeoutsRef = useRef<number[]>([])
 
-  const activeSlide = slides[activeIndex]
-  const currentLabel = String(activeIndex + 1)
+  const hasSlides = slides.length > 0
+  const safeActiveIndex = hasSlides ? Math.min(activeIndex, slides.length - 1) : 0
+  const activeSlide = hasSlides
+    ? slides[safeActiveIndex]
+    : { id: 'empty', src: '', alt: '', tags: [] }
+  const currentLabel = hasSlides ? String(safeActiveIndex + 1) : '0'
   const displayTotal = String(slides.length)
 
   useEffect(() => {
-    onSlideChange?.(activeIndex)
-  }, [activeIndex, onSlideChange])
+    if (hasSlides) {
+      onSlideChange?.(safeActiveIndex)
+    }
+  }, [hasSlides, safeActiveIndex, onSlideChange])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+
+    if (!viewport) {
+      return
+    }
+
+    const scrollRoot = viewport.closest('.prototype-screen__scroll-region')
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsViewportVisible(
+          entry?.isIntersecting === true &&
+            entry.intersectionRatio >= TAG_REVEAL_VISIBILITY_THRESHOLD,
+        )
+      },
+      {
+        root: scrollRoot instanceof Element ? scrollRoot : null,
+        threshold: [0, TAG_REVEAL_VISIBILITY_THRESHOLD, 1],
+      },
+    )
+
+    observer.observe(viewport)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!hasSlides || activeIndex <= slides.length - 1) {
+      return
+    }
+
+    setActiveIndex(0)
+  }, [activeIndex, hasSlides, slides.length])
 
   useEffect(() => {
     timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutsRef.current = []
 
+    setVisibleTagCount(0)
+
+    if (!hasSlides || !onSelectTag || !isViewportVisible) {
+      return () => {
+        timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+        timeoutsRef.current = []
+      }
+    }
+
+    if (revealedSlideIdsRef.current.has(activeSlide.id)) {
+      setVisibleTagCount(activeSlide.tags.length)
+
+      return () => {
+        timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+        timeoutsRef.current = []
+      }
+    }
+
+    if (activeSlide.tags.length === 0) {
+      revealedSlideIdsRef.current.add(activeSlide.id)
+
+      return () => {
+        timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+        timeoutsRef.current = []
+      }
+    }
+
     activeSlide.tags.forEach((_, index) => {
       const timeoutId = window.setTimeout(() => {
         setVisibleTagCount(index + 1)
+
+        if (index === activeSlide.tags.length - 1) {
+          revealedSlideIdsRef.current.add(activeSlide.id)
+        }
       }, TAG_REVEAL_BASE_DELAY + index * TAG_REVEAL_STAGGER)
       timeoutsRef.current.push(timeoutId)
     })
@@ -71,61 +155,81 @@ export function FeedMediaCarousel({
       timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
       timeoutsRef.current = []
     }
-  }, [activeSlide])
+  }, [activeSlide, hasSlides, isViewportVisible, onSelectTag])
 
   const visibleTags = useMemo(
-    () => activeSlide.tags.slice(0, visibleTagCount),
-    [activeSlide.tags, visibleTagCount],
+    () => (hasSlides ? activeSlide.tags.slice(0, visibleTagCount) : []),
+    [activeSlide.tags, hasSlides, visibleTagCount],
   )
 
   const dotDescriptors = useMemo(() => {
+    if (!hasSlides) {
+      return []
+    }
+
     const total = slides.length
 
     if (total <= 5) {
       return slides.map((slide, index) => ({
         id: slide.id,
-        variant: index === activeIndex ? 'active' : ('normal' as DotVariant),
+        variant: index === safeActiveIndex ? 'active' : ('normal' as DotVariant),
       }))
     }
 
-    if (activeIndex <= 2) {
+    if (safeActiveIndex <= 2) {
       return slides.slice(0, 5).map((slide, index) => ({
         id: slide.id,
         variant:
-          index === activeIndex
+          index === safeActiveIndex
             ? 'active'
             : (['normal', 'normal', 'normal', 'small', 'tiny'][index] as DotVariant),
       }))
     }
 
-    if (activeIndex >= total - 3) {
+    if (safeActiveIndex >= total - 3) {
       return slides.slice(total - 5).map((slide, index) => ({
         id: slide.id,
         variant:
-          total - 5 + index === activeIndex
+          total - 5 + index === safeActiveIndex
             ? 'active'
             : (['tiny', 'small', 'normal', 'normal', 'normal'][index] as DotVariant),
       }))
     }
 
-    return slides.slice(activeIndex - 2, activeIndex + 3).map((slide, index) => ({
-      id: slide.id,
-      variant: (['tiny', 'small', 'active', 'small', 'tiny'][index] as DotVariant),
-    }))
-  }, [slides, activeIndex])
+    return slides
+      .slice(safeActiveIndex - 2, safeActiveIndex + 3)
+      .map((slide, index) => ({
+        id: slide.id,
+        variant: (['tiny', 'small', 'active', 'small', 'tiny'][index] as DotVariant),
+      }))
+  }, [hasSlides, safeActiveIndex, slides])
 
   function changeSlide(nextIndex: number) {
+    if (!hasSlides) {
+      return
+    }
+
     setVisibleTagCount(0)
     setActiveIndex(nextIndex)
   }
 
   function goToNext() {
-    const nextIndex = activeIndex === slides.length - 1 ? 0 : activeIndex + 1
+    if (!hasSlides) {
+      return
+    }
+
+    const nextIndex =
+      safeActiveIndex === slides.length - 1 ? 0 : safeActiveIndex + 1
     changeSlide(nextIndex)
   }
 
   function goToPrevious() {
-    const nextIndex = activeIndex === 0 ? slides.length - 1 : activeIndex - 1
+    if (!hasSlides) {
+      return
+    }
+
+    const nextIndex =
+      safeActiveIndex === 0 ? slides.length - 1 : safeActiveIndex - 1
     changeSlide(nextIndex)
   }
 
@@ -185,9 +289,11 @@ export function FeedMediaCarousel({
   }
 
   return (
-    <section className="ds-feed-media">
+    <section className="ds-feed-media" style={{ paddingTop: topPadding }}>
       <div
+        ref={viewportRef}
         className="ds-feed-media__viewport"
+        style={{ height: imageHeight }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onPointerDown={handlePointerDown}
@@ -197,84 +303,96 @@ export function FeedMediaCarousel({
       >
         <div
           className="ds-feed-media__track"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          style={{ transform: `translateX(-${safeActiveIndex * 100}%)` }}
         >
-          {slides.map((slide) => (
+          {slides.map((slide, index) => (
             <div key={slide.id} className="ds-feed-media__slide">
               <FigmaAsset
                 src={slide.src}
                 alt={slide.alt}
                 displayWidth={375}
-                displayHeight={375}
+                displayHeight={imageHeight}
                 className="ds-feed-media__image"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding={index === 0 ? 'sync' : 'async'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
                 draggable={false}
               />
             </div>
           ))}
         </div>
 
-        <div className="ds-feed-media__counter">
-          <div className="ds-feed-media__counter-group">
-            <span className="ds-feed-media__counter-part ds-feed-media__counter-part--current">
-              {currentLabel}
-            </span>
-            <span className="ds-feed-media__counter-part ds-feed-media__counter-part--slash">
-              /
-            </span>
-            <span className="ds-feed-media__counter-part ds-feed-media__counter-part--total">
-              {displayTotal}
-            </span>
+        {hasSlides ? (
+          <div className="ds-feed-media__counter">
+            <div className="ds-feed-media__counter-group">
+              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--current">
+                {currentLabel}
+              </span>
+              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--slash">
+                /
+              </span>
+              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--total">
+                {displayTotal}
+              </span>
+            </div>
           </div>
-        </div>
+        ) : null}
 
-        {visibleTags.map((tag) => (
-          <button
-            key={tag.id}
-            type="button"
-            className="ds-feed-media__tag"
-            style={{ left: tag.left, top: tag.top }}
-            aria-label="View tagged product"
-            onClick={() => onSelectTag?.(tag.productId)}
-          >
-            <FigmaAsset
-              src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
-              alt=""
-              displayWidth={18}
-              displayHeight={18}
-              className="ds-feed-media__tag-bg"
-            />
-            <FigmaAsset
-              src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
-              alt=""
-              displayWidth={7.71429}
-              displayHeight={7.71429}
-              className="ds-feed-media__tag-plus"
-            />
-          </button>
-        ))}
+        {overlay ? <div className="ds-feed-media__overlay">{overlay}</div> : null}
 
-        <div className="ds-feed-media__dots" aria-hidden="true">
-          <div className="ds-feed-media__dots-track">
-            {dotDescriptors.map((dot, index) => {
-              const size = dotSizeByVariant[dot.variant]
-              const left = dotDescriptors
-                .slice(0, index)
-                .reduce(
-                  (offset, descriptor) => offset + dotSizeByVariant[descriptor.variant] + DOT_GAP,
-                  0,
-                )
-              const top = (DOT_TRACK_HEIGHT - size) / 2
-
-              return (
-                <span
-                  key={dot.id}
-                  className={`ds-feed-media__dot ds-feed-media__dot--${dot.variant}`}
-                  style={{ width: size, height: size, left, top }}
+        {hasSlides && onSelectTag
+          ? visibleTags.map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                className="ds-feed-media__tag"
+                style={{ left: tag.left, top: tag.top }}
+                aria-label="View tagged product"
+                onClick={() => onSelectTag(tag.productId)}
+              >
+                <FigmaAsset
+                  src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
+                  alt=""
+                  displayWidth={18}
+                  displayHeight={18}
+                  className="ds-feed-media__tag-bg"
                 />
-              )
-            })}
+                <FigmaAsset
+                  src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
+                  alt=""
+                  displayWidth={7.71429}
+                  displayHeight={7.71429}
+                  className="ds-feed-media__tag-plus"
+                />
+              </button>
+            ))
+          : null}
+
+        {hasSlides ? (
+          <div className="ds-feed-media__dots" aria-hidden="true">
+            <div className="ds-feed-media__dots-track">
+              {dotDescriptors.map((dot, index) => {
+                const size = dotSizeByVariant[dot.variant]
+                const left = dotDescriptors
+                  .slice(0, index)
+                  .reduce(
+                    (offset, descriptor) =>
+                      offset + dotSizeByVariant[descriptor.variant] + DOT_GAP,
+                    0,
+                  )
+                const top = (DOT_TRACK_HEIGHT - size) / 2
+
+                return (
+                  <span
+                    key={dot.id}
+                    className={`ds-feed-media__dot ds-feed-media__dot--${dot.variant}`}
+                    style={{ width: size, height: size, left, top }}
+                  />
+                )
+              })}
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </section>
   )

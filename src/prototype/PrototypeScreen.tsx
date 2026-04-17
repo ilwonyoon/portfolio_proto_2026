@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
+import './prototype-screen.css'
 import { DEVICE_VIEWPORT } from './constants'
 
 type PrototypeScreenProps = {

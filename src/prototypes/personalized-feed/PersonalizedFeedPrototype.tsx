@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './personalized-feed.css'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
-import { FeedCard, FeedProductBottomSheet } from '../../system/feed'
+import {
+  FeedProductBottomSheet,
+  HomeFeedItemRenderer,
+  type HomeFeedItem,
+  type UserUploadedFeedItem,
+} from '../../system/feed'
 import {
   BottomNavBar,
   FloatingActionButton,
@@ -11,9 +16,9 @@ import {
   TopTabBar,
 } from '../../system/mobile'
 import {
-  personalizedFeedCardData,
-  personalizedFeedProductSheetTitle,
-} from './feed-content-data'
+  fetchPersonalizedFeedItems,
+  getInitialPersonalizedFeedItems,
+} from './feed-api'
 import { personalizedFeedShortcuts } from './shortcut-items'
 
 type PersonalizedFeedPrototypeProps = {
@@ -25,7 +30,31 @@ function PersonalizedFeedPrototype({ mode = 'full' }: PersonalizedFeedPrototypeP
   const [activeTopTab, setActiveTopTab] = useState<'for-you' | 'discover'>(
     'for-you',
   )
-  const [isProductSheetOpen, setIsProductSheetOpen] = useState(false)
+  const [feedItems, setFeedItems] = useState<HomeFeedItem[]>(
+    getInitialPersonalizedFeedItems,
+  )
+  const [activeProductSheetItemId, setActiveProductSheetItemId] = useState<
+    string | null
+  >(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void fetchPersonalizedFeedItems().then((items) => {
+      if (!cancelled) {
+        setFeedItems(items)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const activeProductSheetItem = feedItems.find(
+    (item): item is UserUploadedFeedItem =>
+      item.type === 'user-uploaded' && item.id === activeProductSheetItemId,
+  )
 
   function handleOpenProductDetail(productId: string) {
     void productId
@@ -91,18 +120,23 @@ function PersonalizedFeedPrototype({ mode = 'full' }: PersonalizedFeedPrototypeP
           </div>
 
           <div className="personalized-feed__body">
-            <div className="personalized-feed__main">
+            <div className="personalized-feed__main prototype-screen__scroll-region">
               <ShortcutCarousel
                 className="personalized-feed__shortcuts"
                 items={personalizedFeedShortcuts}
               />
               <div className="personalized-feed__content">
                 {activeTopTab === 'for-you' ? (
-                  <FeedCard
-                    {...personalizedFeedCardData}
-                    onOpenProductSheet={() => setIsProductSheetOpen(true)}
-                    onOpenProductDetail={handleOpenProductDetail}
-                  />
+                  feedItems.map((item) => (
+                    <HomeFeedItemRenderer
+                      key={item.id}
+                      item={item}
+                      onOpenProductSheet={setActiveProductSheetItemId}
+                      onOpenProductDetail={(_, productId) =>
+                        handleOpenProductDetail(productId)
+                      }
+                    />
+                  ))
                 ) : null}
               </div>
             </div>
@@ -157,10 +191,10 @@ function PersonalizedFeedPrototype({ mode = 'full' }: PersonalizedFeedPrototypeP
           />
 
           <FeedProductBottomSheet
-            open={isProductSheetOpen}
-            title={personalizedFeedProductSheetTitle}
-            products={personalizedFeedCardData.products?.catalog ?? []}
-            onClose={() => setIsProductSheetOpen(false)}
+            open={Boolean(activeProductSheetItem)}
+            title={activeProductSheetItem?.productSheetTitle ?? ''}
+            products={activeProductSheetItem?.card.products?.catalog ?? []}
+            onClose={() => setActiveProductSheetItemId(null)}
             onSelectProduct={handleOpenProductDetail}
           />
         </div>

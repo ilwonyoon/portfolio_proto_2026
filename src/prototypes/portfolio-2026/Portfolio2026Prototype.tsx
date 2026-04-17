@@ -1010,7 +1010,7 @@ function Portfolio2026Prototype({
       }
     >
       <PrototypeScreen contentHeight={screenHeight} variant="bare">
-        <div className="onboarding-screen">
+        <div className="onboarding-screen prototype-screen__scroll-region">
           <div className="status-bar">
             <div className="status-bar__time">9:41</div>
             <FigmaAsset

@@ -20,6 +20,7 @@
 
 .onboarding-screen {
   min-height: 812px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -874,41 +875,8 @@
   background: #000000;
 }
 
-.prototype-device {
-  width: 375px;
-}
-
-.prototype-device--bare {
-  width: 375px;
-}
-
-.prototype-screen {
-  overflow-x: hidden;
-  overflow-y: auto;
-  border-radius: 40px;
-  background: #ffffff;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.32);
-  scrollbar-width: none;
-  overscroll-behavior-x: none;
-}
-
-.prototype-screen::-webkit-scrollbar {
-  display: none;
-}
-
-.prototype-screen__content {
-  width: 375px;
-}
-
 @media (max-width: 420px) {
   .portfolio-prototype--full {
     padding-inline: 0;
-  }
-
-  .prototype-device,
-  .prototype-device--bare,
-  .prototype-screen,
-  .prototype-screen__content {
-    width: 100% !important;
   }
 }

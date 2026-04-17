@@ -8,6 +8,7 @@ export type FeedProduct = {
   priceLabel: string
   discountLabel?: string
   previewBadgeLabel?: string
+  previewBadgeTone?: 'neutral' | 'critical'
   thumbnailRadius?: 4 | 6
 }
 
@@ -16,22 +17,16 @@ export type FeedProductStripProps = {
   previewProductIds?: string[]
   previewCount?: number
   viewMoreVisibility?: 'auto' | 'always' | 'never'
+  viewMoreLabel?: string
   onViewMore?: () => void
   onSelectProduct?: (productId: string) => void
 }
 
-export function FeedProductStrip({
-  products,
-  previewProductIds,
+export function resolveFeedPreviewProducts(
+  products: FeedProduct[],
+  previewProductIds?: string[],
   previewCount = 4,
-  viewMoreVisibility = 'auto',
-  onViewMore,
-  onSelectProduct,
-}: FeedProductStripProps) {
-  if (products.length === 0) {
-    return null
-  }
-
+) {
   const previewProducts =
     previewProductIds?.length
       ? previewProductIds
@@ -39,7 +34,27 @@ export function FeedProductStrip({
           .filter((product): product is FeedProduct => Boolean(product))
       : products.slice(0, previewCount)
 
-  const visiblePreviewProducts = previewProducts.slice(0, previewCount)
+  return previewProducts.slice(0, previewCount)
+}
+
+export function FeedProductStrip({
+  products,
+  previewProductIds,
+  previewCount = 4,
+  viewMoreVisibility = 'auto',
+  viewMoreLabel = 'View more',
+  onViewMore,
+  onSelectProduct,
+}: FeedProductStripProps) {
+  if (products.length === 0) {
+    return null
+  }
+
+  const visiblePreviewProducts = resolveFeedPreviewProducts(
+    products,
+    previewProductIds,
+    previewCount,
+  )
   const shouldShowViewMore =
     viewMoreVisibility === 'always'
       ? true
@@ -67,7 +82,13 @@ export function FeedProductStrip({
               className="ds-feed-product-strip__thumbnail-image"
             />
             {product.previewBadgeLabel ? (
-              <span className="ds-feed-product-strip__badge">
+              <span
+                className={
+                  product.previewBadgeTone === 'critical'
+                    ? 'ds-feed-product-strip__badge ds-feed-product-strip__badge--critical'
+                    : 'ds-feed-product-strip__badge'
+                }
+              >
                 {product.previewBadgeLabel}
               </span>
             ) : null}
@@ -81,7 +102,7 @@ export function FeedProductStrip({
           className="ds-feed-product-strip__view-more"
           onClick={onViewMore}
         >
-          <span>View more</span>
+          <span>{viewMoreLabel}</span>
           <FigmaAsset
             src="/assets/figma/personalized-feed/feed-card/chevron-right-12.svg"
             alt=""
