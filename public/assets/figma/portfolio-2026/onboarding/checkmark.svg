@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="[Icon] Check">
+<g id="Color">
+<mask id="mask0_0_771" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="3" width="10" height="7">
+<path id="Vector" fill-rule="evenodd" clip-rule="evenodd" d="M10.4242 3.24263C10.6585 3.47695 10.6585 3.85684 10.4242 4.09116L5.09083 9.42449C4.85652 9.65881 4.47662 9.65881 4.24231 9.42449L1.57564 6.75783C1.34132 6.52351 1.34132 6.14361 1.57564 5.9093C1.80995 5.67498 2.18985 5.67498 2.42417 5.9093L4.66657 8.1517L9.57564 3.24263C9.80995 3.00832 10.1899 3.00832 10.4242 3.24263Z" fill="var(--fill-0, white)"/>
+</mask>
+<g mask="url(#mask0_0_771)">
+<g id="COLOR TOKEN">
+<g id="Color_2">
+<rect id="Color_3" width="12" height="12" fill="white"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</svg>

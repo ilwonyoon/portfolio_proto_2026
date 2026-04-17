@@ -82,5 +82,152 @@
     "file": "portfolio-2026/onboarding/status-levels.svg",
     "sourceType": "svg",
     "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/onboarding",
+    "nodeId": "6133:71513",
+    "file": "portfolio-2026/onboarding/checkmark.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/home-type",
+    "nodeId": "6133:71766",
+    "file": "portfolio-2026/home-type/arrow-left.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/sofa.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/bed.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/dining-table.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/fabric.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/dresser-storage.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/refrigerator.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/tv-media.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/clothes-rack.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/wardrobe.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/washer-dryer.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/mattress-topper.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/vanity-console.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/bathroom-essentials.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/shelving-bookcase.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/final-preferences",
+    "nodeId": "6143:114501",
+    "file": "portfolio-2026/final-preferences/chairs.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "portfolio-2026/recommendations",
+    "nodeId": "6143:439248",
+    "file": "portfolio-2026/recommendations/basket.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/recommendations",
+    "nodeId": "6143:439248",
+    "file": "portfolio-2026/recommendations/movingbox.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/recommendations",
+    "nodeId": "6143:439248",
+    "file": "portfolio-2026/recommendations/content.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "portfolio-2026/recommendations",
+    "nodeId": "6143:439248",
+    "file": "portfolio-2026/recommendations/close.svg",
+    "sourceType": "svg",
+    "exportScale": 1
   }
 ]

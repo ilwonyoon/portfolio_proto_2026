@@ -1,0 +1,36 @@
+:root {
+  --color-canvas: #141414;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f7f9fa;
+  --color-surface-selected: #e5f6ff;
+  --color-text-primary: #2f3438;
+  --color-text-secondary: #828c94;
+  --color-text-disabled: #c2c8cc;
+  --color-border: #e6e6e6;
+  --color-border-strong: #0aa5ff;
+  --color-brand: #00a1ff;
+  --color-brand-strong: #0aa5ff;
+  --color-progress-track: #e9ecef;
+  --font-sans:
+    'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --font-body:
+    'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --type-screen-heading-size: 20px;
+  --type-screen-heading-line-height: 26px;
+  --type-screen-heading-letter-spacing: -0.45px;
+  --type-screen-heading-weight: 600;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-device: 40px;
+  --shadow-card: 2px 2px 20px rgba(194, 200, 204, 0.2);
+  --shadow-device: 0 24px 64px rgba(0, 0, 0, 0.32);
+}

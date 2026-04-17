@@ -1,14 +1,14 @@
+@import './system/styles/tokens.css';
+@import './system/components.css';
+
 :root {
-  --bg: #141414;
+  --bg: var(--color-canvas);
   --text: #ffffff;
-  --font-sans:
-    'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
   --font-mono:
     'SFMono-Regular', 'SF Mono', ui-monospace, 'Roboto Mono', monospace;
   color: var(--text);
   background: var(--bg);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -28,7 +28,7 @@ body,
 body {
   margin: 0;
   min-width: 320px;
-  background: #141414;
+  background: var(--color-canvas);
 }
 
 button,
