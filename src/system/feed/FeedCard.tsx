@@ -8,12 +8,12 @@ import type { FeedFeaturedProductRowProps } from './FeedFeaturedProductRow'
 import { FeedMediaCarousel } from './FeedMediaCarousel'
 import type { FeedMediaSlide } from './FeedMediaCarousel'
 import { FeedProductStrip } from './FeedProductStrip'
-import { resolveFeedPreviewProducts } from './FeedProductStrip'
 import type { FeedProduct } from './FeedProductStrip'
 import { FeedReactionBar } from './FeedReactionBar'
 import type { FeedReactionBarProps } from './FeedReactionBar'
 import { FeedRecommendationTitle } from './FeedRecommendationTitle'
 import type { FeedRecommendationTitleProps } from './FeedRecommendationTitle'
+import { resolveFeedPreviewProducts } from './feedProductUtils'
 
 export type FeedCardProductsSection = {
   catalog: FeedProduct[]

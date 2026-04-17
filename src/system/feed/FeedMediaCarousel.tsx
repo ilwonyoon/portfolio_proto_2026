@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
+import { MediaCounter } from '../primitives'
 
 export type FeedProductTagPoint = {
   id: string
@@ -61,9 +62,13 @@ export function FeedMediaCarousel({
 
   const hasSlides = slides.length > 0
   const safeActiveIndex = hasSlides ? Math.min(activeIndex, slides.length - 1) : 0
-  const activeSlide = hasSlides
-    ? slides[safeActiveIndex]
-    : { id: 'empty', src: '', alt: '', tags: [] }
+  const activeSlide = useMemo(
+    () =>
+      hasSlides
+        ? slides[safeActiveIndex]
+        : { id: 'empty', src: '', alt: '', tags: [] },
+    [hasSlides, safeActiveIndex, slides],
+  )
   const currentLabel = hasSlides ? String(safeActiveIndex + 1) : '0'
   const displayTotal = String(slides.length)
 
@@ -102,18 +107,8 @@ export function FeedMediaCarousel({
   }, [])
 
   useEffect(() => {
-    if (!hasSlides || activeIndex <= slides.length - 1) {
-      return
-    }
-
-    setActiveIndex(0)
-  }, [activeIndex, hasSlides, slides.length])
-
-  useEffect(() => {
     timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutsRef.current = []
-
-    setVisibleTagCount(0)
 
     if (!hasSlides || !onSelectTag || !isViewportVisible) {
       return () => {
@@ -123,7 +118,10 @@ export function FeedMediaCarousel({
     }
 
     if (revealedSlideIdsRef.current.has(activeSlide.id)) {
-      setVisibleTagCount(activeSlide.tags.length)
+      const timeoutId = window.setTimeout(() => {
+        setVisibleTagCount(activeSlide.tags.length)
+      }, 0)
+      timeoutsRef.current.push(timeoutId)
 
       return () => {
         timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
@@ -323,19 +321,11 @@ export function FeedMediaCarousel({
         </div>
 
         {hasSlides ? (
-          <div className="ds-feed-media__counter">
-            <div className="ds-feed-media__counter-group">
-              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--current">
-                {currentLabel}
-              </span>
-              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--slash">
-                /
-              </span>
-              <span className="ds-feed-media__counter-part ds-feed-media__counter-part--total">
-                {displayTotal}
-              </span>
-            </div>
-          </div>
+          <MediaCounter
+            current={Number(currentLabel)}
+            total={Number(displayTotal)}
+            className="ds-feed-media__counter"
+          />
         ) : null}
 
         {overlay ? <div className="ds-feed-media__overlay">{overlay}</div> : null}

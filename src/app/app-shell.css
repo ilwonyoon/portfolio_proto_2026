@@ -126,6 +126,93 @@
   color: var(--color-surface);
 }
 
+.component-library-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(720px, 100%);
+  margin: 0 auto;
+}
+
+.component-library-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.component-library-panel__eyebrow,
+.component-library-panel__subhead {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.component-library-panel__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 22px;
+  line-height: 30px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.component-library-panel__copy {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.3px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.component-library-panel__code-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.component-library-panel__code-list code {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.component-library-panel__device-preview {
+  width: 375px;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 40px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
+}
+
+.component-library-panel__shortcut-preview {
+  padding: 12px 0 8px;
+}
+
+.component-library-panel__bottom-nav-preview {
+  margin-top: 8px;
+}
+
+.component-library-panel__primitive-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .design-system-panel {
   display: flex;
   flex-direction: column;
@@ -278,15 +365,10 @@
   overflow: hidden;
 }
 
-.workbench-stage__canvas--design-system {
+.workbench-stage__canvas--component-library {
   place-items: start stretch;
   padding-top: 48px;
   overflow-y: auto;
-}
-
-.workbench-stage__canvas--design-system .design-system-panel {
-  width: min(560px, 100%);
-  margin: 0 auto;
 }
 
 @media (max-width: 980px) {

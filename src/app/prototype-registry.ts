@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import OldHomeFeedPrototype from '../prototypes/old-home-feed/OldHomeFeedPrototype'
 import PersonalizedFeedPrototype from '../prototypes/personalized-feed/PersonalizedFeedPrototype'
 import Portfolio2026Prototype from '../prototypes/portfolio-2026/Portfolio2026Prototype'
 
@@ -16,6 +17,14 @@ export type PrototypeDefinition = {
 }
 
 export const prototypeRegistry: PrototypeDefinition[] = [
+  {
+    id: 'old-home-feed',
+    title: 'Old home feed',
+    description: 'Previous Ohouse home feed shell prototype.',
+    status: 'Active build',
+    screens: ['Home'],
+    Component: OldHomeFeedPrototype,
+  },
   {
     id: 'personalized-feed',
     title: 'Personalized feed',

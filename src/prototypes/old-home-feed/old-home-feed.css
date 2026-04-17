@@ -1,0 +1,10 @@
+.old-home-feed__banner {
+  display: flex;
+  padding: 16px;
+}
+
+.old-home-feed__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}

@@ -691,5 +691,131 @@
     "file": "personalized-feed/view-more/product-sheet-6.png",
     "sourceType": "png",
     "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/home-filled.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/explore.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/store.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/expert.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/profile.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/notification-dot.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/search.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/notification.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/cart.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/bookmark.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed",
+    "nodeId": "6261:590139",
+    "file": "old-home-feed/menu.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/banner",
+    "nodeId": "6265:704492",
+    "file": "old-home-feed/banner/banner03.png",
+    "sourceType": "png",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/banner",
+    "nodeId": "6265:704492",
+    "file": "old-home-feed/banner/add-12.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/home-tour-grid",
+    "nodeId": "6261:577796",
+    "file": "old-home-feed/home-tour-grid/tour-1.png",
+    "sourceType": "png",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/home-tour-grid",
+    "nodeId": "6261:577796",
+    "file": "old-home-feed/home-tour-grid/tour-2.png",
+    "sourceType": "png",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/home-tour-grid",
+    "nodeId": "6261:577796",
+    "file": "old-home-feed/home-tour-grid/tour-3.png",
+    "sourceType": "png",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/home-tour-grid",
+    "nodeId": "6261:577796",
+    "file": "old-home-feed/home-tour-grid/tour-4.png",
+    "sourceType": "png",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/home-tour-grid",
+    "nodeId": "6261:577796",
+    "file": "old-home-feed/home-tour-grid/toggle-bookmark.svg",
+    "sourceType": "svg",
+    "exportScale": 1
   }
 ]

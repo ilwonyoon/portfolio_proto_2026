@@ -1,13 +1,18 @@
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 
-type HomeSearchNavIcon = {
+export type HomeSearchNavIcon = {
   label: string
   src: string
   width: number
   height: number
+  showDot?: boolean
+  dotSrc?: string
+  dotWidth?: number
+  dotHeight?: number
+  badgeLabel?: string
 }
 
-type HomeSearchNavProps = {
+export type HomeSearchNavProps = {
   menuIcon: HomeSearchNavIcon
   searchIcon: HomeSearchNavIcon
   actions: HomeSearchNavIcon[]
@@ -45,19 +50,33 @@ export function HomeSearchNav({
 
       <div className="ds-home-search-nav__actions">
         {actions.map((action) => (
-          <button
-            key={action.label}
-            type="button"
-            className="ds-home-search-nav__action"
-            aria-label={action.label}
-          >
-            <FigmaAsset
-              src={action.src}
-              alt=""
-              displayWidth={action.width}
-              displayHeight={action.height}
-            />
-          </button>
+          <div key={action.label} className="ds-home-search-nav__action-wrap">
+            <button
+              type="button"
+              className="ds-home-search-nav__action"
+              aria-label={action.label}
+            >
+              <FigmaAsset
+                src={action.src}
+                alt=""
+                displayWidth={action.width}
+                displayHeight={action.height}
+              />
+            </button>
+            {action.showDot && action.dotSrc ? (
+              <span className="ds-home-search-nav__dot">
+                <FigmaAsset
+                  src={action.dotSrc}
+                  alt=""
+                  displayWidth={action.dotWidth ?? 4}
+                  displayHeight={action.dotHeight ?? 4}
+                />
+              </span>
+            ) : null}
+            {action.badgeLabel ? (
+              <span className="ds-home-search-nav__badge">{action.badgeLabel}</span>
+            ) : null}
+          </div>
         ))}
       </div>
     </div>

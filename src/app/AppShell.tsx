@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'react'
 import './app-shell.css'
 import { prototypeRegistry } from './prototype-registry'
-import { DesignSystemPanel } from './DesignSystemPanel'
+import { ComponentLibraryPanel } from './ComponentLibraryPanel'
 import { LiquidGlassCursor } from '../system'
 
 export function AppShell() {
   const [activePrototypeId, setActivePrototypeId] = useState(
     prototypeRegistry[0]?.id ?? '',
   )
-  const [activeView, setActiveView] = useState<'prototype' | 'design-system'>(
-    'prototype',
-  )
+  const [activeView, setActiveView] = useState<
+    'prototype' | 'component-library'
+  >('prototype')
 
   const activePrototype = useMemo(
     () =>
@@ -69,13 +69,13 @@ export function AppShell() {
           <button
             type="button"
             className={
-              activeView === 'design-system'
+              activeView === 'component-library'
                 ? 'workbench-sidebar__secondary-action workbench-sidebar__secondary-action--active'
                 : 'workbench-sidebar__secondary-action'
             }
-            onClick={() => setActiveView('design-system')}
+            onClick={() => setActiveView('component-library')}
           >
-            Design system
+            Component libraries
           </button>
         </div>
       </aside>
@@ -83,20 +83,20 @@ export function AppShell() {
       <section
         className="workbench-stage"
         aria-label={
-          activeView === 'design-system'
-            ? 'Design system preview'
+          activeView === 'component-library'
+            ? 'Component library preview'
             : 'Prototype preview'
         }
       >
         <div
           className={
-            activeView === 'design-system'
-              ? 'workbench-stage__canvas workbench-stage__canvas--design-system'
+            activeView === 'component-library'
+              ? 'workbench-stage__canvas workbench-stage__canvas--component-library'
               : 'workbench-stage__canvas'
           }
         >
-          {activeView === 'design-system' ? (
-            <DesignSystemPanel />
+          {activeView === 'component-library' ? (
+            <ComponentLibraryPanel />
           ) : (
             <ActivePrototypeComponent mode="full" />
           )}
