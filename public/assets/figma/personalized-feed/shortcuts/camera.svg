@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 25 22.5" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="object">
+<path id="Rectangle 42364" d="M0 7.21978C0 5.68382 1.18005 4.4056 2.71111 4.28311C9.22663 3.76187 15.7734 3.76187 22.2889 4.28311C23.8199 4.4056 25 5.68382 25 7.21978V19C25 20.933 23.433 22.5 21.5 22.5H3.5C1.567 22.5 0 20.933 0 19V7.21978Z" fill="var(--fill-0, #0C2737)"/>
+<circle id="Ellipse 2474" cx="12.5" cy="11.5" r="5.5" fill="var(--fill-0, white)"/>
+<circle id="Ellipse 2475" cx="12.5" cy="11.4968" r="3.75" fill="var(--fill-0, #8B8BE8)"/>
+<path id="Rectangle 42365" d="M1.5 2.57143C1.5 1.15127 2.65127 0 4.07143 0H8.92857C10.3487 0 11.5 1.15127 11.5 2.57143C11.5 2.80812 11.3081 3 11.0714 3H1.92857C1.69188 3 1.5 2.80812 1.5 2.57143Z" fill="var(--fill-0, #8B8BE8)"/>
+<path id="Rectangle 42366" d="M15.5 3C15.5 2.17157 16.1716 1.5 17 1.5H20.4366C21.2651 1.5 21.9366 2.17157 21.9366 3V5H15.5V3Z" fill="var(--fill-0, #0C2737)"/>
+<rect id="Rectangle 42367" x="3.02075" y="6.49683" width="3" height="3" rx="1" fill="var(--fill-0, white)"/>
+</g>
+</svg>

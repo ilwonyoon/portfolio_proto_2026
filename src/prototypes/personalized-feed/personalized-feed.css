@@ -1,0 +1,75 @@
+.personalized-feed {
+  overflow-x: hidden;
+}
+
+.personalized-feed--full {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+}
+
+.personalized-feed--thumbnail {
+  width: 375px;
+  height: 812px;
+  display: block;
+  pointer-events: none;
+}
+
+.personalized-feed__screen {
+  position: relative;
+  height: 812px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.personalized-feed__top {
+  flex: 0 0 auto;
+}
+
+.personalized-feed__body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.personalized-feed__main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+
+.personalized-feed__main::-webkit-scrollbar {
+  display: none;
+}
+
+.personalized-feed__fab {
+  position: absolute;
+  right: 16px;
+  bottom: calc(54px + 34px + 16px);
+}
+
+.personalized-feed__shortcuts {
+  flex: 0 0 auto;
+}
+
+.personalized-feed__content {
+  flex: 0 0 auto;
+  min-height: 0;
+  padding-bottom: 24px;
+}
+
+@media (max-width: 420px) {
+  .personalized-feed--full {
+    padding-inline: 0;
+  }
+}

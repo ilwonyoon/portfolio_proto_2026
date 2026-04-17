@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import './app-shell.css'
 import { prototypeRegistry } from './prototype-registry'
 import { DesignSystemPanel } from './DesignSystemPanel'
+import { LiquidGlassCursor } from '../system'
 
 export function AppShell() {
   const [activePrototypeId, setActivePrototypeId] = useState(
@@ -26,6 +27,8 @@ export function AppShell() {
 
   return (
     <main className="workbench-shell">
+      <LiquidGlassCursor active={activeView === 'prototype'} />
+
       <aside className="workbench-sidebar">
         <div className="workbench-sidebar__header">
           <p className="workbench-sidebar__eyebrow">Prototypes</p>

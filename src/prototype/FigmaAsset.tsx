@@ -9,6 +9,7 @@ type FigmaAssetProps = {
   className?: string
   exportScale?: 1 | 2
   loading?: 'eager' | 'lazy'
+  draggable?: boolean
 }
 
 export function FigmaAsset({
@@ -19,6 +20,7 @@ export function FigmaAsset({
   className,
   exportScale = DEFAULT_EXPORT_SCALE,
   loading = 'eager',
+  draggable = false,
 }: FigmaAssetProps) {
   const style = {
     width: displayWidth,
@@ -34,6 +36,7 @@ export function FigmaAsset({
       height={displayHeight}
       loading={loading}
       decoding="async"
+      draggable={draggable}
       data-export-scale={exportScale}
       className={className}
       style={style}

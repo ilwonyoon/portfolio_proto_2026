@@ -1,7 +1,5 @@
-import { ProgressBar } from '../system/mobile/ProgressBar'
-import { HomeIndicator } from '../system/mobile/HomeIndicator'
-import { Button } from '../system/primitives/Button'
-import { Chip } from '../system/primitives/Chip'
+import { HomeIndicator, ProgressBar } from '../system/mobile'
+import { Button, Chip } from '../system/primitives'
 import { colors } from '../system/tokens'
 
 const colorEntries = [

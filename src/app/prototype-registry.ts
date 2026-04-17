@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import PersonalizedFeedPrototype from '../prototypes/personalized-feed/PersonalizedFeedPrototype'
 import Portfolio2026Prototype from '../prototypes/portfolio-2026/Portfolio2026Prototype'
 
 type PrototypeRendererProps = {
@@ -15,6 +16,14 @@ export type PrototypeDefinition = {
 }
 
 export const prototypeRegistry: PrototypeDefinition[] = [
+  {
+    id: 'personalized-feed',
+    title: 'Personalized feed',
+    description: 'Starter scaffold for Personalized feed.',
+    status: 'Scaffold',
+    screens: ['Intro'],
+    Component: PersonalizedFeedPrototype,
+  },
   {
     id: 'portfolio-2026',
     title: 'Interest profiling',

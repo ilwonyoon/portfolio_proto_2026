@@ -1,5 +1,38 @@
 # Prototype Template
+## Prototype Template
 
+Use this repository as a multi-prototype workbench.
+
+### Create a new prototype
+
+```bash
+npm run new:prototype -- <prototype-id> "<Prototype Title>"
+```
+
+Example:
+
+```bash
+npm run new:prototype -- room-planner "Room planner"
+```
+
+This will:
+
+- create `src/prototypes/<prototype-id>/`
+- scaffold a starter React component and CSS file
+- add the prototype to [src/app/prototype-registry.ts](../../app/prototype-registry.ts)
+
+### Generated files
+
+- `<PascalCase>Prototype.tsx`
+- `<prototype-id>.css`
+- `index.ts`
+
+### Expected workflow
+
+1. Generate the prototype folder.
+2. Replace the starter screen with the Figma-driven implementation.
+3. Keep shared UI in `src/system/*`.
+4. Keep prototype-specific copy, assets, and layout logic inside the prototype folder.
 Use this folder shape when adding a new prototype module.
 
 ## Suggested structure

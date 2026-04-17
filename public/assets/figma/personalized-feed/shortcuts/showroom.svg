@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="object">
+<path id="Rectangle 42441" d="M24 13.5V3.5C24 1.567 22.433 0 20.5 0H3.5C1.567 0 0 1.567 0 3.5V13.5C0 13.7761 0.223857 14 0.5 14H23.5C23.7761 14 24 13.7761 24 13.5Z" fill="var(--fill-0, #C8E8F8)"/>
+<g id="Mask group">
+<mask id="mask0_0_4122" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="14">
+<path id="Rectangle 42461" d="M24 13.5V3.5C24 1.567 22.433 0 20.5 0H3.5C1.567 0 0 1.567 0 3.5V13.5C0 13.7761 0.223857 14 0.5 14H23.5C23.7761 14 24 13.7761 24 13.5Z" fill="var(--fill-0, #C8E8F8)"/>
+</mask>
+<g mask="url(#mask0_0_4122)">
+<rect id="Rectangle 42459" x="6" y="-1" width="6" height="15" fill="var(--fill-0, #47BBF5)"/>
+<rect id="Rectangle 42460" x="18" y="-1" width="6" height="15" fill="var(--fill-0, #47BBF5)"/>
+</g>
+</g>
+<path id="Union" d="M18 13C18 13.5454 18.4367 13.9881 18.9795 13.999H22.5V20.5C22.5 22.433 20.933 24 19 24H5C3.067 24 1.5 22.433 1.5 20.5V13.999H5.02051C5.56332 13.9881 6 13.5454 6 13C6 13.5454 6.43668 13.9881 6.97949 13.999H11.0205C11.5633 13.9881 12 13.5454 12 13C12 13.5454 12.4367 13.9881 12.9795 13.999H17.0205C17.5633 13.9881 18 13.5454 18 13Z" fill="var(--fill-0, #1C4F6C)"/>
+<path id="Rectangle 40896" d="M14 18.5728V17.0728C14 15.9682 13.1046 15.0728 12 15.0728C10.8954 15.0728 10 15.9682 10 17.0728V18.5728C10 18.8489 10.2239 19.0728 10.5 19.0728H13.5C13.7761 19.0728 14 18.8489 14 18.5728Z" fill="var(--fill-0, #FBFBFB)"/>
+</g>
+</svg>

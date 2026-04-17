@@ -245,7 +245,6 @@ function splitIntoTwoRows<T>(items: readonly T[]) {
 function Portfolio2026Prototype({
   mode = 'full',
 }: Portfolio2026PrototypeProps) {
-  const cursorRef = useRef<HTMLDivElement | null>(null)
   const [isMovingSelected, setIsMovingSelected] = useState(false)
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
   const [selectedExtras, setSelectedExtras] = useState<string[]>([])
@@ -271,73 +270,6 @@ function Portfolio2026Prototype({
     )
     setCurrentStep(nextStep)
   }
-
-  useEffect(() => {
-    if (isThumbnail) {
-      return
-    }
-
-    if (!window.matchMedia('(pointer: fine)').matches) {
-      return
-    }
-
-    const cursor = cursorRef.current
-
-    if (!cursor) {
-      return
-    }
-
-    let pointerX = 0
-    let pointerY = 0
-    let rafId = 0
-
-    const renderCursor = () => {
-      cursor.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`
-      rafId = 0
-    }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      pointerX = event.clientX
-      pointerY = event.clientY
-      cursor.classList.add('ios-cursor--visible')
-
-      if (rafId === 0) {
-        rafId = window.requestAnimationFrame(renderCursor)
-      }
-    }
-
-    const handlePointerDown = () => {
-      cursor.classList.add('ios-cursor--pressed')
-    }
-
-    const handlePointerUp = () => {
-      cursor.classList.remove('ios-cursor--pressed')
-    }
-
-    const handlePointerLeave = () => {
-      cursor.classList.remove('ios-cursor--visible', 'ios-cursor--pressed')
-    }
-
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerdown', handlePointerDown)
-    window.addEventListener('pointerup', handlePointerUp)
-    window.addEventListener('pointercancel', handlePointerLeave)
-    window.addEventListener('blur', handlePointerLeave)
-    document.addEventListener('mouseleave', handlePointerLeave)
-
-    return () => {
-      if (rafId !== 0) {
-        window.cancelAnimationFrame(rafId)
-      }
-
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerdown', handlePointerDown)
-      window.removeEventListener('pointerup', handlePointerUp)
-      window.removeEventListener('pointercancel', handlePointerLeave)
-      window.removeEventListener('blur', handlePointerLeave)
-      document.removeEventListener('mouseleave', handlePointerLeave)
-    }
-  }, [isThumbnail])
 
   const headerLines = (() => {
     if (currentStep === 'intro') {
@@ -1077,10 +1009,6 @@ function Portfolio2026Prototype({
           : 'portfolio-prototype portfolio-prototype--full'
       }
     >
-      {isThumbnail ? null : (
-        <div ref={cursorRef} aria-hidden="true" className="ios-cursor" />
-      )}
-
       <PrototypeScreen contentHeight={screenHeight} variant="bare">
         <div className="onboarding-screen">
           <div className="status-bar">

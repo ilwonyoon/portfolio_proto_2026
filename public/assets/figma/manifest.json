@@ -229,5 +229,467 @@
     "file": "portfolio-2026/recommendations/close.svg",
     "sourceType": "svg",
     "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/menu.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/search.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/notification.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/bookmark.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/cart.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/home-filled.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/community.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/shopping.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/interior.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/profile.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/structure",
+    "nodeId": "6167:552429",
+    "file": "personalized-feed/fab-plus.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/binaryshop-logo.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/camera.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/cleaner-basket.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/cleaner-brush.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/clock.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/clovercoin.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/drill.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-ellipse-2439.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-ellipse-2440.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-ellipse-323.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-ellipse-324.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-ellipse-326.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-rectangle.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-union.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/game-vector.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/house.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/jewelry-mask-group-2.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/jewelry-mask-group.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/jewelry-vector-545.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/jewelry-vector-546.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/mart-shampoo.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/mart-tissue.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/paper.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/roller.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/showroom.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/shortcuts",
+    "nodeId": "6167:554354",
+    "file": "personalized-feed/shortcuts/truck.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/avatar.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/chevron-right-12.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/comment.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/export.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/heart.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/indicator-dot-active.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/indicator-dot-small.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/indicator-dot-tiny.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/indicator-dot.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/media-base.jpg",
+    "sourceType": "jpg",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/media-photo.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-4.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-tag-bg.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/product-tag-plus.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/feed-card",
+    "nodeId": "6167:554483",
+    "file": "personalized-feed/feed-card/scrap-outline.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/reaction-bar",
+    "nodeId": "6167:554503",
+    "file": "personalized-feed/reaction-bar/comment-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/reaction-bar",
+    "nodeId": "6167:554503",
+    "file": "personalized-feed/reaction-bar/export-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/reaction-bar",
+    "nodeId": "6167:554503",
+    "file": "personalized-feed/reaction-bar/heart-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/reaction-bar",
+    "nodeId": "6167:554503",
+    "file": "personalized-feed/reaction-bar/scrap-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/dismiss-18.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-4.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-5.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/view-more",
+    "nodeId": "6173:558615",
+    "file": "personalized-feed/view-more/product-sheet-6.png",
+    "sourceType": "png",
+    "exportScale": 2
   }
 ]

@@ -262,6 +262,13 @@
   overflow: hidden;
 }
 
+@media (pointer: fine) {
+  .workbench-stage,
+  .workbench-stage * {
+    cursor: none !important;
+  }
+}
+
 .workbench-stage__canvas {
   display: grid;
   place-items: start center;
