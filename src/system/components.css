@@ -782,7 +782,7 @@
   position: absolute;
   inset: 0;
   z-index: 40;
-  pointer-events: none;
+  pointer-events: auto;
   overflow: hidden;
 }
 
@@ -793,10 +793,6 @@
   transform: translateX(100%);
   transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
   will-change: transform;
-}
-
-.ds-home-post-detail--open {
-  pointer-events: auto;
 }
 
 .ds-home-post-detail--open .ds-home-post-detail__panel {

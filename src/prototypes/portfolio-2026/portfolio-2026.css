@@ -18,9 +18,16 @@
   pointer-events: none;
 }
 
-.onboarding-screen {
-  min-height: 812px;
+.portfolio-prototype__screen {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.onboarding-screen {
+  min-height: 0;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   background: #ffffff;

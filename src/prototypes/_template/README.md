@@ -37,6 +37,7 @@ This will:
 ### Scroll behavior
 
 - `PrototypeScreen` is a fixed device frame and should not scroll.
+- Keep the system status bar outside the scroll region so it stays fixed at the top.
 - Put scrolling on an inner region such as `.prototype-screen__scroll-region`.
 - For tall screens, keep the outer frame locked and let only the in-screen content move.
 

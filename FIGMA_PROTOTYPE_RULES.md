@@ -5,6 +5,7 @@
 - Every incoming Figma frame must have a width of `375px`.
 - Frame height may exceed `812px`, but the content must stay inside the same screen and scroll vertically.
 - Horizontal overflow is disabled by default.
+- The system status bar stays fixed at the top and must not scroll with screen content.
 
 ## Figma workflow
 - Start from the exact Figma frame or state link.

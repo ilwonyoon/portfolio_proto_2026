@@ -1010,7 +1010,7 @@ function Portfolio2026Prototype({
       }
     >
       <PrototypeScreen contentHeight={screenHeight} variant="bare">
-        <div className="onboarding-screen prototype-screen__scroll-region">
+        <div className="portfolio-prototype__screen">
           <div className="status-bar">
             <div className="status-bar__time">9:41</div>
             <FigmaAsset
@@ -1021,175 +1021,177 @@ function Portfolio2026Prototype({
             />
           </div>
 
-          {currentStep === 'intro' ? (
-            <TopNav className="intro-top-nav" />
-          ) : currentStep === 'recommendations' ? (
-            <TopNav
-              className="completion-top-nav"
-              trailing={
-                <IconButton
-                  label="Close"
-                  onClick={() => setStep('interests')}
-                >
-                  <FigmaAsset
-                    src="/assets/figma/portfolio-2026/recommendations/close.svg"
-                    alt=""
-                    displayWidth={19.8}
-                    displayHeight={19.8}
-                  />
-                </IconButton>
-              }
-            />
-          ) : (
-            <TopNav
-              className="top-nav"
-              leading={
-                <IconButton
-                  label={currentStep === 'interests' ? 'Close' : 'Back'}
-                  onClick={handleBack}
-                >
-                  {currentStep === 'interests' ? (
-                    <span className="icon-close" />
-                  ) : (
-                    <FigmaAsset
-                      src="/assets/figma/portfolio-2026/home-type/arrow-left.svg"
-                      alt=""
-                      displayWidth={20.5}
-                      displayHeight={18.87}
-                    />
-                  )}
-                </IconButton>
-              }
-              center={<ProgressBar fillClassName={progressClassName} />}
-            />
-          )}
-
-          {currentStep === 'intro' ? (
-            <div className="intro-step">
-              <AnimatedIntroScenario onStart={() => setStep('interests')} />
-            </div>
-          ) : currentStep === 'recommendations' ? (
-            <div className="recommendations-step">
-              <img
-                src={pointGetGif}
-                alt=""
-                className="recommendations-step__gif"
-                width={200}
-                height={200}
-              />
-
-              <section
-                className="recommendations-step__hero"
-                aria-label="Recommendations ready"
-              >
-                <div className="recommendations-step__copy">
-                  <h1 className="recommendations-step__title">Your feed is ready</h1>
-                </div>
-                <button type="button" className="recommendations-step__cta">
-                  Go to your feed
-                </button>
-              </section>
-
-              <section
-                className="recommendations-list"
-                aria-label="Recommended actions"
-              >
-                {recommendationCards.map((card) => (
-                  <button
-                    key={card.id}
-                    type="button"
-                    className="recommendation-card"
+          <div className="onboarding-screen prototype-screen__scroll-region">
+            {currentStep === 'intro' ? (
+              <TopNav className="intro-top-nav" />
+            ) : currentStep === 'recommendations' ? (
+              <TopNav
+                className="completion-top-nav"
+                trailing={
+                  <IconButton
+                    label="Close"
+                    onClick={() => setStep('interests')}
                   >
-                    <span className="recommendation-card__icon">
-                      <FigmaAsset
-                        src={card.iconSrc}
-                        alt=""
-                        displayWidth={card.iconWidth}
-                        displayHeight={card.iconHeight}
-                      />
-                    </span>
-                    <span className="recommendation-card__label">{card.label}</span>
                     <FigmaAsset
-                      src="/assets/figma/portfolio-2026/onboarding/chevron-right.svg"
+                      src="/assets/figma/portfolio-2026/recommendations/close.svg"
                       alt=""
-                      displayWidth={9.2}
-                      displayHeight={15.6}
+                      displayWidth={19.8}
+                      displayHeight={19.8}
                     />
-                  </button>
-                ))}
-              </section>
-            </div>
-          ) : (
-            <>
-              <header className="screen-header">
-                <AnimatedTextBlock
-                  lines={headerLines}
-                  delay={0.08}
-                  onComplete={() => setIsSurveyContentVisible(true)}
-                />
-              </header>
-              <div
-                className={
-                  isSurveyContentVisible
-                    ? 'survey-step-shell survey-step-shell--visible'
-                    : 'survey-step-shell'
+                  </IconButton>
                 }
-              >
-                {renderSurveyStep()}
-              </div>
-            </>
-          )}
-
-          {currentStep === 'recommendations' || currentStep === 'intro' ? null : (
-            <div className="screen-spacer" />
-          )}
-
-          <footer className="bottom-cta">
-            {currentStep === 'recommendations' || currentStep === 'intro' ? null : (
-              <div
-                className={
-                  isSurveyContentVisible
-                    ? 'bottom-cta__inner bottom-cta__inner--visible'
-                    : 'bottom-cta__inner'
+              />
+            ) : (
+              <TopNav
+                className="top-nav"
+                leading={
+                  <IconButton
+                    label={currentStep === 'interests' ? 'Close' : 'Back'}
+                    onClick={handleBack}
+                  >
+                    {currentStep === 'interests' ? (
+                      <span className="icon-close" />
+                    ) : (
+                      <FigmaAsset
+                        src="/assets/figma/portfolio-2026/home-type/arrow-left.svg"
+                        alt=""
+                        displayWidth={20.5}
+                        displayHeight={18.87}
+                      />
+                    )}
+                  </IconButton>
                 }
-              >
-                {currentStep === 'final-preferences' ? (
-                <Button
-                  enabled={isFinalButtonEnabled}
-                  disabled={!isFinalButtonEnabled}
-                  onClick={() => setStep('recommendations')}
-                >
-                  Complete
-                </Button>
-              ) : currentStep === 'living-with' ? (
-                <Button
-                  enabled={selectedLivingWith.length > 0}
-                  disabled={selectedLivingWith.length === 0}
-                  onClick={enterFinalPreferences}
-                >
-                  Next
-                </Button>
-              ) : currentStep === 'home-type' ? (
-                <Button
-                  enabled={Boolean(selectedApartmentSize)}
-                  disabled={!selectedApartmentSize}
-                  onClick={() => setStep('living-with')}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  enabled={Boolean(selectedMonth)}
-                  disabled={!selectedMonth}
-                  onClick={() => setStep('home-type')}
-                >
-                  Next
-                </Button>
-              )}
-              </div>
+                center={<ProgressBar fillClassName={progressClassName} />}
+              />
             )}
-            <HomeIndicator />
-          </footer>
+
+            {currentStep === 'intro' ? (
+              <div className="intro-step">
+                <AnimatedIntroScenario onStart={() => setStep('interests')} />
+              </div>
+            ) : currentStep === 'recommendations' ? (
+              <div className="recommendations-step">
+                <img
+                  src={pointGetGif}
+                  alt=""
+                  className="recommendations-step__gif"
+                  width={200}
+                  height={200}
+                />
+
+                <section
+                  className="recommendations-step__hero"
+                  aria-label="Recommendations ready"
+                >
+                  <div className="recommendations-step__copy">
+                    <h1 className="recommendations-step__title">Your feed is ready</h1>
+                  </div>
+                  <button type="button" className="recommendations-step__cta">
+                    Go to your feed
+                  </button>
+                </section>
+
+                <section
+                  className="recommendations-list"
+                  aria-label="Recommended actions"
+                >
+                  {recommendationCards.map((card) => (
+                    <button
+                      key={card.id}
+                      type="button"
+                      className="recommendation-card"
+                    >
+                      <span className="recommendation-card__icon">
+                        <FigmaAsset
+                          src={card.iconSrc}
+                          alt=""
+                          displayWidth={card.iconWidth}
+                          displayHeight={card.iconHeight}
+                        />
+                      </span>
+                      <span className="recommendation-card__label">{card.label}</span>
+                      <FigmaAsset
+                        src="/assets/figma/portfolio-2026/onboarding/chevron-right.svg"
+                        alt=""
+                        displayWidth={9.2}
+                        displayHeight={15.6}
+                      />
+                    </button>
+                  ))}
+                </section>
+              </div>
+            ) : (
+              <>
+                <header className="screen-header">
+                  <AnimatedTextBlock
+                    lines={headerLines}
+                    delay={0.08}
+                    onComplete={() => setIsSurveyContentVisible(true)}
+                  />
+                </header>
+                <div
+                  className={
+                    isSurveyContentVisible
+                      ? 'survey-step-shell survey-step-shell--visible'
+                      : 'survey-step-shell'
+                  }
+                >
+                  {renderSurveyStep()}
+                </div>
+              </>
+            )}
+
+            {currentStep === 'recommendations' || currentStep === 'intro' ? null : (
+              <div className="screen-spacer" />
+            )}
+
+            <footer className="bottom-cta">
+              {currentStep === 'recommendations' || currentStep === 'intro' ? null : (
+                <div
+                  className={
+                    isSurveyContentVisible
+                      ? 'bottom-cta__inner bottom-cta__inner--visible'
+                      : 'bottom-cta__inner'
+                  }
+                >
+                  {currentStep === 'final-preferences' ? (
+                    <Button
+                      enabled={isFinalButtonEnabled}
+                      disabled={!isFinalButtonEnabled}
+                      onClick={() => setStep('recommendations')}
+                    >
+                      Complete
+                    </Button>
+                  ) : currentStep === 'living-with' ? (
+                    <Button
+                      enabled={selectedLivingWith.length > 0}
+                      disabled={selectedLivingWith.length === 0}
+                      onClick={enterFinalPreferences}
+                    >
+                      Next
+                    </Button>
+                  ) : currentStep === 'home-type' ? (
+                    <Button
+                      enabled={Boolean(selectedApartmentSize)}
+                      disabled={!selectedApartmentSize}
+                      onClick={() => setStep('living-with')}
+                    >
+                      Next
+                    </Button>
+                  ) : (
+                    <Button
+                      enabled={Boolean(selectedMonth)}
+                      disabled={!selectedMonth}
+                      onClick={() => setStep('home-type')}
+                    >
+                      Next
+                    </Button>
+                  )}
+                </div>
+              )}
+              <HomeIndicator />
+            </footer>
+          </div>
         </div>
       </PrototypeScreen>
     </div>

@@ -2,8 +2,8 @@ import './old-home-feed.css'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { oldHomeFeedGridSections } from './home-grid-sections-data'
 import {
-  oldHomeFeedTaggedMediaSlides,
-  oldHomeFeedTaggedProducts,
+  oldHomeFeedPostDetails,
+  oldHomeFeedTaggedModuleCatalog,
 } from './post-detail-tagged-media-data'
 import { personalizedFeedShortcuts } from '../personalized-feed/shortcut-items'
 import {
@@ -31,6 +31,9 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const closeTimeoutRef = useRef<number | null>(null)
   const openFrameRef = useRef<number | null>(null)
+  const selectedPostDetail = selectedPost
+    ? oldHomeFeedPostDetails[selectedPost.id]
+    : null
 
   useEffect(() => {
     return () => {
@@ -155,30 +158,32 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
         ],
       }}
       overlay={
-        selectedPost ? (
+        selectedPost && selectedPostDetail ? (
           <HomePostDetailView
             isOpen={isDetailOpen}
             heroSrc={selectedPost.imageSrc}
             heroAlt={selectedPost.imageAlt}
             title={selectedPost.detailTitle ?? selectedPost.title}
             authorAvatarSrc="/assets/figma/old-home-feed/post-detail/author-avatar.jpg"
-            authorHandle="dotorisisters"
-            authorDisplayName="Acorn Sisters"
-            infoRows={[
-              [
-                { label: 'Home type', value: 'Other' },
-                { label: 'Size', value: '43 pyeong' },
-                { label: 'Scope', value: 'Home styling' },
-              ],
-              [{ label: 'Household', value: 'Living with parents' }],
-            ]}
-            expandLabel="Show 5 more"
+            authorHandle={selectedPostDetail.authorHandle}
+            authorDisplayName={selectedPostDetail.authorDisplayName}
+            infoRows={selectedPostDetail.infoRows}
+            expandLabel={selectedPostDetail.expandLabel}
             modules={
-              <HomeTaggedProductModule
-                slides={oldHomeFeedTaggedMediaSlides}
-                products={oldHomeFeedTaggedProducts}
-                saveIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
-              />
+              <>
+                {selectedPostDetail.taggedModuleIds.map((moduleId) => {
+                  const module = oldHomeFeedTaggedModuleCatalog[moduleId]
+
+                  return (
+                    <HomeTaggedProductModule
+                      key={`${selectedPost.id}-${module.id}`}
+                      slides={module.slides}
+                      products={module.products}
+                      saveIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
+                    />
+                  )
+                })}
+              </>
             }
             onClose={handleClosePost}
             onGoHome={handleClosePost}
