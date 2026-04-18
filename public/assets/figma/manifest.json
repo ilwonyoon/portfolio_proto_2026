@@ -817,5 +817,89 @@
     "file": "old-home-feed/home-tour-grid/toggle-bookmark.svg",
     "sourceType": "svg",
     "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577834",
+    "file": "old-home-feed/content-grid/you-might-like-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577834",
+    "file": "old-home-feed/content-grid/you-might-like-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577834",
+    "file": "old-home-feed/content-grid/you-might-like-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577834",
+    "file": "old-home-feed/content-grid/you-might-like-4.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577963",
+    "file": "old-home-feed/content-grid/white-tone-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577963",
+    "file": "old-home-feed/content-grid/white-tone-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577963",
+    "file": "old-home-feed/content-grid/white-tone-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:577963",
+    "file": "old-home-feed/content-grid/white-tone-4.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:578003",
+    "file": "old-home-feed/content-grid/weekly-best-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:578003",
+    "file": "old-home-feed/content-grid/weekly-best-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:578003",
+    "file": "old-home-feed/content-grid/weekly-best-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/content-grid",
+    "nodeId": "6261:578003",
+    "file": "old-home-feed/content-grid/weekly-best-4.png",
+    "sourceType": "png",
+    "exportScale": 2
   }
 ]

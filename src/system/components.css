@@ -650,6 +650,10 @@
   background: #ffffff;
 }
 
+.ds-home-tour-grid--with-view-more {
+  padding-bottom: 16px;
+}
+
 .ds-home-tour-grid__header {
   padding: 16px 16px 16px;
 }
@@ -716,17 +720,55 @@
 
 .ds-home-tour-grid__card-title {
   margin: 0;
-  font-family: 'Pretendard', var(--font-body);
+  font-family: 'SF Pro Text', var(--font-body);
   font-size: 14px;
   line-height: 18px;
   letter-spacing: -0.3px;
-  font-weight: 500;
+  font-weight: 400;
   color: #2f3438;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ds-home-tour-grid__view-more-wrap {
+  padding: 16px 16px 0;
+}
+
+.ds-home-tour-grid__view-more-button {
+  width: 100%;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.ds-home-tour-grid__view-more-label {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.3px;
+  font-weight: 600;
+  color: #2f3438;
+}
+
+.ds-home-tour-grid__view-more-chevron-wrap {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ds-home-tour-grid__view-more-chevron {
+  display: block;
 }
 
 .ds-feed-media__dots {

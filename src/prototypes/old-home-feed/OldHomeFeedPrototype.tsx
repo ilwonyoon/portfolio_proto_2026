@@ -1,5 +1,6 @@
 import './old-home-feed.css'
-import { oldHomeTourSectionItems } from './home-tour-section-data'
+import { Fragment } from 'react'
+import { oldHomeFeedGridSections } from './home-grid-sections-data'
 import { personalizedFeedShortcuts } from '../personalized-feed/shortcut-items'
 import { HomeTourGridSection } from '../../system/feed'
 import { SectionDivider } from '../../system/primitives'
@@ -43,11 +44,20 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
             items={personalizedFeedShortcuts}
           />
           <SectionDivider />
-          <HomeTourGridSection
-            title="Home tour for you"
-            items={oldHomeTourSectionItems}
-            bookmarkIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
-          />
+          {oldHomeFeedGridSections.map((section, index) => (
+            <Fragment key={section.id}>
+              <HomeTourGridSection
+                title={section.title}
+                items={section.items}
+                viewMoreLabel={section.viewMoreLabel}
+                viewMoreChevronSrc="/assets/figma/personalized-feed/brand-promo/chevron-right.svg"
+                viewMoreChevronWidth={7.91407}
+                viewMoreChevronHeight={13.3519}
+                bookmarkIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
+              />
+              {index < oldHomeFeedGridSections.length - 1 ? <SectionDivider /> : null}
+            </Fragment>
+          ))}
         </div>
       }
       bottomNav={{

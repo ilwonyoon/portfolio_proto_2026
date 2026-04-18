@@ -14,6 +14,11 @@ type HomeTourGridSectionProps = {
   bookmarkIconSrc: string
   className?: string
   onToggleSave?: (itemId: string) => void
+  viewMoreLabel?: string
+  viewMoreChevronSrc?: string
+  viewMoreChevronWidth?: number
+  viewMoreChevronHeight?: number
+  onViewMore?: () => void
 }
 
 export function HomeTourGridSection({
@@ -22,9 +27,16 @@ export function HomeTourGridSection({
   bookmarkIconSrc,
   className,
   onToggleSave,
+  viewMoreLabel,
+  viewMoreChevronSrc,
+  viewMoreChevronWidth = 7.91407,
+  viewMoreChevronHeight = 13.3519,
+  onViewMore,
 }: HomeTourGridSectionProps) {
   return (
-    <section className={`ds-home-tour-grid ${className ?? ''}`.trim()}>
+    <section
+      className={`ds-home-tour-grid ${viewMoreLabel ? 'ds-home-tour-grid--with-view-more' : ''} ${className ?? ''}`.trim()}
+    >
       <header className="ds-home-tour-grid__header">
         <h2 className="ds-home-tour-grid__title">{title}</h2>
       </header>
@@ -61,6 +73,25 @@ export function HomeTourGridSection({
           </article>
         ))}
       </div>
+
+      {viewMoreLabel ? (
+        <div className="ds-home-tour-grid__view-more-wrap">
+          <button type="button" className="ds-home-tour-grid__view-more-button" onClick={onViewMore}>
+            <span className="ds-home-tour-grid__view-more-label">{viewMoreLabel}</span>
+            {viewMoreChevronSrc ? (
+              <span className="ds-home-tour-grid__view-more-chevron-wrap" aria-hidden="true">
+                <FigmaAsset
+                  src={viewMoreChevronSrc}
+                  alt=""
+                  displayWidth={viewMoreChevronWidth}
+                  displayHeight={viewMoreChevronHeight}
+                  className="ds-home-tour-grid__view-more-chevron"
+                />
+              </span>
+            ) : null}
+          </button>
+        </div>
+      ) : null}
     </section>
   )
 }

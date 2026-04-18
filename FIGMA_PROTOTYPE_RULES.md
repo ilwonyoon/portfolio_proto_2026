@@ -25,6 +25,11 @@
 - Render 2x raster assets at design size in the prototype.
 - Keep exported Figma assets under `public/assets/figma`.
 - Track exported assets in `public/assets/figma/manifest.json`.
+- Treat icon sizing as two separate values:
+- `slot size`: the layout box reserved for the icon, such as `24x24` or `18x18`
+- `glyph size`: the actual visible vector size exported from Figma, which is often smaller than the slot
+- Never stretch the glyph to fill the slot unless Figma explicitly does so.
+- Center the glyph inside the slot, and pass `displayWidth` / `displayHeight` as the glyph size.
 
 ## Asset naming
 - Include the screen name and Figma node id in each filename.
