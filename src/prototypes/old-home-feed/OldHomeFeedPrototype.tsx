@@ -65,7 +65,7 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
         items: [
           {
             id: 'home',
-            label: '홈',
+            label: 'Home',
             iconSrc: '/assets/figma/old-home-feed/home-filled.svg',
             iconWidth: 24,
             iconHeight: 24,
@@ -79,21 +79,21 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
           },
           {
             id: 'store',
-            label: '스토어',
+            label: 'Store',
             iconSrc: '/assets/figma/old-home-feed/store.svg',
             iconWidth: 19.8,
             iconHeight: 17.8,
           },
           {
             id: 'expert',
-            label: '이사/시공/수리',
+            label: 'Services',
             iconSrc: '/assets/figma/old-home-feed/expert.svg',
             iconWidth: 21,
             iconHeight: 20.97,
           },
           {
             id: 'my-page',
-            label: '마이페이지',
+            label: 'My Page',
             iconSrc: '/assets/figma/old-home-feed/profile.svg',
             iconWidth: 16.8,
             iconHeight: 20,
