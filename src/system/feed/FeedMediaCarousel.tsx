@@ -23,7 +23,16 @@ type FeedMediaCarouselProps = {
   onSelectTag?: (productId: string) => void
   overlay?: ReactNode
   imageHeight?: number
+  imageWidth?: number
   topPadding?: number
+  showCounter?: boolean
+  showDots?: boolean
+  showTagReveal?: boolean
+  tagSize?: number
+  tagBgSrc?: string
+  tagPlusSrc?: string
+  tagPlusWidth?: number
+  tagPlusHeight?: number
 }
 
 const SWIPE_THRESHOLD = 36
@@ -49,7 +58,16 @@ export function FeedMediaCarousel({
   onSelectTag,
   overlay,
   imageHeight = 375,
+  imageWidth = 375,
   topPadding = 16,
+  showCounter = true,
+  showDots = true,
+  showTagReveal = true,
+  tagSize = 18,
+  tagBgSrc = '/assets/figma/personalized-feed/feed-card/product-tag-bg.svg',
+  tagPlusSrc = '/assets/figma/personalized-feed/feed-card/product-tag-plus.svg',
+  tagPlusWidth = 7.71429,
+  tagPlusHeight = 7.71429,
 }: FeedMediaCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isViewportVisible, setIsViewportVisible] = useState(false)
@@ -110,7 +128,7 @@ export function FeedMediaCarousel({
     timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutsRef.current = []
 
-    if (!hasSlides || !onSelectTag || !isViewportVisible) {
+    if (!showTagReveal || !hasSlides || !isViewportVisible) {
       return () => {
         timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
         timeoutsRef.current = []
@@ -153,11 +171,16 @@ export function FeedMediaCarousel({
       timeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
       timeoutsRef.current = []
     }
-  }, [activeSlide, hasSlides, isViewportVisible, onSelectTag])
+  }, [activeSlide, hasSlides, isViewportVisible, onSelectTag, showTagReveal])
 
   const visibleTags = useMemo(
-    () => (hasSlides ? activeSlide.tags.slice(0, visibleTagCount) : []),
-    [activeSlide.tags, hasSlides, visibleTagCount],
+    () =>
+      hasSlides
+        ? showTagReveal
+          ? activeSlide.tags.slice(0, visibleTagCount)
+          : activeSlide.tags
+        : [],
+    [activeSlide.tags, hasSlides, showTagReveal, visibleTagCount],
   )
 
   const dotDescriptors = useMemo(() => {
@@ -291,7 +314,7 @@ export function FeedMediaCarousel({
       <div
         ref={viewportRef}
         className="ds-feed-media__viewport"
-        style={{ height: imageHeight }}
+        style={{ width: imageWidth, height: imageHeight }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onPointerDown={handlePointerDown}
@@ -304,11 +327,15 @@ export function FeedMediaCarousel({
           style={{ transform: `translateX(-${safeActiveIndex * 100}%)` }}
         >
           {slides.map((slide, index) => (
-            <div key={slide.id} className="ds-feed-media__slide">
+            <div
+              key={slide.id}
+              className="ds-feed-media__slide"
+              style={{ width: imageWidth }}
+            >
               <FigmaAsset
                 src={slide.src}
                 alt={slide.alt}
-                displayWidth={375}
+                displayWidth={imageWidth}
                 displayHeight={imageHeight}
                 className="ds-feed-media__image"
                 loading={index === 0 ? 'eager' : 'lazy'}
@@ -320,7 +347,7 @@ export function FeedMediaCarousel({
           ))}
         </div>
 
-        {hasSlides ? (
+        {hasSlides && showCounter ? (
           <MediaCounter
             current={Number(currentLabel)}
             total={Number(displayTotal)}
@@ -330,35 +357,45 @@ export function FeedMediaCarousel({
 
         {overlay ? <div className="ds-feed-media__overlay">{overlay}</div> : null}
 
-        {hasSlides && onSelectTag
+        {hasSlides
           ? visibleTags.map((tag) => (
               <button
                 key={tag.id}
                 type="button"
-                className="ds-feed-media__tag"
-                style={{ left: tag.left, top: tag.top }}
+                className={
+                  showTagReveal
+                    ? 'ds-feed-media__tag'
+                    : 'ds-feed-media__tag ds-feed-media__tag--static'
+                }
                 aria-label="View tagged product"
-                onClick={() => onSelectTag(tag.productId)}
+                onClick={() => onSelectTag?.(tag.productId)}
+                disabled={!onSelectTag}
+                style={{
+                  left: tag.left,
+                  top: tag.top,
+                  width: tagSize,
+                  height: tagSize,
+                }}
               >
                 <FigmaAsset
-                  src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
+                  src={tagBgSrc}
                   alt=""
-                  displayWidth={18}
-                  displayHeight={18}
+                  displayWidth={tagSize}
+                  displayHeight={tagSize}
                   className="ds-feed-media__tag-bg"
                 />
                 <FigmaAsset
-                  src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
+                  src={tagPlusSrc}
                   alt=""
-                  displayWidth={7.71429}
-                  displayHeight={7.71429}
+                  displayWidth={tagPlusWidth}
+                  displayHeight={tagPlusHeight}
                   className="ds-feed-media__tag-plus"
                 />
               </button>
             ))
           : null}
 
-        {hasSlides ? (
+        {hasSlides && showDots ? (
           <div className="ds-feed-media__dots" aria-hidden="true">
             <div className="ds-feed-media__dots-track">
               {dotDescriptors.map((dot, index) => {

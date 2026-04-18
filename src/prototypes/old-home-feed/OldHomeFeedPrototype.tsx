@@ -1,8 +1,17 @@
 import './old-home-feed.css'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { oldHomeFeedGridSections } from './home-grid-sections-data'
+import {
+  oldHomeFeedTaggedMediaSlides,
+  oldHomeFeedTaggedProducts,
+} from './post-detail-tagged-media-data'
 import { personalizedFeedShortcuts } from '../personalized-feed/shortcut-items'
-import { HomeTourGridSection } from '../../system/feed'
+import {
+  HomePostDetailView,
+  HomeTaggedProductModule,
+  type HomeTourGridSectionItem,
+  HomeTourGridSection,
+} from '../../system/feed'
 import { SectionDivider } from '../../system/primitives'
 import {
   HomeFeedScaffold,
@@ -15,7 +24,51 @@ type OldHomeFeedPrototypeProps = {
   mode?: 'full' | 'thumbnail'
 }
 
+const DETAIL_CLOSE_DURATION_MS = 420
+
 function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
+  const [selectedPost, setSelectedPost] = useState<HomeTourGridSectionItem | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const closeTimeoutRef = useRef<number | null>(null)
+  const openFrameRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current)
+      }
+      if (openFrameRef.current !== null) {
+        window.cancelAnimationFrame(openFrameRef.current)
+      }
+    }
+  }, [])
+
+  function handleOpenPost(item: HomeTourGridSectionItem) {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    if (openFrameRef.current !== null) {
+      window.cancelAnimationFrame(openFrameRef.current)
+      openFrameRef.current = null
+    }
+
+    setIsDetailOpen(false)
+    setSelectedPost(item)
+    openFrameRef.current = window.requestAnimationFrame(() => {
+      setIsDetailOpen(true)
+      openFrameRef.current = null
+    })
+  }
+
+  function handleClosePost() {
+    setIsDetailOpen(false)
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setSelectedPost(null)
+      closeTimeoutRef.current = null
+    }, DETAIL_CLOSE_DURATION_MS)
+  }
+
   return (
     <HomeFeedScaffold
       mode={mode}
@@ -49,6 +102,7 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
               <HomeTourGridSection
                 title={section.title}
                 items={section.items}
+                onSelectItem={handleOpenPost}
                 viewMoreLabel={section.viewMoreLabel}
                 viewMoreChevronSrc="/assets/figma/personalized-feed/brand-promo/chevron-right.svg"
                 viewMoreChevronWidth={7.91407}
@@ -100,6 +154,37 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
           },
         ],
       }}
+      overlay={
+        selectedPost ? (
+          <HomePostDetailView
+            isOpen={isDetailOpen}
+            heroSrc={selectedPost.imageSrc}
+            heroAlt={selectedPost.imageAlt}
+            title={selectedPost.detailTitle ?? selectedPost.title}
+            authorAvatarSrc="/assets/figma/old-home-feed/post-detail/author-avatar.jpg"
+            authorHandle="dotorisisters"
+            authorDisplayName="Acorn Sisters"
+            infoRows={[
+              [
+                { label: 'Home type', value: 'Other' },
+                { label: 'Size', value: '43 pyeong' },
+                { label: 'Scope', value: 'Home styling' },
+              ],
+              [{ label: 'Household', value: 'Living with parents' }],
+            ]}
+            expandLabel="Show 5 more"
+            modules={
+              <HomeTaggedProductModule
+                slides={oldHomeFeedTaggedMediaSlides}
+                products={oldHomeFeedTaggedProducts}
+                saveIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
+              />
+            }
+            onClose={handleClosePost}
+            onGoHome={handleClosePost}
+          />
+        ) : null
+      }
     />
   )
 }

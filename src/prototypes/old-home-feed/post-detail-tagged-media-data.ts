@@ -1,0 +1,95 @@
+import type { FeedMediaSlide, FeedProduct } from '../../system/feed'
+
+export const oldHomeFeedTaggedMediaSlides = [
+  {
+    id: 'housewarming-tagged-media-1',
+    src: '/assets/figma/old-home-feed/tagged-media-v2/media-main.png',
+    alt: 'Housewarming post with tagged products',
+    tags: [
+      { id: 'tag-1', productId: 'product-1', left: 129.17, top: 275.11 },
+      { id: 'tag-2', productId: 'product-2', left: 263.01, top: 259.88 },
+      { id: 'tag-3', productId: 'product-3', left: 23.26, top: 244.11 },
+      { id: 'tag-4', productId: 'product-4', left: 10.77, top: 197.19 },
+      { id: 'tag-5', productId: 'product-5', left: 281.12, top: 164.4 },
+      { id: 'tag-6', productId: 'product-6', left: 192.77, top: 277.95 },
+      { id: 'tag-7', productId: 'product-7', left: 44.59, top: 134.81 },
+      { id: 'tag-8', productId: 'product-8', left: 291.21, top: 231.81 },
+      { id: 'tag-9', productId: 'product-9', left: 49.91, top: 360.9 },
+    ],
+  },
+] satisfies FeedMediaSlide[]
+
+export const oldHomeFeedTaggedProducts = [
+  {
+    id: 'product-1',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-1.png',
+    thumbnailAlt: 'Tagged product 1',
+    name: 'Tagged product 1',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-2',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-2.png',
+    thumbnailAlt: 'Tagged product 2',
+    name: 'Tagged product 2',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-3',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-3.png',
+    thumbnailAlt: 'Tagged product 3',
+    name: 'Tagged product 3',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-4',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-4.png',
+    thumbnailAlt: 'Tagged product 4',
+    name: 'Tagged product 4',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-5',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-5.png',
+    thumbnailAlt: 'Tagged product 5',
+    name: 'Tagged product 5',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-6',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-6.png',
+    thumbnailAlt: 'Tagged product 6',
+    name: 'Tagged product 6',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-7',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-7.png',
+    thumbnailAlt: 'Tagged product 7',
+    name: 'Tagged product 7',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-8',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-8.png',
+    thumbnailAlt: 'Tagged product 8',
+    name: 'Tagged product 8',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+  {
+    id: 'product-9',
+    thumbnailSrc: '/assets/figma/old-home-feed/tagged-media-v2/product-9.png',
+    thumbnailAlt: 'Tagged product 9',
+    name: 'Tagged product 9',
+    priceLabel: '',
+    thumbnailRadius: 24,
+  },
+] satisfies FeedProduct[]

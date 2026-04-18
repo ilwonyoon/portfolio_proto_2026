@@ -1,9 +1,12 @@
 .workbench-shell {
-  min-height: 100svh;
+  width: 100%;
+  height: 100svh;
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   background: var(--color-canvas);
   color: var(--color-surface);
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .workbench-sidebar {
@@ -347,6 +350,7 @@
   place-items: start center;
   padding: 24px;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 @media (pointer: fine) {
@@ -363,6 +367,7 @@
   height: 100%;
   padding: 20px 8px 8px;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .workbench-stage__canvas--component-library {

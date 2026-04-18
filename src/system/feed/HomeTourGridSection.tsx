@@ -5,6 +5,7 @@ export type HomeTourGridSectionItem = {
   imageSrc: string
   imageAlt: string
   title: string
+  detailTitle?: string
   saved?: boolean
 }
 
@@ -14,6 +15,7 @@ type HomeTourGridSectionProps = {
   bookmarkIconSrc: string
   className?: string
   onToggleSave?: (itemId: string) => void
+  onSelectItem?: (item: HomeTourGridSectionItem) => void
   viewMoreLabel?: string
   viewMoreChevronSrc?: string
   viewMoreChevronWidth?: number
@@ -27,6 +29,7 @@ export function HomeTourGridSection({
   bookmarkIconSrc,
   className,
   onToggleSave,
+  onSelectItem,
   viewMoreLabel,
   viewMoreChevronSrc,
   viewMoreChevronWidth = 7.91407,
@@ -43,7 +46,20 @@ export function HomeTourGridSection({
 
       <div className="ds-home-tour-grid__grid">
         {items.map((item) => (
-          <article key={item.id} className="ds-home-tour-grid__card">
+          <article
+            key={item.id}
+            className={`ds-home-tour-grid__card ${onSelectItem ? 'ds-home-tour-grid__card--interactive' : ''}`.trim()}
+            onClick={() => onSelectItem?.(item)}
+            onKeyDown={(event) => {
+              if (!onSelectItem) return
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onSelectItem(item)
+              }
+            }}
+            role={onSelectItem ? 'button' : undefined}
+            tabIndex={onSelectItem ? 0 : undefined}
+          >
             <div className="ds-home-tour-grid__image-frame">
               <FigmaAsset
                 src={item.imageSrc}
@@ -58,7 +74,10 @@ export function HomeTourGridSection({
                 className="ds-home-tour-grid__toggle"
                 aria-label={item.saved ? 'Remove from saved items' : 'Save item'}
                 aria-pressed={Boolean(item.saved)}
-                onClick={() => onToggleSave?.(item.id)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onToggleSave?.(item.id)
+                }}
               >
                 <FigmaAsset
                   src={bookmarkIconSrc}

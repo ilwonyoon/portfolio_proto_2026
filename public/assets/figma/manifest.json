@@ -901,5 +901,110 @@
     "file": "old-home-feed/content-grid/weekly-best-4.png",
     "sourceType": "png",
     "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/post-detail",
+    "nodeId": "6269:722520",
+    "file": "old-home-feed/post-detail/status-right-white.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/post-detail",
+    "nodeId": "6269:722520",
+    "file": "old-home-feed/post-detail/back.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/post-detail",
+    "nodeId": "6269:722520",
+    "file": "old-home-feed/post-detail/home.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/post-detail",
+    "nodeId": "6269:722520",
+    "file": "old-home-feed/post-detail/chevron-down.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "old-home-feed/post-detail",
+    "nodeId": "6269:722520",
+    "file": "old-home-feed/post-detail/author-avatar.jpg",
+    "sourceType": "jpg",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/media-main.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-1.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-2.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-3.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-4.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-5.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-6.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-7.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-8.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "old-home-feed/tagged-media",
+    "nodeId": "6276:722904",
+    "file": "old-home-feed/tagged-media-v2/product-9.png",
+    "sourceType": "png",
+    "exportScale": 2
   }
 ]
