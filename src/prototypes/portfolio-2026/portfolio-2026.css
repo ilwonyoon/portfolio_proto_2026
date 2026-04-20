@@ -34,21 +34,34 @@
 }
 
 .status-bar {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 14px 0 21px;
+  flex: 0 0 44px;
+  height: 44px;
+  position: relative;
+  background: #ffffff;
 }
 
 .status-bar__time {
+  position: absolute;
+  top: 13px;
+  left: 21px;
   width: 54px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: -0.28px;
   color: #000000;
   text-align: center;
+}
+
+.status-bar__levels {
+  position: absolute;
+  top: -3px;
+  right: 14px;
+  display: block;
 }
 
 .top-nav {

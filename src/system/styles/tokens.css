@@ -25,6 +25,18 @@
   --type-body-15-line-height: 22px;
   --type-body-15-letter-spacing: -0.35px;
   --type-body-15-weight: 400;
+  --type-article-body-size: 16px;
+  --type-article-body-line-height: 24px;
+  --type-article-body-letter-spacing: -0.32px;
+  --type-article-body-weight: 400;
+  --type-article-heading-size: 22px;
+  --type-article-heading-line-height: 28px;
+  --type-article-heading-letter-spacing: -0.35px;
+  --type-article-heading-weight: 700;
+  --type-article-subheading-size: 18px;
+  --type-article-subheading-line-height: 24px;
+  --type-article-subheading-letter-spacing: -0.28px;
+  --type-article-subheading-weight: 700;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;

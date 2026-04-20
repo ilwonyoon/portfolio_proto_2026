@@ -6,6 +6,7 @@ export type HomeTaggedProductModuleProps = {
   slides: FeedMediaSlide[]
   products: FeedProduct[]
   saveIconSrc: string
+  imageHeight?: number
   saveIconWidth?: number
   saveIconHeight?: number
   onSelectProduct?: (productId: string) => void
@@ -16,18 +17,24 @@ export function HomeTaggedProductModule({
   slides,
   products,
   saveIconSrc,
+  imageHeight = 457.3,
   saveIconWidth = 24,
   saveIconHeight = 24,
   onSelectProduct,
   onToggleSave,
 }: HomeTaggedProductModuleProps) {
+  const homeTourProducts = products.map((product) => ({
+    ...product,
+    thumbnailRadius: 8,
+  }))
+
   return (
     <section className="ds-home-tagged-media">
       <div className="ds-home-tagged-media__surface">
         <FeedMediaCarousel
           slides={slides}
           imageWidth={343}
-          imageHeight={457.3}
+          imageHeight={imageHeight}
           topPadding={0}
           showCounter={false}
           showDots={false}
@@ -56,15 +63,16 @@ export function HomeTaggedProductModule({
 
       <FeedProductStrip
         mode="rail"
-        products={products}
-        thumbnailSize={72}
-        thumbnailRadius={24}
-        topPadding={12}
+        products={homeTourProducts}
+        thumbnailSize={64}
+        thumbnailRadius={8}
+        topPadding={8}
         bottomPadding={0}
         contentPaddingX={0}
-        rowHeight={84}
+        rowHeight={72}
         itemGap={8}
         showRightFade
+        rightFadeWidth={44}
         onSelectProduct={onSelectProduct}
       />
     </section>

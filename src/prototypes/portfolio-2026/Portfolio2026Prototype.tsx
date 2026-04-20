@@ -1018,6 +1018,7 @@ function Portfolio2026Prototype({
               alt=""
               displayWidth={68}
               displayHeight={50}
+              className="status-bar__levels"
             />
           </div>
 

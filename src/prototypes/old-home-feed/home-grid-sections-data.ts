@@ -147,8 +147,8 @@ export const oldHomeFeedGridSections: OldHomeFeedGridSection[] = [
       },
       {
         id: 'weekly-best-4',
-        imageSrc: '/assets/figma/old-home-feed/content-grid/weekly-best-4.png',
-        imageAlt: 'Living organization items that make a home look polished',
+        imageSrc: '/assets/figma/old-home-feed/organizing-finds/cover.png',
+        imageAlt: 'Snoopy figure on a white cable organizer cart',
         detailTitle: '8 organizing finds that make your home look put together',
         title: truncateCardTitle('8 organizing finds that make your home look put together'),
       },

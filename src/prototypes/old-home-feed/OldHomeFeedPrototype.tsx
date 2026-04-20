@@ -2,13 +2,13 @@ import './old-home-feed.css'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { oldHomeFeedGridSections } from './home-grid-sections-data'
 import {
+  oldHomeFeedArticleBlocks,
   oldHomeFeedPostDetails,
-  oldHomeFeedTaggedModuleCatalog,
 } from './post-detail-tagged-media-data'
 import { personalizedFeedShortcuts } from '../personalized-feed/shortcut-items'
 import {
   HomePostDetailView,
-  HomeTaggedProductModule,
+  HomePostArticleContent,
   type HomeTourGridSectionItem,
   HomeTourGridSection,
 } from '../../system/feed'
@@ -164,26 +164,19 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
             heroSrc={selectedPost.imageSrc}
             heroAlt={selectedPost.imageAlt}
             title={selectedPost.detailTitle ?? selectedPost.title}
-            authorAvatarSrc="/assets/figma/old-home-feed/post-detail/author-avatar.jpg"
+            authorAvatarSrc={
+              selectedPostDetail.authorAvatarSrc ??
+              '/assets/figma/old-home-feed/post-detail/author-avatar.jpg'
+            }
             authorHandle={selectedPostDetail.authorHandle}
             authorDisplayName={selectedPostDetail.authorDisplayName}
             infoRows={selectedPostDetail.infoRows}
             expandLabel={selectedPostDetail.expandLabel}
             modules={
-              <>
-                {selectedPostDetail.taggedModuleIds.map((moduleId) => {
-                  const module = oldHomeFeedTaggedModuleCatalog[moduleId]
-
-                  return (
-                    <HomeTaggedProductModule
-                      key={`${selectedPost.id}-${module.id}`}
-                      slides={module.slides}
-                      products={module.products}
-                      saveIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
-                    />
-                  )
-                })}
-              </>
+              <HomePostArticleContent
+                blocks={selectedPostDetail.articleBlocks ?? oldHomeFeedArticleBlocks}
+                saveIconSrc="/assets/figma/old-home-feed/home-tour-grid/toggle-bookmark.svg"
+              />
             }
             onClose={handleClosePost}
             onGoHome={handleClosePost}
