@@ -6,6 +6,7 @@ type ChipProps = {
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void
   className?: string
   variant?: 'default' | 'month'
+  dataScriptTarget?: string
 }
 
 export function Chip({
@@ -14,6 +15,7 @@ export function Chip({
   onClick,
   className,
   variant = 'default',
+  dataScriptTarget,
 }: ChipProps) {
   const variantClass =
     variant === 'month' ? 'ds-chip ds-chip--month' : 'ds-chip ds-chip--default'
@@ -23,6 +25,7 @@ export function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={selected}
+      data-script-target={dataScriptTarget}
       className={
         selected
           ? `${variantClass} ds-chip--selected ${className ?? ''}`.trim()

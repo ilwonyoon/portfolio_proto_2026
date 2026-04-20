@@ -7,6 +7,7 @@ type ButtonProps = {
   disabled?: boolean
   className?: string
   type?: 'button' | 'submit' | 'reset'
+  dataScriptTarget?: string
 }
 
 export function Button({
@@ -16,6 +17,7 @@ export function Button({
   disabled,
   className,
   type = 'button',
+  dataScriptTarget,
 }: ButtonProps) {
   const isDisabled = disabled ?? !enabled
 
@@ -24,6 +26,7 @@ export function Button({
       type={type}
       disabled={isDisabled}
       onClick={onClick}
+      data-script-target={dataScriptTarget}
       className={
         enabled
           ? `ds-button ds-button--enabled ${className ?? ''}`.trim()

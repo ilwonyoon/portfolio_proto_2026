@@ -152,6 +152,14 @@ const serviceOptions = [
   { id: 'furniture-repair', label: 'Furniture repair' },
 ] as const
 
+function toScriptTargetId(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
 const recommendationCards = [
   {
     id: 'shop',
@@ -445,6 +453,7 @@ function Portfolio2026Prototype({
     if (isFamilyApartmentMove) {
       return [
         'Family-friendly layout',
+        'Living room styling',
         'Parenting routines at home',
         'Pet-friendly fabrics',
         'Kitchen organization',
@@ -453,7 +462,6 @@ function Portfolio2026Prototype({
         "Kids' room setup",
         'Laundry organization',
         'Apartment storage ideas',
-        'Cozy bedroom refresh',
       ]
     }
 
@@ -561,6 +569,7 @@ function Portfolio2026Prototype({
                     }
                   >
                     <span
+                      data-script-target={`interest-product-${category.id}`}
                       className={
                         category.imageSrc
                           ? 'preference-category__image'
@@ -612,6 +621,7 @@ function Portfolio2026Prototype({
                             : 'preference-chip'
                         }
                         aria-pressed={isSelected}
+                        data-script-target={`interest-topic-${toScriptTargetId(topic)}`}
                         onClick={() => handleFinalToggle(topic, setSelectedTopics)}
                       >
                         {topic}
@@ -634,6 +644,7 @@ function Portfolio2026Prototype({
                             : 'preference-chip'
                         }
                         aria-pressed={isSelected}
+                        data-script-target={`interest-topic-${toScriptTargetId(topic)}`}
                         onClick={() => handleFinalToggle(topic, setSelectedTopics)}
                       >
                         {topic}
@@ -669,6 +680,7 @@ function Portfolio2026Prototype({
                             : 'preference-chip'
                         }
                         aria-pressed={isSelected}
+                        data-script-target={`interest-service-${service.id}`}
                         onClick={() =>
                           handleFinalToggle(service.id, setSelectedServices)
                         }
@@ -693,6 +705,7 @@ function Portfolio2026Prototype({
                             : 'preference-chip'
                         }
                         aria-pressed={isSelected}
+                        data-script-target={`interest-service-${service.id}`}
                         onClick={() =>
                           handleFinalToggle(service.id, setSelectedServices)
                         }
@@ -726,6 +739,7 @@ function Portfolio2026Prototype({
                 role="button"
                 tabIndex={0}
                 aria-pressed={isSelected}
+                data-script-target={`interest-living-with-${toScriptTargetId(option)}`}
                 onClick={() => {
                   setSelectedLivingWith((current) => toggleValue(current, option))
                 }}
@@ -778,6 +792,7 @@ function Portfolio2026Prototype({
               role="button"
               tabIndex={0}
               aria-pressed={selectedHomeType === option}
+              data-script-target={`interest-home-type-${toScriptTargetId(option)}`}
               onClick={() => {
                 setSelectedHomeType(option)
 
@@ -832,6 +847,7 @@ function Portfolio2026Prototype({
                         key={size}
                         variant="month"
                         selected={selectedApartmentSize === size}
+                        dataScriptTarget={`interest-size-${toScriptTargetId(size)}`}
                         onClick={(event) => {
                           event.stopPropagation()
                           setSelectedApartmentSize(size)
@@ -877,6 +893,7 @@ function Portfolio2026Prototype({
                       ? isExtraSelected
                       : undefined
                 }
+                data-script-target={`interest-reason-${reason.id}`}
                 onClick={
                   isMoving
                     ? () => {
@@ -962,6 +979,7 @@ function Portfolio2026Prototype({
                         key={month}
                         variant="month"
                         selected={selectedMonth === month}
+                        dataScriptTarget={`interest-month-${toScriptTargetId(month)}`}
                         onClick={(event) => {
                           event.stopPropagation()
                           setSelectedMonth(month)
@@ -1159,6 +1177,7 @@ function Portfolio2026Prototype({
                     <Button
                       enabled={isFinalButtonEnabled}
                       disabled={!isFinalButtonEnabled}
+                      dataScriptTarget="interest-complete"
                       onClick={() => setStep('recommendations')}
                     >
                       Complete
@@ -1167,6 +1186,7 @@ function Portfolio2026Prototype({
                     <Button
                       enabled={selectedLivingWith.length > 0}
                       disabled={selectedLivingWith.length === 0}
+                      dataScriptTarget="interest-next"
                       onClick={enterFinalPreferences}
                     >
                       Next
@@ -1175,6 +1195,7 @@ function Portfolio2026Prototype({
                     <Button
                       enabled={Boolean(selectedApartmentSize)}
                       disabled={!selectedApartmentSize}
+                      dataScriptTarget="interest-next"
                       onClick={() => setStep('living-with')}
                     >
                       Next
@@ -1183,6 +1204,7 @@ function Portfolio2026Prototype({
                     <Button
                       enabled={Boolean(selectedMonth)}
                       disabled={!selectedMonth}
+                      dataScriptTarget="interest-next"
                       onClick={() => setStep('home-type')}
                     >
                       Next
@@ -1281,6 +1303,7 @@ function AnimatedIntroScenario({ onStart }: AnimatedIntroScenarioProps) {
         <button
           type="button"
           className="intro-step__cta intro-step__cta--visible"
+          data-script-target="interest-get-started"
           onClick={onStart}
         >
           Get started
