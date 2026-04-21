@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { StatusBar, TopNav, TopTabBar } from '../../system/mobile'
 import { useBottomSheetPresence } from '../../system/overlays/useBottomSheetPresence'
@@ -14,6 +14,8 @@ type DashboardMetric = {
   id: string
   label: string
   value: string
+  animatedValue?: number
+  valueFormatter?: (value: number) => string
   trend?: MetricTrend
   wide?: boolean
 }
@@ -24,8 +26,37 @@ type SearchTerm = {
   count: string
 }
 
+type PopularStat = {
+  icon: 'views' | 'scrap' | 'heart' | 'tag' | 'comment'
+  label: string
+}
+
+type PopularContent = {
+  id: string
+  thumbnailSrc: string
+  thumbnailBadge?: 'datalist' | 'play'
+  title: string
+  eyebrow: string
+  stats: PopularStat[]
+}
+
+type CreatorActivityDashboardData = {
+  title?: string
+  scoreTitle: string
+  scoreSubtitle: string
+  scoreValue: number
+  scoreProgressMax?: number
+  insightsTitle: string
+  insightsPeriod: string
+  metrics: DashboardMetric[]
+  searchTerms?: SearchTerm[]
+  popularItems?: PopularContent[]
+}
+
 type CreatorActivityDashboardScreenProps = {
   onBack?: () => void
+  data?: CreatorActivityDashboardData
+  isActive?: boolean
 }
 
 const initialMetrics: DashboardMetric[] = [
@@ -42,6 +73,155 @@ const initialSearchTerms: SearchTerm[] = [
   { rank: 3, term: 'Home decor', count: '0' },
   { rank: 4, term: 'Living room ideas', count: '0' },
 ]
+
+const initialDashboardData: CreatorActivityDashboardData = {
+  scoreTitle: 'Creator score',
+  scoreSubtitle: 'Start posting to build your score.',
+  scoreValue: 0,
+  insightsTitle: 'Last 30 days',
+  insightsPeriod: '-',
+  metrics: initialMetrics,
+  searchTerms: initialSearchTerms,
+  title: 'Creator dashboard',
+}
+
+export const populatedCreatorDashboardData: CreatorActivityDashboardData = {
+  scoreTitle: 'Creator Index',
+  scoreSubtitle: 'Increased by 35 points',
+  scoreValue: 482,
+  insightsTitle: 'Insights',
+  insightsPeriod: 'Last week',
+  metrics: [
+    {
+      id: 'views',
+      label: 'Views',
+      value: '2,486',
+      animatedValue: 2486,
+      valueFormatter: formatInteger,
+      trend: { label: '612', direction: 'up' },
+    },
+    {
+      id: 'saved',
+      label: 'Saved',
+      value: '164',
+      animatedValue: 164,
+      valueFormatter: formatInteger,
+      trend: { label: '28', direction: 'up' },
+    },
+    {
+      id: 'likes',
+      label: 'Likes',
+      value: '73',
+      animatedValue: 73,
+      valueFormatter: formatInteger,
+      trend: { label: '14', direction: 'up' },
+    },
+    {
+      id: 'product-clicks',
+      label: 'Product Clicks',
+      value: '96',
+      animatedValue: 96,
+      valueFormatter: formatInteger,
+      trend: { label: '19', direction: 'up' },
+    },
+    {
+      id: 'comments',
+      label: 'Comments',
+      value: '11',
+      animatedValue: 11,
+      valueFormatter: formatInteger,
+      trend: { label: '3', direction: 'up' },
+      wide: true,
+    },
+  ],
+  popularItems: [
+    {
+      id: 'storage-cabinet',
+      thumbnailSrc: `${dashboardAssetRoot}/popular-01-2x.png`,
+      thumbnailBadge: 'datalist',
+      eyebrow: 'Trending Up',
+      title: 'The views increased by 24 times compared to yesterday!',
+      stats: [
+        { icon: 'views', label: '1.5K' },
+        { icon: 'scrap', label: '34' },
+        { icon: 'heart', label: '22' },
+        { icon: 'tag', label: '3' },
+        { icon: 'comment', label: '4' },
+      ],
+    },
+    {
+      id: 'green-living-room',
+      thumbnailSrc: `${dashboardAssetRoot}/popular-02-2x.png`,
+      thumbnailBadge: 'play',
+      eyebrow: 'Trending Up',
+      title: 'The views increased by 24 times compared to yesterday!',
+      stats: [
+        { icon: 'views', label: '684' },
+        { icon: 'scrap', label: '18' },
+        { icon: 'heart', label: '11' },
+        { icon: 'tag', label: '2' },
+        { icon: 'comment', label: '2' },
+      ],
+    },
+    {
+      id: 'plant-corner',
+      thumbnailSrc: `${dashboardAssetRoot}/popular-03-2x.png`,
+      eyebrow: 'Trending Up',
+      title: 'The views increased by 24 times compared to yesterday!',
+      stats: [
+        { icon: 'views', label: '426' },
+        { icon: 'scrap', label: '12' },
+        { icon: 'heart', label: '7' },
+        { icon: 'tag', label: '1' },
+        { icon: 'comment', label: '1' },
+      ],
+    },
+  ],
+  searchTerms: [
+    { rank: 1, term: 'Cat-friendly cleaning', count: '328' },
+    { rank: 2, term: 'Small-space storage', count: '214' },
+    { rank: 3, term: 'Home cafe table', count: '162' },
+    { rank: 4, term: 'White bedding ideas', count: '97' },
+  ],
+  title: 'Dashboard',
+}
+
+function formatInteger(value: number) {
+  return Math.round(value).toLocaleString('en-US')
+}
+
+function useAnimatedCounter(targetValue: number | undefined, isActive: boolean) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    if (!isActive || targetValue === undefined) {
+      setValue(targetValue ?? 0)
+      return
+    }
+
+    const target = targetValue
+    let frameId = 0
+    const duration = 920
+    const startedAt = performance.now()
+
+    function tick(now: number) {
+      const progress = Math.min((now - startedAt) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(target * eased)
+
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(tick)
+      }
+    }
+
+    setValue(0)
+    frameId = window.requestAnimationFrame(tick)
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [isActive, targetValue])
+
+  return value
+}
 
 function DashboardBackButton({ onBack }: { onBack?: () => void }) {
   return (
@@ -63,12 +243,18 @@ function DashboardBackButton({ onBack }: { onBack?: () => void }) {
 }
 
 function MetricTrendBadge({ trend }: { trend?: MetricTrend }) {
-  if (!trend?.label || trend.label === '-') {
+  if (!trend?.label || trend.label === '-' || trend.label === '--') {
     return <span className="creator-activity-metric__trend creator-activity-metric__trend--empty">-</span>
   }
 
   return (
-    <span className="creator-activity-metric__trend">
+    <span
+      className={
+        trend.direction === 'down'
+          ? 'creator-activity-metric__trend creator-activity-metric__trend--down'
+          : 'creator-activity-metric__trend'
+      }
+    >
       {trend.label}
       {trend.direction ? (
         <FigmaAsset
@@ -83,7 +269,21 @@ function MetricTrendBadge({ trend }: { trend?: MetricTrend }) {
   )
 }
 
-function DashboardMetricCard({ label, trend, value, wide }: DashboardMetric) {
+function DashboardMetricCard({
+  animatedValue,
+  isActive,
+  label,
+  trend,
+  value,
+  valueFormatter,
+  wide,
+}: DashboardMetric & { isActive: boolean }) {
+  const counterValue = useAnimatedCounter(animatedValue, isActive)
+  const displayValue =
+    animatedValue === undefined
+      ? value
+      : (valueFormatter ?? formatInteger)(counterValue)
+
   return (
     <article
       className={
@@ -94,14 +294,32 @@ function DashboardMetricCard({ label, trend, value, wide }: DashboardMetric) {
     >
       <p className="creator-activity-metric__label">{label}</p>
       <div className="creator-activity-metric__value-row">
-        <p className="creator-activity-metric__value">{value}</p>
+        <p className="creator-activity-metric__value">{displayValue}</p>
         <MetricTrendBadge trend={trend} />
       </div>
     </article>
   )
 }
 
-function ActivityScorePanel({ onOpenInfo }: { onOpenInfo: () => void }) {
+function ActivityScorePanel({
+  isActive,
+  onOpenInfo,
+  scoreSubtitle,
+  scoreTitle,
+  scoreValue,
+  scoreProgressMax = 1000,
+}: {
+  isActive: boolean
+  onOpenInfo: () => void
+  scoreSubtitle: string
+  scoreTitle: string
+  scoreValue: number
+  scoreProgressMax?: number
+}) {
+  const animatedProgress = useAnimatedCounter(scoreValue, isActive)
+  const scoreDisplay = formatInteger(scoreValue)
+  const progressWidth = `${Math.min(animatedProgress / scoreProgressMax, 1) * 100}%`
+
   return (
     <section className="creator-activity-score" aria-label="Creator score">
       <div className="creator-activity-score__main">
@@ -112,7 +330,7 @@ function ActivityScorePanel({ onOpenInfo }: { onOpenInfo: () => void }) {
             aria-label="Learn about Creator score"
             onClick={onOpenInfo}
           >
-            <h2>Creator score</h2>
+            <h2>{scoreTitle}</h2>
             <span className="creator-activity-score__info" aria-hidden="true">
               <FigmaAsset
                 src={`${dashboardAssetRoot}/info-16.svg`}
@@ -122,7 +340,7 @@ function ActivityScorePanel({ onOpenInfo }: { onOpenInfo: () => void }) {
               />
             </span>
           </button>
-          <p>Start posting to build your score.</p>
+          <p>{scoreSubtitle}</p>
         </div>
         <button
           type="button"
@@ -137,7 +355,7 @@ function ActivityScorePanel({ onOpenInfo }: { onOpenInfo: () => void }) {
             displayHeight={40}
             className="creator-activity-score__badge"
           />
-          <span>0</span>
+          <span>{scoreDisplay}</span>
           <FigmaAsset
             src={`${dashboardAssetRoot}/chevron-right-16.svg`}
             alt=""
@@ -149,7 +367,10 @@ function ActivityScorePanel({ onOpenInfo }: { onOpenInfo: () => void }) {
       </div>
       <div className="creator-activity-score__progress">
         <div className="creator-activity-score__track">
-          <span className="creator-activity-score__bar" />
+          <span
+            className="creator-activity-score__bar"
+            style={{ width: progressWidth }}
+          />
         </div>
         <div className="creator-activity-score__scale" aria-hidden="true">
           <span>0</span>
@@ -274,25 +495,35 @@ function SectionHeader({
   )
 }
 
-function InsightsSection() {
+function InsightsSection({
+  isActive,
+  metrics,
+  period,
+  title,
+}: {
+  isActive: boolean
+  metrics: DashboardMetric[]
+  period: string
+  title: string
+}) {
   return (
-    <section className="creator-activity-insights" aria-label="Last 30 days">
-      <SectionHeader title="Last 30 days" eyebrow="-" />
+    <section className="creator-activity-insights" aria-label={title}>
+      <SectionHeader title={title} eyebrow={period} />
       <div className="creator-activity-metric-grid">
-        {initialMetrics.map((metric) => (
-          <DashboardMetricCard key={metric.id} {...metric} />
+        {metrics.map((metric) => (
+          <DashboardMetricCard key={metric.id} {...metric} isActive={isActive} />
         ))}
       </div>
     </section>
   )
 }
 
-function SearchTermsSection() {
+function SearchTermsSection({ items }: { items: SearchTerm[] }) {
   return (
     <section className="creator-activity-search" aria-label="Top search terms">
       <SectionHeader title="Top search terms" />
       <div className="creator-activity-search-card">
-        {initialSearchTerms.map((item) => (
+        {items.map((item) => (
           <div className="creator-activity-search-row" key={item.rank}>
             <span className="creator-activity-search-row__rank">{item.rank}</span>
             <span className="creator-activity-search-row__term">{item.term}</span>
@@ -304,7 +535,105 @@ function SearchTermsSection() {
   )
 }
 
+function PopularBadge({ type }: { type: NonNullable<PopularContent['thumbnailBadge']> }) {
+  const iconSize =
+    type === 'play'
+      ? { height: 8.13, width: 7.53 }
+      : { height: 12, width: 12 }
+
+  return (
+    <span className="creator-popular-card__badge-slot" aria-hidden="true">
+      <FigmaAsset
+        src={`${dashboardAssetRoot}/${type === 'play' ? 'play-12.svg' : 'datalist-12.svg'}`}
+        alt=""
+        displayWidth={iconSize.width}
+        displayHeight={iconSize.height}
+        className="creator-popular-card__badge"
+      />
+    </span>
+  )
+}
+
+function PopularStatIcon({ icon }: { icon: PopularStat['icon'] }) {
+  const iconMap: Record<
+    PopularStat['icon'],
+    {
+      file: string
+      height: number
+      width: number
+    }
+  > = {
+    comment: { file: 'comment-16.svg', height: 13, width: 13 },
+    heart: { file: 'heart-16.svg', height: 14, width: 14 },
+    scrap: { file: 'scrap-16.svg', height: 13, width: 11 },
+    tag: { file: 'tag-16.svg', height: 13, width: 13 },
+    views: { file: 'views-16.svg', height: 11, width: 10 },
+  }
+  const iconAsset = iconMap[icon]
+
+  return (
+    <span className="creator-popular-card__stat-icon-slot" aria-hidden="true">
+      <FigmaAsset
+        src={`${dashboardAssetRoot}/${iconAsset.file}`}
+        alt=""
+        displayWidth={iconAsset.width}
+        displayHeight={iconAsset.height}
+        className="creator-popular-card__stat-icon"
+      />
+    </span>
+  )
+}
+
+function RecentlyPopularSection({ items }: { items: PopularContent[] }) {
+  return (
+    <section className="creator-popular" aria-label="Recently Popular">
+      <SectionHeader title="Recently Popular" eyebrow="Last week" />
+      <div className="creator-popular__carousel">
+        {items.map((item) => (
+          <article className="creator-popular-card" key={item.id}>
+            <div className="creator-popular-card__top">
+              <div className="creator-popular-card__media">
+                <FigmaAsset
+                  src={item.thumbnailSrc}
+                  alt=""
+                  displayWidth={52}
+                  displayHeight={65}
+                  exportScale={2}
+                  className="creator-popular-card__image"
+                />
+                {item.thumbnailBadge ? <PopularBadge type={item.thumbnailBadge} /> : null}
+              </div>
+              <div className="creator-popular-card__copy">
+                <p className="creator-popular-card__eyebrow">{item.eyebrow}</p>
+                <h3>{item.title}</h3>
+              </div>
+              <FigmaAsset
+                src={`${dashboardAssetRoot}/chevron-right-12.svg`}
+                alt=""
+                displayWidth={6}
+                displayHeight={10}
+                className="creator-popular-card__chevron"
+              />
+            </div>
+            <div className="creator-popular-card__divider" />
+            <div className="creator-popular-card__stats">
+              {item.stats.map((stat) => (
+                <span className="creator-popular-card__stat" key={`${item.id}-${stat.icon}`}>
+                  <PopularStatIcon icon={stat.icon} />
+                  <span>{stat.label}</span>
+                </span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export function CreatorActivityDashboardScreen({
+  data = initialDashboardData,
+  isActive = true,
   onBack,
 }: CreatorActivityDashboardScreenProps) {
   const [isScoreSheetOpen, setIsScoreSheetOpen] = useState(false)
@@ -316,7 +645,7 @@ export function CreatorActivityDashboardScreen({
         <TopNav
           className="creator-dashboard-nav"
           leading={<DashboardBackButton onBack={onBack} />}
-          center={<h1>Creator dashboard</h1>}
+          center={<h1>{data.title ?? 'Creator dashboard'}</h1>}
         />
         <TopTabBar
           className="creator-dashboard-tabs"
@@ -328,9 +657,22 @@ export function CreatorActivityDashboardScreen({
         />
       </div>
       <main className="creator-activity__content">
-        <ActivityScorePanel onOpenInfo={() => setIsScoreSheetOpen(true)} />
-        <InsightsSection />
-        <SearchTermsSection />
+        <ActivityScorePanel
+          isActive={isActive}
+          onOpenInfo={() => setIsScoreSheetOpen(true)}
+          scoreProgressMax={data.scoreProgressMax}
+          scoreSubtitle={data.scoreSubtitle}
+          scoreTitle={data.scoreTitle}
+          scoreValue={data.scoreValue}
+        />
+        <InsightsSection
+          isActive={isActive}
+          metrics={data.metrics}
+          period={data.insightsPeriod}
+          title={data.insightsTitle}
+        />
+        {data.popularItems?.length ? <RecentlyPopularSection items={data.popularItems} /> : null}
+        {data.searchTerms?.length ? <SearchTermsSection items={data.searchTerms} /> : null}
       </main>
       <CreatorScoreBottomSheet
         open={isScoreSheetOpen}

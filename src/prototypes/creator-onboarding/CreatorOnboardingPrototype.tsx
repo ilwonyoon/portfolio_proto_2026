@@ -16,20 +16,20 @@ type CreatorOnboardingPrototypeProps = {
   mode?: 'full' | 'thumbnail'
 }
 
-const assetRoot = '/assets/figma/creator-onboarding'
+export const creatorOnboardingAssetRoot = '/assets/figma/creator-onboarding'
 const creatorTooltipDelayMs = 1400
-const creatorBottomNavItems = sharedPersonalizedBottomNavItems.map((item) =>
+export const creatorBottomNavItems = sharedPersonalizedBottomNavItems.map((item) =>
   item.id === 'home'
     ? {
         ...item,
-        iconSrc: `${assetRoot}/home-24.svg`,
+        iconSrc: `${creatorOnboardingAssetRoot}/home-24.svg`,
         iconWidth: 20.8,
         iconHeight: 19.85,
       }
     : item.id === 'my-page'
       ? {
           ...item,
-          iconSrc: `${assetRoot}/user-active-24.svg`,
+          iconSrc: `${creatorOnboardingAssetRoot}/user-active-24.svg`,
           iconWidth: 16.8,
           iconHeight: 20,
         }
@@ -39,7 +39,7 @@ const creatorBottomNavItems = sharedPersonalizedBottomNavItems.map((item) =>
 const onboardingCards = [
   {
     id: 'photo',
-    iconSrc: `${assetRoot}/photo-24.svg`,
+    iconSrc: `${creatorOnboardingAssetRoot}/photo-24.svg`,
     iconWidth: 24,
     iconHeight: 24,
     title: 'Upload a photo and earn Ohouse points',
@@ -48,7 +48,7 @@ const onboardingCards = [
   },
   {
     id: 'profile',
-    iconSrc: `${assetRoot}/profile-24.svg`,
+    iconSrc: `${creatorOnboardingAssetRoot}/profile-24.svg`,
     iconWidth: 17.37,
     iconHeight: 19.8,
     title: 'Show your style with a profile photo',
@@ -57,7 +57,7 @@ const onboardingCards = [
   },
   {
     id: 'intro',
-    iconSrc: `${assetRoot}/comment-24.svg`,
+    iconSrc: `${creatorOnboardingAssetRoot}/comment-24.svg`,
     iconWidth: 19.5,
     iconHeight: 19.44,
     title: 'Complete your bio and share your style',
@@ -66,7 +66,7 @@ const onboardingCards = [
   },
 ]
 
-function CreatorTopNav() {
+export function CreatorTopNav() {
   return (
     <div className="creator-top-nav">
       <div className="creator-top-nav__tabs" aria-label="Profile section">
@@ -93,7 +93,7 @@ function CreatorTopNav() {
           aria-label="Notifications"
         >
           <FigmaAsset
-            src={`${assetRoot}/notification-24.svg`}
+            src={`${creatorOnboardingAssetRoot}/notification-24.svg`}
             alt=""
             displayWidth={18.2}
             displayHeight={20.25}
@@ -107,7 +107,7 @@ function CreatorTopNav() {
           aria-label="Settings"
         >
           <FigmaAsset
-            src={`${assetRoot}/settings-24.svg`}
+            src={`${creatorOnboardingAssetRoot}/settings-24.svg`}
             alt=""
             displayWidth={18.7}
             displayHeight={18.95}
@@ -120,7 +120,7 @@ function CreatorTopNav() {
           aria-label="Cart"
         >
           <FigmaAsset
-            src={`${assetRoot}/cart-24.svg`}
+            src={`${creatorOnboardingAssetRoot}/cart-24.svg`}
             alt=""
             displayWidth={22.72}
             displayHeight={20.6}
@@ -143,7 +143,7 @@ function ProfileSummary() {
         </p>
       </div>
       <FigmaAsset
-        src={`${assetRoot}/avatar-placeholder-2x.png`}
+        src={`${creatorOnboardingAssetRoot}/avatar-placeholder-2x.png`}
         alt=""
         displayWidth={80}
         displayHeight={80}
@@ -160,7 +160,7 @@ function CreatorTip({ onDismiss }: { onDismiss: () => void }) {
       <p>Start creating and join the Creator Program.</p>
       <button type="button" aria-label="Dismiss" className="creator-tip__dismiss" onClick={onDismiss}>
         <FigmaAsset
-          src={`${assetRoot}/dismiss-12.svg`}
+          src={`${creatorOnboardingAssetRoot}/dismiss-12.svg`}
           alt=""
           displayWidth={12}
           displayHeight={12}
@@ -170,28 +170,38 @@ function CreatorTip({ onDismiss }: { onDismiss: () => void }) {
   )
 }
 
-function ProfileActions({
-  onJoinProgram,
+export function ProfileActions({
+  className,
+  dashboardLabel = 'Join program',
+  dashboardTone = 'primary',
+  onDashboard,
   showTip,
   onDismissTip,
 }: {
-  onJoinProgram: () => void
-  showTip: boolean
-  onDismissTip: () => void
+  className?: string
+  dashboardLabel?: string
+  dashboardTone?: 'primary' | 'neutral'
+  onDashboard: () => void
+  showTip?: boolean
+  onDismissTip?: () => void
 }) {
   return (
-    <div className="creator-profile-actions">
-      {showTip ? <CreatorTip onDismiss={onDismissTip} /> : null}
+    <div className={`creator-profile-actions ${className ?? ''}`.trim()}>
+      {showTip && onDismissTip ? <CreatorTip onDismiss={onDismissTip} /> : null}
       <button
         type="button"
-        className="creator-profile-actions__dashboard"
-        onClick={onJoinProgram}
+        className={
+          dashboardTone === 'neutral'
+            ? 'creator-profile-actions__dashboard creator-profile-actions__dashboard--neutral'
+            : 'creator-profile-actions__dashboard'
+        }
+        onClick={onDashboard}
       >
-        Join program
+        {dashboardLabel}
       </button>
       <button type="button" className="creator-profile-actions__icon" aria-label="Edit profile">
         <FigmaAsset
-          src={`${assetRoot}/write-24.svg`}
+          src={`${creatorOnboardingAssetRoot}/write-24.svg`}
           alt=""
           displayWidth={20}
           displayHeight={20}
@@ -200,7 +210,7 @@ function ProfileActions({
       </button>
       <button type="button" className="creator-profile-actions__icon" aria-label="Share profile">
         <FigmaAsset
-          src={`${assetRoot}/share-24.svg`}
+          src={`${creatorOnboardingAssetRoot}/share-24.svg`}
           alt=""
           displayWidth={15.8}
           displayHeight={17.08}
@@ -261,7 +271,7 @@ function CreatorProfileScreen({
       <main className="creator-onboarding__content">
         <ProfileSummary />
         <ProfileActions
-          onJoinProgram={onJoinProgram}
+          onDashboard={onJoinProgram}
           showTip={showCreatorTip}
           onDismissTip={onDismissTip}
         />
@@ -289,7 +299,7 @@ function CreatorProfileScreen({
 
       <FloatingActionButton
         className="creator-onboarding__fab"
-        iconSrc={`${assetRoot}/fab-upload-24.svg`}
+        iconSrc={`${creatorOnboardingAssetRoot}/fab-upload-24.svg`}
         iconWidth={24}
         iconHeight={24}
         label="Create"

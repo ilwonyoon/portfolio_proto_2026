@@ -1,19 +1,58 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './app-shell.css'
-import { prototypeRegistry } from './prototype-registry'
+import { type PrototypeDefinition, prototypeRegistry } from './prototype-registry'
 import { ComponentLibraryPanel } from './ComponentLibraryPanel'
 import { LiquidGlassCursor } from '../system'
-import { interestProfilingScript } from '../prototypes/portfolio-2026/interest-profiling-script'
 
 const initialSearchParams = new URLSearchParams(window.location.search)
 const scriptedDemoId = initialSearchParams.get('scripted')
-const shouldStartScripted = scriptedDemoId === interestProfilingScript.id
+const initialScriptedPrototype = scriptedDemoId
+  ? prototypeRegistry.find(
+      (prototype) =>
+        prototype.previewModes?.scripted?.script.id === scriptedDemoId,
+    )
+  : undefined
+const shouldStartScripted = Boolean(initialScriptedPrototype)
 const initialPrototypeId = shouldStartScripted
-  ? 'portfolio-2026'
+  ? initialScriptedPrototype?.id
   : initialSearchParams.get('prototype')
 
 type DemoMode = 'live' | 'scripted'
 type ScriptPlaybackStatus = 'idle' | 'running' | 'complete'
+
+function getPrototypeModeOptions(prototype: PrototypeDefinition) {
+  const modeOptions: Array<{
+    id: DemoMode
+    label: string
+  }> = []
+
+  if (prototype.previewModes?.live !== undefined || !prototype.previewModes) {
+    modeOptions.push({
+      id: 'live',
+      label: prototype.previewModes?.live?.label ?? 'Live',
+    })
+  }
+
+  if (prototype.previewModes?.scripted) {
+    modeOptions.push({
+      id: 'scripted',
+      label: prototype.previewModes.scripted.label ?? 'Scripted',
+    })
+  }
+
+  return modeOptions
+}
+
+function prototypeSupportsMode(
+  prototype: PrototypeDefinition | undefined,
+  mode: DemoMode,
+) {
+  if (!prototype) {
+    return false
+  }
+
+  return getPrototypeModeOptions(prototype).some((option) => option.id === mode)
+}
 
 function formatElapsedTime(elapsedMs: number) {
   const totalTenths = Math.floor(elapsedMs / 100)
@@ -54,15 +93,26 @@ export function AppShell() {
   )
 
   const activeScript = useMemo(() => {
-    if (activePrototype?.id !== 'portfolio-2026' || demoMode !== 'scripted') {
+    if (!activePrototype || demoMode !== 'scripted') {
+      return undefined
+    }
+
+    const script = activePrototype.previewModes?.scripted?.script
+
+    if (!script) {
       return undefined
     }
 
     return {
-      ...interestProfilingScript,
-      id: `${interestProfilingScript.id}-${scriptRunId}`,
+      ...script,
+      id: `${script.id}-${scriptRunId}`,
     }
   }, [activePrototype?.id, demoMode, scriptRunId])
+
+  const activeModeOptions = useMemo(
+    () => (activePrototype ? getPrototypeModeOptions(activePrototype) : []),
+    [activePrototype],
+  )
 
   useEffect(() => {
     if (scriptPlayback.status !== 'running') {
@@ -118,7 +168,10 @@ export function AppShell() {
   }, [])
 
   const selectDemoMode = (nextMode: DemoMode) => {
-    setActivePrototypeId('portfolio-2026')
+    if (!prototypeSupportsMode(activePrototype, nextMode)) {
+      return
+    }
+
     setActiveView('prototype')
     setDemoMode(nextMode)
 
@@ -133,13 +186,45 @@ export function AppShell() {
     }
   }
 
+  const selectPrototype = (prototypeId: string) => {
+    const nextPrototype = prototypeRegistry.find(
+      (prototype) => prototype.id === prototypeId,
+    )
+
+    setActivePrototypeId(prototypeId)
+    setActiveView('prototype')
+
+    if (!prototypeSupportsMode(nextPrototype, demoMode)) {
+      setDemoMode('live')
+      scriptStartedAtRef.current = null
+      setScriptPlayback({
+        elapsedMs: 0,
+        status: 'idle',
+      })
+    } else if (demoMode === 'scripted') {
+      setScriptRunId((currentRunId) => currentRunId + 1)
+    }
+  }
+
+  const handlePrototypeKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    prototypeId: string,
+  ) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return
+    }
+
+    event.preventDefault()
+    selectPrototype(prototypeId)
+  }
+
   if (!activePrototype) {
     return null
   }
 
   const ActivePrototypeComponent = activePrototype.Component
-  const isPortfolioPrototypeActive =
-    activeView === 'prototype' && activePrototype.id === 'portfolio-2026'
+  const shouldShowModeToggle =
+    activeView === 'prototype' && activeModeOptions.length > 1
 
   return (
     <main className="workbench-shell">
@@ -150,40 +235,32 @@ export function AppShell() {
         script={activeScript}
       />
 
-      <div className="workbench-entry-toggle" aria-label="Preview mode">
-        <button
-          type="button"
-          className={
-            isPortfolioPrototypeActive && demoMode === 'live'
-              ? 'workbench-entry-toggle__button workbench-entry-toggle__button--active'
-              : 'workbench-entry-toggle__button'
-          }
-          aria-pressed={isPortfolioPrototypeActive && demoMode === 'live'}
-          data-script-entry="live"
-          onClick={() => selectDemoMode('live')}
-        >
-          Live
-        </button>
-        <button
-          type="button"
-          className={
-            isPortfolioPrototypeActive && demoMode === 'scripted'
-              ? 'workbench-entry-toggle__button workbench-entry-toggle__button--active'
-              : 'workbench-entry-toggle__button'
-          }
-          aria-pressed={isPortfolioPrototypeActive && demoMode === 'scripted'}
-          data-script-entry="scripted"
-          onClick={() => selectDemoMode('scripted')}
-        >
-          Scripted
-        </button>
-        {isPortfolioPrototypeActive && demoMode === 'scripted' ? (
-          <span className="workbench-entry-toggle__elapsed" data-script-elapsed>
-            {scriptPlayback.status === 'complete' ? 'Total' : 'Time'}{' '}
-            {formatElapsedTime(scriptPlayback.elapsedMs)}
-          </span>
-        ) : null}
-      </div>
+      {shouldShowModeToggle ? (
+        <div className="workbench-entry-toggle" aria-label="Preview mode">
+          {activeModeOptions.map((modeOption) => (
+            <button
+              key={modeOption.id}
+              type="button"
+              className={
+                demoMode === modeOption.id
+                  ? 'workbench-entry-toggle__button workbench-entry-toggle__button--active'
+                  : 'workbench-entry-toggle__button'
+              }
+              aria-pressed={demoMode === modeOption.id}
+              data-script-entry={modeOption.id}
+              onClick={() => selectDemoMode(modeOption.id)}
+            >
+              {modeOption.label}
+            </button>
+          ))}
+          {demoMode === 'scripted' ? (
+            <span className="workbench-entry-toggle__elapsed" data-script-elapsed>
+              {scriptPlayback.status === 'complete' ? 'Total' : 'Time'}{' '}
+              {formatElapsedTime(scriptPlayback.elapsedMs)}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
       <aside className="workbench-sidebar">
         <div className="workbench-sidebar__header">
@@ -191,37 +268,37 @@ export function AppShell() {
           <h1 className="workbench-sidebar__title">Preview</h1>
         </div>
 
-        <nav className="prototype-list" aria-label="Available prototypes">
-          {prototypeRegistry.map((prototype) => {
-            const isActive = prototype.id === activePrototype.id
-            const PreviewComponent = prototype.Component
+        <div className="workbench-sidebar__nav-scroll">
+          <nav className="prototype-list" aria-label="Available prototypes">
+            {prototypeRegistry.map((prototype) => {
+              const isActive = prototype.id === activePrototype.id
+              const PreviewComponent = prototype.Component
 
-            return (
-              <button
-                key={prototype.id}
-                type="button"
-                className={
-                  isActive
-                    ? 'prototype-list__item prototype-list__item--active'
-                    : 'prototype-list__item'
-                }
-                onClick={() => {
-                  setActivePrototypeId(prototype.id)
-                  setActiveView('prototype')
-                }}
-              >
-                <span className="prototype-list__preview" aria-hidden="true">
-                  <span className="prototype-list__preview-scale">
-                    <PreviewComponent mode="thumbnail" />
+              return (
+                <div
+                  key={prototype.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={
+                    isActive
+                      ? 'prototype-list__item prototype-list__item--active'
+                      : 'prototype-list__item'
+                  }
+                  onClick={() => selectPrototype(prototype.id)}
+                  onKeyDown={(event) => handlePrototypeKeyDown(event, prototype.id)}
+                >
+                  <span className="prototype-list__preview" aria-hidden="true">
+                    <span className="prototype-list__preview-scale">
+                      <PreviewComponent mode="thumbnail" />
+                    </span>
                   </span>
-                </span>
-                <span className="prototype-list__name">{prototype.title}</span>
-              </button>
-            )
-          })}
-        </nav>
+                  <span className="prototype-list__name">{prototype.title}</span>
+                </div>
+              )
+            })}
+          </nav>
 
-        <div className="workbench-sidebar__footer">
           <button
             type="button"
             className={

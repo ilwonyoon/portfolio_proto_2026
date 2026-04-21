@@ -35,6 +35,12 @@
   --oh-type-tab-size: 15px;
   --oh-type-tab-line-height: 24px;
   --oh-type-tab-letter-spacing: -0.24px;
+  --oh-type-body-16-size: 16px;
+  --oh-type-body-16-line-height: 20px;
+  --oh-type-body-16-letter-spacing: -0.31px;
+  --oh-type-body-15-size: 15px;
+  --oh-type-body-15-line-height: 20px;
+  --oh-type-body-15-letter-spacing: -0.24px;
   --oh-type-body-14-size: 14px;
   --oh-type-body-14-line-height: 18px;
   --oh-type-body-14-letter-spacing: -0.15px;
