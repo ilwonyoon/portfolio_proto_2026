@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
+import { useBottomSheetPresence } from '../overlays/useBottomSheetPresence'
 import type { FeedProduct } from './FeedProductStrip'
 
 type FeedProductBottomSheetProps = {
@@ -19,53 +19,7 @@ export function FeedProductBottomSheet({
   onSelectProduct,
   onToggleSave,
 }: FeedProductBottomSheetProps) {
-  const [isMounted, setIsMounted] = useState(open)
-  const [isVisible, setIsVisible] = useState(false)
-  const frameRef = useRef<number | null>(null)
-  const timeoutRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    if (frameRef.current !== null) {
-      window.cancelAnimationFrame(frameRef.current)
-      frameRef.current = null
-    }
-
-    if (timeoutRef.current !== null) {
-      window.clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-
-    if (open) {
-      timeoutRef.current = window.setTimeout(() => {
-        setIsMounted(true)
-        frameRef.current = window.requestAnimationFrame(() => {
-          setIsVisible(true)
-          frameRef.current = null
-        })
-        timeoutRef.current = null
-      }, 0)
-    } else if (isMounted) {
-      timeoutRef.current = window.setTimeout(() => {
-        setIsVisible(false)
-        timeoutRef.current = window.setTimeout(() => {
-          setIsMounted(false)
-          timeoutRef.current = null
-        }, 360)
-      }, 0)
-    }
-
-    return () => {
-      if (frameRef.current !== null) {
-        window.cancelAnimationFrame(frameRef.current)
-        frameRef.current = null
-      }
-
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current)
-        timeoutRef.current = null
-      }
-    }
-  }, [open, isMounted])
+  const { isMounted, isVisible } = useBottomSheetPresence(open)
 
   if (!isMounted) {
     return null

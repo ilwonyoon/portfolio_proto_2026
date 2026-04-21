@@ -1006,5 +1006,180 @@
     "file": "old-home-feed/tagged-media-v2/product-9.png",
     "sourceType": "png",
     "exportScale": 2
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/cart-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/settings-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/notification-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/comment-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/profile-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/photo-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/share-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/write-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/avatar-placeholder-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/user-active-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/home-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/fab-upload-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-onboarding",
+    "nodeId": "6265:708042",
+    "file": "creator-onboarding/dismiss-12.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/arrow-left-24.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/hero-image-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/medal-outline-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/chevron-right-12.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/star-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/stat-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-dashboard-empty",
+    "nodeId": "6265:714388",
+    "file": "creator-dashboard/scrap-filled-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-activity-dashboard",
+    "nodeId": "6265:714386",
+    "file": "creator-dashboard/info-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-activity-dashboard",
+    "nodeId": "6265:714386",
+    "file": "creator-dashboard/score-level.gif",
+    "sourceType": "gif",
+    "exportScale": 2
+  },
+  {
+    "screen": "creator-activity-dashboard",
+    "nodeId": "6265:714386",
+    "file": "creator-dashboard/chevron-right-16.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-activity-dashboard",
+    "nodeId": "6265:714386",
+    "file": "creator-dashboard/trend-up-8.svg",
+    "sourceType": "svg",
+    "exportScale": 1
+  },
+  {
+    "screen": "creator-activity-dashboard",
+    "nodeId": "6265:714386",
+    "file": "creator-dashboard/trend-down-8.svg",
+    "sourceType": "svg",
+    "exportScale": 1
   }
 ]

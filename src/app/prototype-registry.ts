@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import OldHomeFeedPrototype from '../prototypes/old-home-feed/OldHomeFeedPrototype'
 import PersonalizedFeedPrototype from '../prototypes/personalized-feed/PersonalizedFeedPrototype'
 import Portfolio2026Prototype from '../prototypes/portfolio-2026/Portfolio2026Prototype'
+import CreatorOnboardingPrototype from '../prototypes/creator-onboarding'
 
 type PrototypeRendererProps = {
   mode?: 'full' | 'thumbnail'
@@ -47,5 +48,13 @@ export const prototypeRegistry: PrototypeDefinition[] = [
       'Recommendations',
     ],
     Component: Portfolio2026Prototype,
+  },
+  {
+    id: 'creator-onboarding',
+    title: 'Creator onboarding',
+    description: 'My Page creator onboarding preview from the Figma frame.',
+    status: 'Figma recreation',
+    screens: ['My Page'],
+    Component: CreatorOnboardingPrototype,
   },
 ]
