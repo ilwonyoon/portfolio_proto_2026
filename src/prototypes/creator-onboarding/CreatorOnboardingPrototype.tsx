@@ -279,7 +279,7 @@ function CreatorProfileScreen({
           className="creator-content-tabs"
           tabs={[
             { id: 'content', label: 'Content' },
-            { id: 'scraps', label: 'Scraps' },
+            { id: 'saved', label: 'Saved' },
           ]}
           activeTabId="content"
         />
@@ -369,6 +369,7 @@ function CreatorOnboardingPrototype({
           </div>
           <div className="creator-flow__page creator-flow__page--activity">
             <CreatorActivityDashboardScreen
+              isActive={activeScreen === 'activity' && !isThumbnail}
               onBack={() => setActiveScreen('dashboard')}
             />
           </div>

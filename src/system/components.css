@@ -175,7 +175,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
   scrollbar-width: none;
+  touch-action: pan-y;
 }
 
 .ds-home-feed-shell__main::-webkit-scrollbar {
@@ -818,6 +821,9 @@
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  touch-action: pan-y;
   background: #ffffff;
 }
 
@@ -1523,6 +1529,7 @@
   letter-spacing: -0.3px;
   color: #2f3438;
   font-weight: 600;
+  transition: color 140ms ease;
 }
 
 .ds-feed-reaction-bar__icon {
@@ -1535,6 +1542,27 @@
 
 .ds-feed-reaction-bar__icon-asset {
   display: block;
+}
+
+.ds-feed-reaction-bar__filled-icon {
+  display: block;
+  color: var(--color-brand-strong);
+  transform-origin: center;
+  animation: ds-feed-reaction-pop 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ds-feed-reaction-pop {
+  from {
+    transform: scale(0.86);
+  }
+
+  65% {
+    transform: scale(1.08);
+  }
+
+  to {
+    transform: scale(1);
+  }
 }
 
 .ds-feed-comment-thread {
@@ -2324,16 +2352,22 @@
 
 .ds-product-ad-module__save-button {
   position: absolute;
-  right: 10px;
-  bottom: 9px;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
+  right: 0;
+  bottom: 0;
+  width: 46px;
+  height: 46px;
+  padding: 0 10px 10px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .ds-product-ad-module__save-icon {
   display: block;
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(0 1px 3px rgba(47, 52, 56, 0.34));
 }
 
 .ds-product-ad-module__info {
@@ -2495,6 +2529,21 @@
   place-items: center;
 }
 
+.ds-feed-product-sheet__save {
+  color: #2f3438;
+}
+
+.ds-feed-product-sheet__save--active {
+  color: var(--color-brand-strong);
+}
+
+.ds-feed-product-sheet__save-filled-icon {
+  display: block;
+  color: currentColor;
+  transform-origin: center;
+  animation: ds-feed-reaction-pop 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .ds-feed-product-sheet__dismiss {
   justify-self: end;
 }
@@ -2586,6 +2635,63 @@
 
 .ds-feed-product-sheet__price-label {
   color: #2f3438;
+}
+
+.ds-feed-product-sheet__toast {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  min-height: 46px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #141414;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition:
+    opacity 180ms ease,
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  z-index: 3;
+}
+
+.ds-feed-product-sheet__toast--visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.ds-feed-product-sheet__toast-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ds-feed-product-sheet__toast-action {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand-strong);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 18px;
+  letter-spacing: inherit;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 @keyframes ds-feed-tag-bounce-in {

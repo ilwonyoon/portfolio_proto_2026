@@ -225,6 +225,16 @@ export function FeedMediaCarousel({
       }))
   }, [hasSlides, safeActiveIndex, slides])
 
+  const dotTrackWidth = useMemo(
+    () =>
+      dotDescriptors.reduce((width, dot, index) => {
+        const gap = index === 0 ? 0 : DOT_GAP
+
+        return width + gap + dotSizeByVariant[dot.variant]
+      }, 0),
+    [dotDescriptors],
+  )
+
   function changeSlide(nextIndex: number) {
     if (!hasSlides) {
       return
@@ -397,7 +407,7 @@ export function FeedMediaCarousel({
 
         {hasSlides && showDots ? (
           <div className="ds-feed-media__dots" aria-hidden="true">
-            <div className="ds-feed-media__dots-track">
+            <div className="ds-feed-media__dots-track" style={{ width: dotTrackWidth }}>
               {dotDescriptors.map((dot, index) => {
                 const size = dotSizeByVariant[dot.variant]
                 const left = dotDescriptors

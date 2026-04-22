@@ -49,6 +49,7 @@ export type FeedCardProps = {
   contentsInfo?: string
   onOpenProductSheet?: () => void
   onOpenProductDetail?: (productId: string) => void
+  onToggleSave?: (isSaved: boolean) => void
 }
 
 export function FeedCard({
@@ -63,6 +64,7 @@ export function FeedCard({
   contentsInfo,
   onOpenProductSheet,
   onOpenProductDetail,
+  onToggleSave,
 }: FeedCardProps) {
   const promotedFeaturedProduct =
     !featuredProduct && products?.presentation === 'featured'
@@ -115,7 +117,11 @@ export function FeedCard({
         />
       ) : null}
       {reactions ? (
-        <FeedReactionBar {...reactions} topPadding={reactionTopPadding} />
+        <FeedReactionBar
+          {...reactions}
+          topPadding={reactionTopPadding}
+          onToggleSave={onToggleSave}
+        />
       ) : null}
       {comments ? (
         <FeedCommentThread

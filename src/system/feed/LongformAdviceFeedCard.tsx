@@ -5,6 +5,7 @@ import type { LongformAdviceFeedItem } from './HomeFeedItem'
 
 type LongformAdviceFeedCardProps = {
   item: LongformAdviceFeedItem
+  onToggleSave?: (isSaved: boolean) => void
 }
 
 function LongformImageBar({
@@ -23,6 +24,7 @@ function LongformImageBar({
 
 export function LongformAdviceFeedCard({
   item,
+  onToggleSave,
 }: LongformAdviceFeedCardProps) {
   return (
     <article className="ds-longform-advice-card">
@@ -33,7 +35,11 @@ export function LongformAdviceFeedCard({
         topPadding={0}
       />
       <LongformImageBar {...item.imageBar} />
-      <FeedReactionBar {...item.reactions} topPadding={0} />
+      <FeedReactionBar
+        {...item.reactions}
+        topPadding={0}
+        onToggleSave={onToggleSave}
+      />
     </article>
   )
 }

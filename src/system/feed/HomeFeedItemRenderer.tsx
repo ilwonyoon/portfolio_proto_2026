@@ -10,12 +10,14 @@ type HomeFeedItemRendererProps = {
   item: HomeFeedItem
   onOpenProductSheet?: (itemId: string) => void
   onOpenProductDetail?: (itemId: string, productId: string) => void
+  onToggleFeedSave?: (itemId: string, isSaved: boolean) => void
 }
 
 export function HomeFeedItemRenderer({
   item,
   onOpenProductSheet,
   onOpenProductDetail,
+  onToggleFeedSave,
 }: HomeFeedItemRendererProps) {
   switch (item.type) {
     case 'user-uploaded':
@@ -26,6 +28,7 @@ export function HomeFeedItemRenderer({
           onOpenProductDetail={(productId) =>
             onOpenProductDetail?.(item.id, productId)
           }
+          onToggleSave={(isSaved) => onToggleFeedSave?.(item.id, isSaved)}
         />
       )
 
@@ -63,6 +66,11 @@ export function HomeFeedItemRenderer({
       )
 
     case 'longform-advice':
-      return <LongformAdviceFeedCard item={item} />
+      return (
+        <LongformAdviceFeedCard
+          item={item}
+          onToggleSave={(isSaved) => onToggleFeedSave?.(item.id, isSaved)}
+        />
+      )
   }
 }

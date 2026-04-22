@@ -249,7 +249,7 @@ const recommendedPlantInteriorProducts: ApiFeedProduct[] = [
 ]
 
 const recommendedPlantInteriorSlides: ApiFeedSlide[] = Array.from(
-  { length: 10 },
+  { length: 8 },
   (_, index) => ({
     id: `plant-interior-${index + 1}`,
     image: {
@@ -264,7 +264,7 @@ const recommendedPlantInteriorSlides: ApiFeedSlide[] = Array.from(
   }),
 )
 
-const campingSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const campingSlides: ApiFeedSlide[] = Array.from({ length: 5 }, (_, index) => ({
   id: `camping-${index + 1}`,
     image: {
       src: '/assets/figma/personalized-feed/btf-camping/hero.png',
@@ -320,7 +320,7 @@ const routineProducts: ApiFeedProduct[] = [
   },
 ]
 
-const routineSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const routineSlides: ApiFeedSlide[] = Array.from({ length: 6 }, (_, index) => ({
   id: `routine-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-routine/hero.png',
@@ -377,7 +377,7 @@ const tounouProducts: ApiFeedProduct[] = [
   },
 ]
 
-const tounouSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const tounouSlides: ApiFeedSlide[] = Array.from({ length: 4 }, (_, index) => ({
   id: `tounou-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-tounou/hero.png',
@@ -390,7 +390,7 @@ const tounouSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
   ],
 }))
 
-const plateSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const plateSlides: ApiFeedSlide[] = Array.from({ length: 3 }, (_, index) => ({
   id: `plate-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-plate/hero.png',
@@ -445,7 +445,7 @@ const kitchenProducts: ApiFeedProduct[] = [
   },
 ]
 
-const kitchenSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const kitchenSlides: ApiFeedSlide[] = Array.from({ length: 6 }, (_, index) => ({
   id: `kitchen-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-kitchen/hero.png',
@@ -458,7 +458,7 @@ const kitchenSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => (
   ],
 }))
 
-const soopSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const soopSlides: ApiFeedSlide[] = Array.from({ length: 4 }, (_, index) => ({
   id: `soop-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-soop87/hero.png',
@@ -513,7 +513,7 @@ const postcardProducts: ApiFeedProduct[] = [
   },
 ]
 
-const postcardSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => ({
+const postcardSlides: ApiFeedSlide[] = Array.from({ length: 8 }, (_, index) => ({
   id: `postcard-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/btf-postcard/hero.png',
@@ -527,7 +527,7 @@ const postcardSlides: ApiFeedSlide[] = Array.from({ length: 10 }, (_, index) => 
 }))
 
 const longformAdviceSlides: ApiFeedSlide[] = Array.from(
-  { length: 10 },
+  { length: 5 },
   (_, index) => ({
     id: `longform-advice-${index + 1}`,
     image: {
@@ -538,7 +538,7 @@ const longformAdviceSlides: ApiFeedSlide[] = Array.from(
   }),
 )
 
-const brandPromoSlides = Array.from({ length: 10 }, (_, index) => ({
+const brandPromoSlides = Array.from({ length: 4 }, (_, index) => ({
   id: `flatpoint-slide-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/brand-promo/hero.png',
@@ -547,23 +547,47 @@ const brandPromoSlides = Array.from({ length: 10 }, (_, index) => ({
   tags: [],
 }))
 
-const adSlides = Array.from({ length: 10 }, (_, index) => ({
-  id: `hay-ad-slide-${index + 1}`,
-  image: {
-    src: '/assets/figma/personalized-feed/ad/hero.png',
-    alt: 'HAY desk lamp advertisement.',
+const spianoAdSlideImages = [
+  {
+    src: '/assets/figma/personalized-feed/ad/spiano-hero.png',
+    alt: 'SPIANO styling shot with a swing floor lamp in a living room.',
   },
-  tags: [
-    {
-      id: `hay-ad-tag-${index + 1}`,
-      productId: 'apex-desk-clamp-light',
-      x: 146,
-      y: 262,
-    },
-  ],
-}))
+  {
+    src: '/assets/figma/personalized-feed/ad/spiano-slide-02.png',
+    alt: 'Living room styled with a warm floor lamp and green rug.',
+  },
+  {
+    src: '/assets/figma/personalized-feed/ad/spiano-slide-03.png',
+    alt: 'Bright living room with plants and window blinds.',
+  },
+] as const
 
-const renovationReviewSlides = Array.from({ length: 10 }, (_, index) => ({
+const spianoAdTagPositions = [
+  { x: 86, y: 88 },
+  { x: 167, y: 170 },
+  { x: 69, y: 120 },
+] as const
+
+const adSlides = Array.from({ length: 3 }, (_, index) => {
+  const slideIndex = index < spianoAdSlideImages.length ? index : 0
+  const slideImage = spianoAdSlideImages[slideIndex]
+  const tagPosition = spianoAdTagPositions[slideIndex]
+
+  return {
+    id: `spiano-ad-slide-${index + 1}`,
+    image: slideImage,
+    tags: [
+      {
+        id: `spiano-ad-tag-${index + 1}`,
+        productId: 'holis-swing-floor-lamp',
+        x: tagPosition.x,
+        y: tagPosition.y,
+      },
+    ],
+  }
+})
+
+const renovationReviewSlides = Array.from({ length: 6 }, (_, index) => ({
   id: `slow-luu-review-slide-${index + 1}`,
   image: {
     src: '/assets/figma/personalized-feed/renovation-review/hero-overlay.png',
@@ -588,7 +612,7 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
         actionLabel: 'Follow',
       },
       media: {
-        slides: userUploadedSlides,
+        slides: userUploadedSlides.slice(0, 7),
       },
       products: {
         catalog: userUploadedProducts,
@@ -606,34 +630,34 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 175,
+            count: 1248,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 14,
+            count: 86,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 34,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 527,
         },
       },
       comments: {
         description:
           'This is my favorite piece of furniture in the studio. I place my plants on it and store my plant care essentials here.',
-        commentCount: 14,
+        commentCount: 86,
         items: [
           {
             id: 'comment-1',
@@ -678,28 +702,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 420,
+            count: 642,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 55,
+            count: 38,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 67,
+            count: 21,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: '3K',
+          count: 311,
         },
       },
       comments: {
@@ -815,28 +839,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 79,
+            count: 289,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 3,
+            count: 17,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 9,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 148,
         },
       },
       comments: {
@@ -855,7 +879,7 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
           alt: 'flatpoint profile',
         },
         brandName: 'flatpoint',
-        saveCount: 868,
+        saveCount: 1200,
       },
       media: {
         slides: brandPromoSlides,
@@ -887,10 +911,10 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       ],
     },
     {
-      id: 'hay-ad',
+      id: 'spiano-ad',
       type: 'ad',
       profile: {
-        brandName: 'HAY',
+        brandName: 'SPIANO',
         badgeLabel: 'AD',
       },
       media: {
@@ -900,12 +924,12 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       description:
         "\"I think this is truly the prettiest among the lights! The colors and shapes are just to my liking 🙃\" - Review by Mokongne",
       featuredProduct: {
-        id: 'apex-desk-clamp-light',
+        id: 'holis-swing-floor-lamp',
         image: {
-          src: '/assets/figma/personalized-feed/ad/product.png',
-          alt: 'APEX Desk Clamp Light',
+          src: '/assets/figma/personalized-feed/ad/spiano-product.png',
+          alt: 'Holis swing floor lamp',
         },
-        name: '[Overseas] APEX Desk Clamp Light 3 Colors',
+        name: 'Holis swing floor lamp',
         discountLabel: '28%',
         priceLabel: '189,120',
         thumbnailRadius: 4,
@@ -957,29 +981,31 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
+            count: 96,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
+            count: 8,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 5,
           },
         ],
         save: {
           icon: {
-            src: '/assets/figma/personalized-feed/btf-camping/scrap-filled.svg',
-            alt: 'Saved',
+            ...reactionIcons.save,
+            alt: 'Scrap',
           },
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 41,
         },
       },
       comments: {
@@ -1025,28 +1051,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 175,
+            count: 57,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 14,
+            count: 4,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 2,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 33,
         },
       },
       comments: {
@@ -1090,28 +1116,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 7,
+            count: 118,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 1,
+            count: 9,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 6,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 72,
         },
       },
       comments: {
@@ -1163,28 +1189,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 13,
+            count: 74,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 6,
+            count: 5,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 3,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 46,
         },
       },
       comments: {
@@ -1233,28 +1259,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 32,
+            count: 431,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 14,
+            count: 27,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 14,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 209,
         },
       },
       comments: {
@@ -1298,34 +1324,34 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 353,
+            count: 836,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 121,
+            count: 64,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 28,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 418,
         },
       },
       comments: {
         description:
           "In our couple's space, the master bedroom, I've put up a postcard that gives off a sense of my partner's support🖤 Every time I see it, it feels like it's about us, and it lifts my spirits!",
-        commentCount: 121,
+        commentCount: 64,
         items: [
           {
             id: 'postcard-comment-1',
@@ -1365,28 +1391,28 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
             icon: reactionIcons.like,
             iconWidth: 20.8,
             iconHeight: 17.8946,
-            count: 234,
+            count: 1482,
           },
           {
             id: 'Comment',
             icon: reactionIcons.comment,
             iconWidth: 19.5,
             iconHeight: 19.4371,
-            count: 76,
+            count: 112,
           },
           {
             id: 'Share',
             icon: reactionIcons.share,
             iconWidth: 17.8,
             iconHeight: 19.2395,
-            count: 12,
+            count: 39,
           },
         ],
         save: {
           icon: reactionIcons.save,
           iconWidth: 16,
           iconHeight: 19.3975,
-          count: 868,
+          count: 736,
         },
       },
     },

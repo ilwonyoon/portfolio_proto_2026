@@ -98,10 +98,10 @@ export function LiquidGlassCursor({
       cursor.classList.remove('ds-liquid-cursor--pressed')
     }
 
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerdown', handlePointerDown)
-    window.addEventListener('pointerup', handlePointerUp)
-    window.addEventListener('pointercancel', hideCursor)
+    window.addEventListener('pointermove', handlePointerMove, true)
+    window.addEventListener('pointerdown', handlePointerDown, true)
+    window.addEventListener('pointerup', handlePointerUp, true)
+    window.addEventListener('pointercancel', hideCursor, true)
     window.addEventListener('blur', hideCursor)
     document.addEventListener('mouseleave', hideCursor)
 
@@ -110,10 +110,10 @@ export function LiquidGlassCursor({
         window.cancelAnimationFrame(rafId)
       }
 
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerdown', handlePointerDown)
-      window.removeEventListener('pointerup', handlePointerUp)
-      window.removeEventListener('pointercancel', hideCursor)
+      window.removeEventListener('pointermove', handlePointerMove, true)
+      window.removeEventListener('pointerdown', handlePointerDown, true)
+      window.removeEventListener('pointerup', handlePointerUp, true)
+      window.removeEventListener('pointercancel', hideCursor, true)
       window.removeEventListener('blur', hideCursor)
       document.removeEventListener('mouseleave', hideCursor)
     }

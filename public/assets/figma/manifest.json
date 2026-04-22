@@ -1433,5 +1433,145 @@
     "file": "creator-dashboard/lock-16.svg",
     "sourceType": "svg",
     "exportScale": 1
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-card-01-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-card-02-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-card-03-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-card-04-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-hot-01-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-hot-02-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-new-01-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-new-02-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-new-03-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-new-04-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-01-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-02-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-03-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-04-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-05-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-discover-feed",
+    "nodeId": "6370:172220",
+    "file": "personalized-feed/discover/discover-avatar-06-2x.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/ad",
+    "nodeId": "6374:202025",
+    "file": "personalized-feed/ad/spiano-hero.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/ad",
+    "nodeId": "6374:202025",
+    "file": "personalized-feed/ad/spiano-product.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/ad",
+    "nodeId": "6375:204346",
+    "file": "personalized-feed/ad/spiano-slide-02.png",
+    "sourceType": "png",
+    "exportScale": 2
+  },
+  {
+    "screen": "personalized-feed/ad",
+    "nodeId": "6375:204346",
+    "file": "personalized-feed/ad/spiano-slide-03.png",
+    "sourceType": "png",
+    "exportScale": 2
   }
 ]

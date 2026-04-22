@@ -55,7 +55,77 @@
 .personalized-feed__fab {
   position: absolute;
   right: 16px;
-  bottom: calc(54px + 34px + 16px);
+  bottom: 16px;
+  transition:
+    opacity 180ms ease,
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform, opacity;
+  z-index: 5;
+}
+
+.ds-home-feed-shell__body--fab-hidden .personalized-feed__fab {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(76px) scale(0.96);
+}
+
+.personalized-feed__snackbar {
+  position: absolute;
+  right: 8px;
+  bottom: calc(89px + 8px);
+  left: 8px;
+  z-index: 18;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition:
+    opacity 180ms ease,
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.personalized-feed__snackbar--visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.personalized-feed__snackbar-inner {
+  min-height: 46px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #141414;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+}
+
+.personalized-feed__snackbar-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: #ffffff;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personalized-feed__snackbar-action {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand-strong);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .personalized-feed__shortcuts {
@@ -66,6 +136,405 @@
   flex: 0 0 auto;
   min-height: 0;
   padding-bottom: 24px;
+}
+
+.personalized-feed__scroll-tabs {
+  width: 375px;
+  background: #ffffff;
+}
+
+.personalized-discover {
+  width: 375px;
+  padding-bottom: 92px;
+  background: #ffffff;
+}
+
+.personalized-discover__filters {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  width: 375px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 16px;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  background: #ffffff;
+}
+
+.personalized-discover__filters--stuck {
+  height: 54px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.personalized-discover__filters::-webkit-scrollbar {
+  display: none;
+}
+
+.personalized-discover__chip {
+  flex: 0 0 auto;
+  height: 38px;
+  padding: 4px 14px;
+  border: 1px solid #dadde0;
+  border-radius: 50px;
+  background: #ffffff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  color: #2f3438;
+}
+
+.personalized-discover__chip--active {
+  border-color: #2f3438;
+  background: #2f3438;
+  color: #ffffff;
+}
+
+.personalized-discover__content {
+  will-change: opacity, transform;
+  transition:
+    opacity 160ms ease,
+    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.personalized-discover__content--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.personalized-discover__content--switching {
+  opacity: 0.72;
+  transform: translateY(2px);
+}
+
+.personalized-discover-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 167.5px);
+  column-gap: 8px;
+  row-gap: 16px;
+  padding: 0 16px;
+}
+
+.personalized-discover-card {
+  width: 167.5px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.personalized-discover-card--interactive {
+  cursor: pointer;
+}
+
+.personalized-discover-card--interactive:focus-visible {
+  outline: 2px solid #35a8f3;
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+.personalized-discover-card--compact {
+  width: 140px;
+  flex: 0 0 140px;
+}
+
+.personalized-discover-card__image-wrap {
+  position: relative;
+  width: 100%;
+  height: 223.33px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: #f7f9fa;
+}
+
+.personalized-discover-card--compact .personalized-discover-card__image-wrap {
+  height: 186.5px;
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.personalized-discover-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.personalized-discover-card__save {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0 8px 8px 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.personalized-discover-card--compact .personalized-discover-card__save {
+  width: 42px;
+  height: 42px;
+  padding: 0 8px 7px 0;
+}
+
+.personalized-discover-card__save-icon {
+  display: block;
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(0 1px 3px rgba(47, 52, 56, 0.34));
+}
+
+.personalized-discover-card__copy {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.personalized-discover-card--compact .personalized-discover-card__copy {
+  min-height: 36px;
+}
+
+.personalized-discover-card h3 {
+  min-height: 36px;
+  margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  color: #2f3438;
+}
+
+.personalized-discover-card__meta {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.personalized-discover-card--compact .personalized-discover-card__meta {
+  display: none;
+}
+
+.personalized-discover-card__author {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.personalized-discover-card__avatar {
+  flex: 0 0 auto;
+  display: block;
+  border-radius: 50%;
+}
+
+.personalized-discover-card__author span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  color: #2f3438;
+}
+
+.personalized-discover-card__likes {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 4px;
+  color: #828c94;
+}
+
+.personalized-discover-card__heart {
+  display: block;
+  opacity: 0.62;
+}
+
+.personalized-discover-card__likes span {
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  color: #828c94;
+}
+
+.personalized-discover-trending {
+  width: 375px;
+  margin-top: 16px;
+  padding-bottom: 16px;
+  background: #ffffff;
+}
+
+.personalized-discover-trending h2 {
+  height: 48px;
+  margin: 0;
+  padding: 14px 16px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.4px;
+  font-weight: 700;
+  color: #2f3438;
+}
+
+.personalized-discover-trending__rail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 16px;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.personalized-discover-trending__rail::-webkit-scrollbar {
+  display: none;
+}
+
+.personalized-discover-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 42;
+  width: 375px;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.personalized-discover-detail--open {
+  pointer-events: auto;
+}
+
+.personalized-discover-detail__panel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #ffffff;
+  transform: translateX(100%);
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+
+.personalized-discover-detail--open .personalized-discover-detail__panel {
+  transform: translateX(0);
+}
+
+.personalized-discover-detail__scroll {
+  width: 375px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 152px;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  background: #ffffff;
+}
+
+.personalized-discover-detail__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.personalized-discover-detail__header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  width: 375px;
+  background: #ffffff;
+}
+
+.personalized-discover-detail__status {
+  background: #ffffff;
+}
+
+.personalized-discover-detail__top-nav {
+  width: 375px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: #ffffff;
+}
+
+.personalized-discover-detail__back {
+  width: 48px;
+  height: 44px;
+  margin-left: -2px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #2f3438;
+}
+
+.personalized-discover-detail__back-icon {
+  --fill-0: #2f3438;
+  display: block;
+}
+
+.personalized-discover-detail__content {
+  width: 375px;
+  background: #ffffff;
+}
+
+.personalized-discover-detail__bottom-nav {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9;
+}
+
+.personalized-discover-detail__fab {
+  position: absolute;
+  right: 16px;
+  bottom: 104.5px;
+  z-index: 10;
+}
+
+.personalized-feed .ds-feed-product-sheet {
+  z-index: 70;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .personalized-discover__content {
+    transition: none;
+  }
+
+  .personalized-discover__content--switching {
+    opacity: 1;
+    transform: none;
+  }
+
+  .personalized-discover-detail__panel {
+    transition: none;
+  }
 }
 
 @media (max-width: 420px) {

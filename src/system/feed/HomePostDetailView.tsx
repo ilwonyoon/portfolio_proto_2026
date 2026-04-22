@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
+import { useInertialScroll } from '../mobile/useInertialScroll'
 
 export type HomePostDetailMeta = {
   label: string
@@ -39,6 +40,10 @@ export function HomePostDetailView({
 }: HomePostDetailViewProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const [isHeaderSolid, setIsHeaderSolid] = useState(false)
+
+  useInertialScroll(scrollRef, {
+    enabled: isOpen,
+  })
 
   useEffect(() => {
     if (!isOpen) {

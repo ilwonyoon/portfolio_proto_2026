@@ -1,10 +1,11 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { BottomNavBar } from './BottomNavBar'
 import type { BottomNavBarProps } from './BottomNavBar'
 import { HomeSearchNav } from './HomeSearchNav'
 import type { HomeSearchNavProps } from './HomeSearchNav'
 import { StatusBar } from './StatusBar'
+import { useInertialScroll } from './useInertialScroll'
 
 type HomeFeedScaffoldProps = {
   mode?: 'full' | 'thumbnail'
@@ -16,6 +17,8 @@ type HomeFeedScaffoldProps = {
   shortcuts?: ReactNode
   content?: ReactNode
   floatingActionButton?: ReactNode
+  hideFloatingActionButtonOnScroll?: boolean
+  inertialScroll?: boolean
   overlay?: ReactNode
 }
 
@@ -29,9 +32,73 @@ export function HomeFeedScaffold({
   shortcuts,
   content,
   floatingActionButton,
+  hideFloatingActionButtonOnScroll = false,
+  inertialScroll = false,
   overlay,
 }: HomeFeedScaffoldProps) {
   const isThumbnail = mode === 'thumbnail'
+  const mainRef = useRef<HTMLDivElement | null>(null)
+  const lastScrollTopRef = useRef(0)
+  const [isFloatingActionButtonVisible, setIsFloatingActionButtonVisible] =
+    useState(true)
+
+  useInertialScroll(mainRef, {
+    enabled: inertialScroll && !isThumbnail,
+  })
+
+  useEffect(() => {
+    const container = mainRef.current
+
+    if (!hideFloatingActionButtonOnScroll || isThumbnail || !container) {
+      setIsFloatingActionButtonVisible(true)
+      return
+    }
+
+    let frameId = 0
+    lastScrollTopRef.current = container.scrollTop
+
+    const updateVisibility = () => {
+      const currentScrollTop = container.scrollTop
+      const delta = currentScrollTop - lastScrollTopRef.current
+
+      if (currentScrollTop <= 8) {
+        setIsFloatingActionButtonVisible(true)
+        lastScrollTopRef.current = currentScrollTop
+        frameId = 0
+        return
+      }
+
+      if (Math.abs(delta) >= 4) {
+        setIsFloatingActionButtonVisible(delta < 0)
+        lastScrollTopRef.current = currentScrollTop
+      }
+
+      frameId = 0
+    }
+
+    const handleScroll = () => {
+      if (frameId !== 0) {
+        return
+      }
+
+      frameId = window.requestAnimationFrame(updateVisibility)
+    }
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId)
+      }
+
+      container.removeEventListener('scroll', handleScroll)
+    }
+  }, [hideFloatingActionButtonOnScroll, isThumbnail])
+
+  const bodyClassName =
+    hideFloatingActionButtonOnScroll && !isFloatingActionButtonVisible
+      ? 'ds-home-feed-shell__body ds-home-feed-shell__body--fab-hidden'
+      : 'ds-home-feed-shell__body'
 
   return (
     <div
@@ -49,8 +116,12 @@ export function HomeFeedScaffold({
             {topTabs}
           </div>
 
-          <div className="ds-home-feed-shell__body">
-            <div className="ds-home-feed-shell__main prototype-screen__scroll-region">
+          <div className={bodyClassName}>
+            <div
+              ref={mainRef}
+              className="ds-home-feed-shell__main prototype-screen__scroll-region"
+              data-inertial-scroll={inertialScroll && !isThumbnail ? 'true' : undefined}
+            >
               {shortcuts ? (
                 <div className="ds-home-feed-shell__shortcuts">{shortcuts}</div>
               ) : null}

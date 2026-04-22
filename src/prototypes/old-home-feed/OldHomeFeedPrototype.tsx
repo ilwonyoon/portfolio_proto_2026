@@ -157,6 +157,7 @@ function OldHomeFeedPrototype({ mode = 'full' }: OldHomeFeedPrototypeProps) {
           },
         ],
       }}
+      inertialScroll
       overlay={
         selectedPost && selectedPostDetail ? (
           <HomePostDetailView

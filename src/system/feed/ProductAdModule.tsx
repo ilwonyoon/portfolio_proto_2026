@@ -53,10 +53,10 @@ export function ProductAdModule({
                 onClick={() => onToggleSave?.(product.id)}
               >
                 <FigmaAsset
-                  src="/assets/figma/personalized-feed/product-ad/save-toggle.svg"
+                  src="/assets/figma/personalized-feed/bookmark.svg"
                   alt=""
-                  displayWidth={24}
-                  displayHeight={24.4916}
+                  displayWidth={16}
+                  displayHeight={19.4}
                   className="ds-product-ad-module__save-icon"
                 />
               </button>

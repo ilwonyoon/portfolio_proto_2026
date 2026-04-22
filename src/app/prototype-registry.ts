@@ -1,11 +1,13 @@
 import type { ComponentType } from 'react'
 import OldHomeFeedPrototype from '../prototypes/old-home-feed/OldHomeFeedPrototype'
 import PersonalizedFeedPrototype from '../prototypes/personalized-feed/PersonalizedFeedPrototype'
+import PersonalizedDiscoverFeedPrototype from '../prototypes/personalized-discover-feed'
 import Portfolio2026Prototype from '../prototypes/portfolio-2026/Portfolio2026Prototype'
 import { interestProfilingScript } from '../prototypes/portfolio-2026/interest-profiling-script'
 import CreatorOnboardingPrototype from '../prototypes/creator-onboarding'
 import CreatorProfileContentPrototype from '../prototypes/creator-profile-content'
 import CreatorProgramDashboardPrototype from '../prototypes/creator-program-dashboard'
+import UploadPrototype from '../prototypes/upload'
 import type { LiquidGlassCursorScript } from '../system/overlays'
 
 type PrototypeRendererProps = {
@@ -46,6 +48,14 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Scaffold',
     screens: ['Intro'],
     Component: PersonalizedFeedPrototype,
+  },
+  {
+    id: 'personalized-discover-feed',
+    title: 'Personalized discover',
+    description: 'Discover tab grid experience for the personalized feed.',
+    status: 'Figma recreation',
+    screens: ['Discover'],
+    Component: PersonalizedDiscoverFeedPrototype,
   },
   {
     id: 'portfolio-2026',
@@ -92,5 +102,13 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Figma recreation',
     screens: ['Program'],
     Component: CreatorProgramDashboardPrototype,
+  },
+  {
+    id: 'upload',
+    title: 'Upload',
+    description: 'Product tag upload flow with reusable mobile sheet patterns.',
+    status: 'Figma recreation',
+    screens: ['Add product tag'],
+    Component: UploadPrototype,
   },
 ]

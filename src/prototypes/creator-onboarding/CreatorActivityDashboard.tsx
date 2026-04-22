@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { StatusBar, TopNav, TopTabBar } from '../../system/mobile'
+import { useInertialScroll } from '../../system/mobile/useInertialScroll'
 import { useBottomSheetPresence } from '../../system/overlays/useBottomSheetPresence'
 
 const dashboardAssetRoot = '/assets/figma/creator-dashboard'
@@ -637,6 +638,15 @@ export function CreatorActivityDashboardScreen({
   onBack,
 }: CreatorActivityDashboardScreenProps) {
   const [isScoreSheetOpen, setIsScoreSheetOpen] = useState(false)
+  const contentRef = useRef<HTMLElement | null>(null)
+
+  useInertialScroll(contentRef, {
+    enabled: isActive,
+    friction: 0.93,
+    maxVelocity: 22,
+    minVelocity: 0.16,
+    wheelGain: 0.12,
+  })
 
   return (
     <div className="creator-activity__screen">
@@ -656,7 +666,11 @@ export function CreatorActivityDashboardScreen({
           activeTabId="activity"
         />
       </div>
-      <main className="creator-activity__content">
+      <main
+        ref={contentRef}
+        className="creator-activity__content prototype-screen__scroll-region"
+        data-inertial-scroll={isActive ? 'true' : undefined}
+      >
         <ActivityScorePanel
           isActive={isActive}
           onOpenInfo={() => setIsScoreSheetOpen(true)}
