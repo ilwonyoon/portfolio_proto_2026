@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { StatusBar, TopNav, TopTabBar } from '../../system/mobile'
+import { useAnimatedCounter } from '../../system/interactions'
 
 const dashboardAssetRoot = '/assets/figma/creator-dashboard'
 
@@ -44,49 +44,6 @@ const activitySections = [
   },
 ]
 
-function springCountProgress(progress: number) {
-  const clamped = Math.min(Math.max(progress, 0), 1)
-  const accelerated = clamped * clamped * (2.35 - 1.35 * clamped)
-  const spring = Math.sin(clamped * Math.PI * 2.7) * (1 - clamped) * 0.035
-
-  return Math.min(Math.max(accelerated + spring, 0), 1)
-}
-
-function useAnimatedCounter(targetValue: number, enabled = true) {
-  const [value, setValue] = useState(enabled ? 0 : targetValue)
-
-  useEffect(() => {
-    if (!enabled) {
-      setValue(targetValue)
-      return
-    }
-
-    let animationFrame = 0
-    const startedAt = performance.now()
-    const durationMs = 1180
-    setValue(0)
-
-    const tick = (now: number) => {
-      const progress = (now - startedAt) / durationMs
-      const easedProgress = springCountProgress(progress)
-
-      setValue(Math.min(targetValue, Math.round(easedProgress * targetValue)))
-
-      if (progress < 1) {
-        animationFrame = window.requestAnimationFrame(tick)
-      } else {
-        setValue(targetValue)
-      }
-    }
-
-    animationFrame = window.requestAnimationFrame(tick)
-
-    return () => window.cancelAnimationFrame(animationFrame)
-  }, [enabled, targetValue])
-
-  return value
-}
-
 function DashboardBackButton({ onBack }: { onBack?: () => void }) {
   return (
     <button
@@ -107,7 +64,7 @@ function DashboardBackButton({ onBack }: { onBack?: () => void }) {
 }
 
 function DashboardHero({ isActive }: { isActive: boolean }) {
-  const saveCount = useAnimatedCounter(24, isActive)
+  const saveCount = useAnimatedCounter(24, isActive, 'ios-spring')
 
   return (
     <div className="creator-dashboard-hero" aria-hidden="true">

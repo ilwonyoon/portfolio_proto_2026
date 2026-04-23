@@ -6,6 +6,7 @@ import { HomeSearchNav } from './HomeSearchNav'
 import type { HomeSearchNavProps } from './HomeSearchNav'
 import { StatusBar } from './StatusBar'
 import { useInertialScroll } from './useInertialScroll'
+import type { ScrollPhysicsPresetName } from '../interactions'
 
 type HomeFeedScaffoldProps = {
   mode?: 'full' | 'thumbnail'
@@ -19,6 +20,7 @@ type HomeFeedScaffoldProps = {
   floatingActionButton?: ReactNode
   hideFloatingActionButtonOnScroll?: boolean
   inertialScroll?: boolean
+  inertialScrollPreset?: ScrollPhysicsPresetName
   overlay?: ReactNode
 }
 
@@ -34,6 +36,7 @@ export function HomeFeedScaffold({
   floatingActionButton,
   hideFloatingActionButtonOnScroll = false,
   inertialScroll = false,
+  inertialScrollPreset = 'ios-feed',
   overlay,
 }: HomeFeedScaffoldProps) {
   const isThumbnail = mode === 'thumbnail'
@@ -44,6 +47,7 @@ export function HomeFeedScaffold({
 
   useInertialScroll(mainRef, {
     enabled: inertialScroll && !isThumbnail,
+    preset: inertialScrollPreset,
   })
 
   useEffect(() => {

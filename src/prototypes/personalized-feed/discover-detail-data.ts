@@ -78,11 +78,25 @@ function createRepeatedSlides({
   }))
 }
 
-const profile = {
-  avatarSrc: `${assetRoot}/avatar-2x.png`,
-  name: 'H.House',
-  subtitle: 'Cultivating today',
-  actionLabel: 'Follow',
+const personalizedProfiles = {
+  hHouse: {
+    avatarSrc: '/assets/figma/personalized-feed/feed-card/avatar.png',
+    name: 'H.House',
+    subtitle: 'Cultivating today',
+    actionLabel: 'Follow',
+  },
+  slowLuu: {
+    avatarSrc: '/assets/figma/personalized-feed/renovation-review/avatar.png',
+    name: 'slow_luu',
+    subtitle: 'Storage tips organized like J',
+    actionLabel: 'Follow',
+  },
+  soop87: {
+    avatarSrc: '/assets/figma/personalized-feed/btf-soop87/avatar.png',
+    name: 'soop87',
+    subtitle: '#MostBusyAtHome',
+    actionLabel: 'Follow',
+  },
 } as const
 
 const firstPostProducts = [
@@ -198,9 +212,9 @@ export const discoverDetailFeedItems: HomeFeedItem[] = [
     type: 'user-uploaded',
     productSheetTitle: 'In this photo 24',
     card: {
-      header: profile,
+      header: personalizedProfiles.hHouse,
       media: {
-        topPadding: 0,
+        topPadding: 16,
         slides: createRepeatedSlides({
           postId: 'discover-green-chair',
           imageSrc: `${assetRoot}/hero-01-2x.png`,
@@ -251,11 +265,11 @@ export const discoverDetailFeedItems: HomeFeedItem[] = [
     productSheetTitle: 'In this photo 4',
     card: {
       header: {
-        ...profile,
+        ...personalizedProfiles.slowLuu,
         topPadding: 0,
       },
       media: {
-        topPadding: 0,
+        topPadding: 16,
         slides: createRepeatedSlides({
           postId: 'discover-sunlit-routine',
           imageSrc: `${assetRoot}/hero-02-2x.png`,
@@ -354,9 +368,9 @@ export const discoverDetailFeedItems: HomeFeedItem[] = [
     type: 'user-uploaded',
     productSheetTitle: 'In this photo 4',
     card: {
-      header: profile,
+      header: personalizedProfiles.soop87,
       media: {
-        topPadding: 0,
+        topPadding: 16,
         slides: createRepeatedSlides({
           postId: 'discover-tounou',
           imageSrc: `${assetRoot}/hero-03-2x.png`,

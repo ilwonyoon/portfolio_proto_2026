@@ -43,6 +43,7 @@ export function HomePostDetailView({
 
   useInertialScroll(scrollRef, {
     enabled: isOpen,
+    preset: 'ios-detail',
   })
 
   useEffect(() => {

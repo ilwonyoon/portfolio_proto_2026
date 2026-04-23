@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "new:prototype": "node scripts/create-prototype.mjs"
+    "new:prototype": "node scripts/create-prototype.mjs",
+    "prototype:pre": "node scripts/prototype-guard.mjs pre",
+    "prototype:post": "node scripts/prototype-guard.mjs post"
   },
   "dependencies": {
     "gsap": "^3.15.0",

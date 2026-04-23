@@ -14,6 +14,7 @@ import {
   sharedPersonalizedBottomNavItems,
   sharedPersonalizedHomeSearchNav,
 } from '../../system/mobile'
+import { Snackbar, useSnackbar } from '../../system/overlays'
 import {
   fetchPersonalizedFeedItems,
   getInitialPersonalizedFeedItems,
@@ -31,34 +32,6 @@ type PersonalizedFeedPrototypeProps = {
   scrollableTopTabs?: boolean
 }
 
-type SaveSnackbarState = {
-  message: string
-  actionLabel: string
-}
-
-function SaveSnackbar({ snackbar }: { snackbar: SaveSnackbarState | null }) {
-  return (
-    <div
-      className={
-        snackbar
-          ? 'personalized-feed__snackbar personalized-feed__snackbar--visible'
-          : 'personalized-feed__snackbar'
-      }
-      role="status"
-      aria-live="polite"
-    >
-      <div className="personalized-feed__snackbar-inner">
-        <span className="personalized-feed__snackbar-copy">
-          {snackbar?.message ?? ''}
-        </span>
-        <button type="button" className="personalized-feed__snackbar-action">
-          {snackbar?.actionLabel ?? 'View saved'}
-        </button>
-      </div>
-    </div>
-  )
-}
-
 function PersonalizedFeedPrototype({
   initialTopTab = 'for-you',
   mode = 'full',
@@ -73,10 +46,7 @@ function PersonalizedFeedPrototype({
   const [activeProductSheetItemId, setActiveProductSheetItemId] = useState<
     string | null
   >(null)
-  const snackbarTimerRef = useRef<number | null>(null)
-  const [saveSnackbar, setSaveSnackbar] = useState<SaveSnackbarState | null>(
-    null,
-  )
+  const { snackbar: saveSnackbar, showSnackbar } = useSnackbar()
   const [isDiscoverDetailMounted, setIsDiscoverDetailMounted] = useState(false)
   const [isDiscoverDetailOpen, setIsDiscoverDetailOpen] = useState(false)
   const discoverDetailCloseTimerRef = useRef<number | null>(null)
@@ -98,10 +68,6 @@ function PersonalizedFeedPrototype({
 
   useEffect(() => {
     return () => {
-      if (snackbarTimerRef.current !== null) {
-        window.clearTimeout(snackbarTimerRef.current)
-      }
-
       if (discoverDetailCloseTimerRef.current !== null) {
         window.clearTimeout(discoverDetailCloseTimerRef.current)
       }
@@ -122,19 +88,10 @@ function PersonalizedFeedPrototype({
   }
 
   function showSaveSnackbar(message: string) {
-    if (snackbarTimerRef.current !== null) {
-      window.clearTimeout(snackbarTimerRef.current)
-    }
-
-    setSaveSnackbar({
+    showSnackbar({
       message,
       actionLabel: 'View saved',
     })
-
-    snackbarTimerRef.current = window.setTimeout(() => {
-      setSaveSnackbar(null)
-      snackbarTimerRef.current = null
-    }, 1600)
   }
 
   function handleToggleFeedSave(itemId: string, isSaved: boolean) {
@@ -246,7 +203,12 @@ function PersonalizedFeedPrototype({
               onToggleFeedSave={handleToggleFeedSave}
             />
           ) : null}
-          <SaveSnackbar snackbar={saveSnackbar} />
+          <Snackbar
+            className="personalized-feed__snackbar"
+            message={saveSnackbar?.message}
+            actionLabel={saveSnackbar?.actionLabel}
+            style={{ bottom: 'calc(89px + 8px)' }}
+          />
           <FeedProductBottomSheet
             open={Boolean(activeProductSheetItem)}
             title={activeProductSheetItem?.productSheetTitle ?? ''}

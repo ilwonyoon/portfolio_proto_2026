@@ -8,6 +8,7 @@ type ButtonProps = {
   className?: string
   type?: 'button' | 'submit' | 'reset'
   dataScriptTarget?: string
+  variant?: 'default' | 'sheet'
 }
 
 export function Button({
@@ -18,8 +19,11 @@ export function Button({
   className,
   type = 'button',
   dataScriptTarget,
+  variant = 'default',
 }: ButtonProps) {
   const isDisabled = disabled ?? !enabled
+  const variantClass =
+    variant === 'sheet' ? 'ds-button ds-button--sheet' : 'ds-button'
 
   return (
     <button
@@ -29,8 +33,8 @@ export function Button({
       data-script-target={dataScriptTarget}
       className={
         enabled
-          ? `ds-button ds-button--enabled ${className ?? ''}`.trim()
-          : `ds-button ${className ?? ''}`.trim()
+          ? `${variantClass} ds-button--enabled ${className ?? ''}`.trim()
+          : `${variantClass} ${className ?? ''}`.trim()
       }
     >
       {children}

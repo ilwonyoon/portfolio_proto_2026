@@ -1,7 +1,12 @@
 import { useEffect, type RefObject } from 'react'
+import {
+  resolveScrollPhysicsConfig,
+  type ScrollPhysicsPresetName,
+} from '../interactions'
 
 type InertialScrollOptions = {
   enabled?: boolean
+  preset?: ScrollPhysicsPresetName
   friction?: number
   maxVelocity?: number
   minVelocity?: number
@@ -36,12 +41,26 @@ export function useInertialScroll(
   scrollRef: RefObject<HTMLElement | null>,
   {
     enabled = true,
-    friction = 0.9,
-    maxVelocity = 38,
-    minVelocity = 0.22,
-    wheelGain = 0.22,
+    preset = 'ios-feed',
+    friction,
+    maxVelocity,
+    minVelocity,
+    wheelGain,
   }: InertialScrollOptions = {},
 ) {
+  const resolvedConfig = resolveScrollPhysicsConfig(preset, {
+    friction,
+    maxVelocity,
+    minVelocity,
+    wheelGain,
+  })
+  const {
+    friction: resolvedFriction,
+    maxVelocity: resolvedMaxVelocity,
+    minVelocity: resolvedMinVelocity,
+    wheelGain: resolvedWheelGain,
+  } = resolvedConfig
+
   useEffect(() => {
     const container = scrollRef.current
 
@@ -90,9 +109,9 @@ export function useInertialScroll(
         return
       }
 
-      velocity *= Math.pow(friction, delta / 16.67)
+      velocity *= Math.pow(resolvedFriction, delta / 16.67)
 
-      if (Math.abs(velocity) <= minVelocity) {
+      if (Math.abs(velocity) <= resolvedMinVelocity) {
         stop()
         return
       }
@@ -117,9 +136,9 @@ export function useInertialScroll(
       const deltaY = normalizeWheelDelta(event, container)
 
       velocity = clamp(
-        velocity + deltaY * wheelGain,
-        -maxVelocity,
-        maxVelocity,
+        velocity + deltaY * resolvedWheelGain,
+        -resolvedMaxVelocity,
+        resolvedMaxVelocity,
       )
 
       start()
@@ -133,5 +152,12 @@ export function useInertialScroll(
       container.removeEventListener('wheel', handleWheel)
       container.removeEventListener('pointerdown', stop)
     }
-  }, [enabled, friction, maxVelocity, minVelocity, scrollRef, wheelGain])
+  }, [
+    enabled,
+    resolvedFriction,
+    resolvedMaxVelocity,
+    resolvedMinVelocity,
+    resolvedWheelGain,
+    scrollRef,
+  ])
 }

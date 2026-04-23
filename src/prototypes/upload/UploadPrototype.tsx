@@ -2,8 +2,8 @@ import { useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { StatusBar, TopNav } from '../../system/mobile'
+import { BottomSheet, useSheetDragGesture } from '../../system/overlays'
 import { Chip } from '../../system/primitives'
-import { useBottomSheetPresence } from '../../system/overlays/useBottomSheetPresence'
 import './upload.css'
 
 type UploadPrototypeProps = {
@@ -34,6 +34,8 @@ type ProductSheetTab = 'purchased' | 'tagged'
 const assetRoot = '/assets/figma/upload'
 const mediaSize = 343
 const tagMarkerSize = 30
+const uploadProductSheetHeight = 768
+const uploadProductSheetPeekHeight = 203
 const initialTagPosition: TagPosition = {
   x: mediaSize / 2,
   y: mediaSize / 2,
@@ -518,154 +520,91 @@ function UploadProductSheet({
   onChangeTab: (tab: ProductSheetTab) => void
   onSelectProduct: (product: Product) => void
 }) {
-  const { isMounted, isVisible } = useBottomSheetPresence(open)
-  const sheetDragRef = useRef<{
-    pointerId: number
-    startY: number
-    opened: boolean
-  } | null>(null)
   const visibleProducts =
     activeTab === 'purchased' ? purchasedProducts : taggedProducts
-
-  function handlePanelPointerDown(event: React.PointerEvent<HTMLElement>) {
-    if (open) {
-      return
-    }
-
-    sheetDragRef.current = {
-      pointerId: event.pointerId,
-      startY: event.clientY,
-      opened: false,
-    }
-    event.currentTarget.setPointerCapture(event.pointerId)
-  }
-
-  function handlePanelPointerMove(event: React.PointerEvent<HTMLElement>) {
-    const drag = sheetDragRef.current
-
-    if (open || !drag || drag.pointerId !== event.pointerId) {
-      return
-    }
-
-    if (drag.startY - event.clientY > 28) {
-      drag.opened = true
-      onDragOpen()
-      event.currentTarget.releasePointerCapture(event.pointerId)
-      sheetDragRef.current = null
-    }
-  }
-
-  function handlePanelPointerUp(event: React.PointerEvent<HTMLElement>) {
-    const drag = sheetDragRef.current
-
-    if (!drag || drag.pointerId !== event.pointerId) {
-      return
-    }
-
-    if (!drag.opened && drag.startY - event.clientY > 18) {
-      onDragOpen()
-    }
-
-    event.currentTarget.releasePointerCapture(event.pointerId)
-    sheetDragRef.current = null
-  }
-
-  function handlePanelPointerCancel(event: React.PointerEvent<HTMLElement>) {
-    const drag = sheetDragRef.current
-
-    if (drag?.pointerId === event.pointerId) {
-      event.currentTarget.releasePointerCapture(event.pointerId)
-      sheetDragRef.current = null
-    }
-  }
+  const sheetDragGesture = useSheetDragGesture({
+    open,
+    closedOffset: uploadProductSheetHeight - uploadProductSheetPeekHeight,
+    openTriggerThreshold: 28,
+    openReleaseThreshold: 18,
+    closeTriggerThreshold: 140,
+    closeReleaseThreshold: 84,
+    onOpen: onDragOpen,
+    onClose,
+  })
 
   return (
-    <div
-      className={
-        open
-          ? 'upload-product-sheet upload-product-sheet--open'
-          : 'upload-product-sheet'
-      }
-      aria-hidden={!open}
+    <BottomSheet
+      open={open}
+      ariaLabel="Product tags"
+      onClose={onClose}
+      className="upload-product-sheet"
+      dimClassName="upload-product-sheet__dim"
+      panelClassName="upload-product-sheet__panel"
+      persistWhenClosed
+      peekHeight={uploadProductSheetPeekHeight}
+      dragOffset={sheetDragGesture.dragOffset}
+      isDragging={sheetDragGesture.isDragging}
+      panelStyle={{ height: `${uploadProductSheetHeight}px` }}
+      panelProps={open ? undefined : sheetDragGesture.bind}
     >
-      {isMounted ? (
-        <button
-          type="button"
-          className={
-            isVisible
-              ? 'upload-product-sheet__dim upload-product-sheet__dim--visible'
-              : 'upload-product-sheet__dim'
-          }
-          aria-label="Close product tag sheet"
-          onClick={onClose}
-        />
-      ) : null}
-
-      <section
-        className="upload-product-sheet__panel"
-        role="dialog"
-        aria-modal={open}
-        aria-label="Product tags"
-        onPointerDown={handlePanelPointerDown}
-        onPointerMove={handlePanelPointerMove}
-        onPointerUp={handlePanelPointerUp}
-        onPointerCancel={handlePanelPointerCancel}
+      <div
+        className="upload-product-sheet__handle-wrap"
+        {...(open ? sheetDragGesture.bind : undefined)}
       >
-        <div className="upload-product-sheet__handle-wrap">
-          <div className="upload-product-sheet__handle" />
-        </div>
+        <div className="upload-product-sheet__handle" />
+      </div>
 
-        <div className="upload-product-sheet__search">
+      <div className="upload-product-sheet__search">
+        <FigmaAsset
+          src="/assets/figma/personalized-feed/search.svg"
+          alt=""
+          displayWidth={18}
+          displayHeight={18}
+        />
+        <span>Search for a product name or brand</span>
+      </div>
+
+      <div className="upload-product-sheet__action-bar">
+        <div className="upload-product-sheet__chips">
+          <Chip
+            selected={activeTab === 'purchased'}
+            className="upload-chip"
+            onClick={() => onChangeTab('purchased')}
+          >
+            Purchased
+          </Chip>
+          <Chip
+            selected={activeTab === 'tagged'}
+            className="upload-chip"
+            onClick={() => onChangeTab('tagged')}
+          >
+            Tagged
+          </Chip>
+        </div>
+        <button type="button" className="upload-product-sheet__add">
+          <span>Add</span>
           <FigmaAsset
-            src="/assets/figma/personalized-feed/search.svg"
+            src="/assets/figma/creator-onboarding/write-24.svg"
             alt=""
-            displayWidth={18}
-            displayHeight={18}
+            displayWidth={16}
+            displayHeight={16}
           />
-          <span>Search for a product name or brand</span>
-        </div>
+        </button>
+      </div>
 
-        <div className="upload-product-sheet__action-bar">
-          <div className="upload-product-sheet__chips">
-            <Chip
-              selected={activeTab === 'purchased'}
-              className="upload-chip"
-              onClick={() => onChangeTab('purchased')}
-            >
-              Purchased
-            </Chip>
-            <Chip
-              selected={activeTab === 'tagged'}
-              className="upload-chip"
-              onClick={() => onChangeTab('tagged')}
-            >
-              Tagged
-            </Chip>
-          </div>
-          <button type="button" className="upload-product-sheet__add">
-            <span>Add</span>
-            <FigmaAsset
-              src="/assets/figma/creator-onboarding/write-24.svg"
-              alt=""
-              displayWidth={16}
-              displayHeight={16}
+      <div className="upload-product-sheet__grid-wrap">
+        <div className="upload-product-sheet__grid">
+          {visibleProducts.map((product) => (
+            <UploadProductCard
+              key={product.id}
+              product={product}
+              onSelect={onSelectProduct}
             />
-          </button>
+          ))}
         </div>
-
-        <div className="upload-product-sheet__grid-wrap">
-          <div className="upload-product-sheet__grid">
-            {visibleProducts.map((product) => (
-              <UploadProductCard
-                key={product.id}
-                product={product}
-                onSelect={onSelectProduct}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
+      </div>
+    </BottomSheet>
   )
 }
 

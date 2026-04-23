@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
+import { useAnimatedCounter } from '../../system/interactions'
 import { StatusBar, TopNav, TopTabBar } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
-import { useBottomSheetPresence } from '../../system/overlays/useBottomSheetPresence'
+import { BottomSheet } from '../../system/overlays'
 
 const dashboardAssetRoot = '/assets/figma/creator-dashboard'
 
@@ -191,39 +192,6 @@ function formatInteger(value: number) {
   return Math.round(value).toLocaleString('en-US')
 }
 
-function useAnimatedCounter(targetValue: number | undefined, isActive: boolean) {
-  const [value, setValue] = useState(0)
-
-  useEffect(() => {
-    if (!isActive || targetValue === undefined) {
-      setValue(targetValue ?? 0)
-      return
-    }
-
-    const target = targetValue
-    let frameId = 0
-    const duration = 920
-    const startedAt = performance.now()
-
-    function tick(now: number) {
-      const progress = Math.min((now - startedAt) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setValue(target * eased)
-
-      if (progress < 1) {
-        frameId = window.requestAnimationFrame(tick)
-      }
-    }
-
-    setValue(0)
-    frameId = window.requestAnimationFrame(tick)
-
-    return () => window.cancelAnimationFrame(frameId)
-  }, [isActive, targetValue])
-
-  return value
-}
-
 function DashboardBackButton({ onBack }: { onBack?: () => void }) {
   return (
     <button
@@ -392,33 +360,18 @@ function CreatorScoreBottomSheet({
   open: boolean
   onClose: () => void
 }) {
-  const { isMounted, isVisible } = useBottomSheetPresence(open)
-
-  if (!isMounted) {
-    return null
-  }
-
   return (
-    <div
-      className={
-        isVisible
-          ? 'ds-feed-product-sheet ds-feed-product-sheet--visible creator-score-sheet'
-          : 'ds-feed-product-sheet creator-score-sheet'
-      }
-      role="dialog"
-      aria-modal="true"
-      aria-label="What is Creator score?"
+    <BottomSheet
+      open={open}
+      ariaLabel="What is Creator score?"
+      closeLabel="Close Creator score information"
+      onClose={onClose}
+      className="creator-score-sheet"
+      dimClassName="ds-feed-product-sheet__dim"
+      panelClassName="ds-feed-product-sheet__panel creator-score-sheet__panel"
     >
-      <button
-        type="button"
-        className="ds-feed-product-sheet__dim"
-        aria-label="Close Creator score information"
-        onClick={onClose}
-      />
-
-      <section className="ds-feed-product-sheet__panel creator-score-sheet__panel">
         <div className="ds-feed-product-sheet__header creator-score-sheet__header">
-          <div className="ds-feed-product-sheet__handle" />
+          <div className="ds-bottom-sheet__handle ds-feed-product-sheet__handle" />
 
           <div className="ds-feed-product-sheet__nav creator-score-sheet__nav">
             <div className="ds-feed-product-sheet__nav-spacer" />
@@ -476,8 +429,7 @@ function CreatorScoreBottomSheet({
         <div className="creator-score-sheet__home-indicator" aria-hidden="true">
           <span />
         </div>
-      </section>
-    </div>
+    </BottomSheet>
   )
 }
 
@@ -642,10 +594,7 @@ export function CreatorActivityDashboardScreen({
 
   useInertialScroll(contentRef, {
     enabled: isActive,
-    friction: 0.93,
-    maxVelocity: 22,
-    minVelocity: 0.16,
-    wheelGain: 0.12,
+    preset: 'ios-dashboard',
   })
 
   return (

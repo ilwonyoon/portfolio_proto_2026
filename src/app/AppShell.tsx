@@ -16,6 +16,8 @@ const shouldStartScripted = Boolean(initialScriptedPrototype)
 const initialPrototypeId = shouldStartScripted
   ? initialScriptedPrototype?.id
   : initialSearchParams.get('prototype')
+const newestPrototype = prototypeRegistry[prototypeRegistry.length - 1]
+const newestFirstPrototypeRegistry = [...prototypeRegistry].reverse()
 
 type DemoMode = 'live' | 'scripted'
 type ScriptPlaybackStatus = 'idle' | 'running' | 'complete'
@@ -67,7 +69,7 @@ export function AppShell() {
   const [activePrototypeId, setActivePrototypeId] = useState(
     prototypeRegistry.some((prototype) => prototype.id === initialPrototypeId)
       ? initialPrototypeId ?? ''
-      : prototypeRegistry[0]?.id ?? '',
+      : newestPrototype?.id ?? '',
   )
   const [activeView, setActiveView] = useState<
     'prototype' | 'component-library'
@@ -88,7 +90,7 @@ export function AppShell() {
   const activePrototype = useMemo(
     () =>
       prototypeRegistry.find((prototype) => prototype.id === activePrototypeId) ??
-      prototypeRegistry[0],
+      newestPrototype,
     [activePrototypeId],
   )
 
@@ -270,7 +272,7 @@ export function AppShell() {
 
         <div className="workbench-sidebar__nav-scroll">
           <nav className="prototype-list" aria-label="Available prototypes">
-            {prototypeRegistry.map((prototype) => {
+            {newestFirstPrototypeRegistry.map((prototype) => {
               const isActive = prototype.id === activePrototype.id
               const PreviewComponent = prototype.Component
 
@@ -308,16 +310,20 @@ export function AppShell() {
             }
             onClick={() => setActiveView('component-library')}
           >
-            Component libraries
+            Design system
           </button>
         </div>
       </aside>
 
       <section
-        className="workbench-stage"
+        className={
+          activeView === 'component-library'
+            ? 'workbench-stage'
+            : 'workbench-stage workbench-stage--prototype'
+        }
         aria-label={
           activeView === 'component-library'
-            ? 'Component library preview'
+            ? 'Design system preview'
             : 'Prototype preview'
         }
       >

@@ -1,0 +1,469 @@
+.pdp-prototype {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.pdp-prototype > .prototype-device {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pdp-prototype--thumbnail {
+  position: static;
+  width: 375px;
+  height: 812px;
+  display: block;
+  pointer-events: none;
+}
+
+.pdp-prototype--thumbnail > .prototype-device {
+  position: static;
+  transform: none;
+}
+
+.pdp-screen {
+  width: 375px;
+  height: 812px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  color: #2f3438;
+  font-family: var(--font-body);
+}
+
+.pdp-header {
+  flex: 0 0 88px;
+  background: #ffffff;
+  z-index: 4;
+}
+
+.pdp-top-nav {
+  background: #ffffff;
+}
+
+.pdp-top-nav__group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pdp-icon-button {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  color: #2f3438;
+}
+
+.pdp-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #ffffff;
+}
+
+.pdp-hero {
+  position: relative;
+  width: 375px;
+  height: 375px;
+  overflow: hidden;
+  background: #f7f9fa;
+}
+
+.pdp-hero__image {
+  width: 375px;
+  height: 375px;
+  display: block;
+  object-fit: cover;
+}
+
+.pdp-media-counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  height: 24px;
+  padding: 4px 8px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  background: rgba(33, 38, 41, 0.5);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+}
+
+.pdp-content-wrap {
+  background: #ffffff;
+}
+
+.pdp-info {
+  padding: 16px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pdp-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdp-brand,
+.pdp-name-row h1,
+.pdp-list-price,
+.pdp-sale-price,
+.pdp-price-guarantee,
+.pdp-coupon-card p,
+.pdp-coupon-card span,
+.pdp-field-row p {
+  margin: 0;
+}
+
+.pdp-brand {
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+  color: #828c94;
+}
+
+.pdp-name-row {
+  display: grid;
+  grid-template-columns: minmax(0, 303px) 24px;
+  align-items: start;
+  gap: 16px;
+}
+
+.pdp-name-row h1 {
+  min-width: 0;
+  color: #2f3438;
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: -0.31px;
+  font-weight: 400;
+}
+
+.pdp-rating {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdp-rating__stars {
+  display: flex;
+  align-items: center;
+}
+
+.pdp-rating__star {
+  display: block;
+  color: #0aa5ff;
+  --fill-0: #0aa5ff;
+  --fill-1: #eaeef3;
+}
+
+.pdp-share-icon {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.pdp-share-icon img {
+  position: absolute;
+  top: 0.5px;
+  left: 1px;
+}
+
+.pdp-rating__count {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #0aa5ff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+}
+
+.pdp-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pdp-list-price {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #828c94;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 400;
+}
+
+.pdp-list-price img {
+  opacity: 0.65;
+}
+
+.pdp-sale-price {
+  color: #2f3438;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.3px;
+  font-weight: 600;
+}
+
+.pdp-price-guarantee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f3438;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.pdp-price-guarantee span:first-child {
+  color: #00a1ff;
+  font-weight: 600;
+}
+
+.pdp-price-guarantee img {
+  opacity: 0.65;
+}
+
+.pdp-coupon-card {
+  height: 61px;
+  border-radius: 6px;
+  background: #f7f9fa;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px;
+}
+
+.pdp-coupon-card__icon {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 18px;
+}
+
+.pdp-coupon-card__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pdp-coupon-card__copy span:first-child {
+  color: #2f3438;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 500;
+}
+
+.pdp-coupon-card__copy span:last-child {
+  color: #828c94;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.pdp-benefit-shipping {
+  padding: 20px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffffff;
+}
+
+.pdp-field-row {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.pdp-field-row__label {
+  color: #828c94;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.pdp-field-row__content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #2f3438;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 400;
+}
+
+.pdp-field-row__content--shipping {
+  gap: 10px;
+}
+
+.pdp-strong {
+  font-weight: 600;
+}
+
+.pdp-line-with-icon {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.pdp-line-with-icon span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.pdp-inline-icon {
+  flex: 0 0 auto;
+}
+
+.pdp-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  color: #828c94;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.pdp-note__check {
+  margin-top: 3px;
+}
+
+.pdp-arrival-button,
+.pdp-bundled-button {
+  border: 0;
+  font-family: var(--font-body);
+  color: #2f3438;
+  background: #f7f9fa;
+}
+
+.pdp-arrival-button {
+  width: 270.85px;
+  height: 41px;
+  border-radius: 6px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+}
+
+.pdp-arrival-button__chevron {
+  margin-left: auto;
+}
+
+.pdp-bundled-button {
+  width: max-content;
+  max-width: 100%;
+  height: 32px;
+  padding: 6px 8px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  font-weight: 400;
+}
+
+.pdp-divider {
+  height: 13px;
+  border-top: 1px solid #eaedef;
+  background: #f7f9fa;
+}
+
+.pdp-cta-bar {
+  flex: 0 0 90px;
+  background: #ffffff;
+  z-index: 5;
+}
+
+.pdp-cta-bar__toolbar {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+}
+
+.pdp-save-button {
+  width: 48px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #2f3438;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+}
+
+.pdp-buy-button {
+  flex: 1 1 auto;
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #0aa5ff;
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: -0.31px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pdp-prototype--thumbnail .pdp-main {
+  overflow: hidden;
+}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { BottomNavBar, StatusBar, TopTabBar } from '../../system/mobile'
-import { useBottomSheetPresence } from '../../system/overlays/useBottomSheetPresence'
+import { BottomSheet, PushPage } from '../../system/overlays'
 import {
   CreatorTopNav,
   ProfileActions,
@@ -243,33 +243,18 @@ function CreatorScoreGuideBottomSheet({
   onCheckScore: () => void
   onClose: () => void
 }) {
-  const { isMounted, isVisible } = useBottomSheetPresence(open)
-
-  if (!isMounted) {
-    return null
-  }
-
   return (
-    <div
-      className={
-        isVisible
-          ? 'ds-feed-product-sheet ds-feed-product-sheet--visible creator-score-guide-sheet'
-          : 'ds-feed-product-sheet creator-score-guide-sheet'
-      }
-      role="dialog"
-      aria-modal="true"
-      aria-label="Creator score guide"
+    <BottomSheet
+      open={open}
+      ariaLabel="Creator score guide"
+      closeLabel="Close Creator score guide"
+      onClose={onClose}
+      className="creator-score-guide-sheet"
+      dimClassName="ds-feed-product-sheet__dim"
+      panelClassName="ds-feed-product-sheet__panel creator-score-guide-sheet__panel"
     >
-      <button
-        type="button"
-        className="ds-feed-product-sheet__dim"
-        aria-label="Close Creator score guide"
-        onClick={onClose}
-      />
-
-      <section className="ds-feed-product-sheet__panel creator-score-guide-sheet__panel">
         <div className="creator-score-guide-sheet__handle-wrap">
-          <div className="ds-feed-product-sheet__handle" />
+          <div className="ds-bottom-sheet__handle ds-feed-product-sheet__handle" />
         </div>
 
         <div className="creator-score-guide-sheet__content">
@@ -317,8 +302,7 @@ function CreatorScoreGuideBottomSheet({
             <span />
           </div>
         </div>
-      </section>
-    </div>
+    </BottomSheet>
   )
 }
 
@@ -331,33 +315,18 @@ function CreatorPushPromptBottomSheet({
   onAllow: () => void
   onClose: () => void
 }) {
-  const { isMounted, isVisible } = useBottomSheetPresence(open)
-
-  if (!isMounted) {
-    return null
-  }
-
   return (
-    <div
-      className={
-        isVisible
-          ? 'ds-feed-product-sheet ds-feed-product-sheet--visible creator-push-sheet'
-          : 'ds-feed-product-sheet creator-push-sheet'
-      }
-      role="dialog"
-      aria-modal="true"
-      aria-label="Content activity notifications"
+    <BottomSheet
+      open={open}
+      ariaLabel="Content activity notifications"
+      closeLabel="Close content activity notifications"
+      onClose={onClose}
+      className="creator-push-sheet"
+      dimClassName="ds-feed-product-sheet__dim"
+      panelClassName="ds-feed-product-sheet__panel creator-push-sheet__panel"
     >
-      <button
-        type="button"
-        className="ds-feed-product-sheet__dim"
-        aria-label="Close content activity notifications"
-        onClick={onClose}
-      />
-
-      <section className="ds-feed-product-sheet__panel creator-push-sheet__panel">
         <div className="creator-push-sheet__handle-wrap">
-          <div className="ds-feed-product-sheet__handle" />
+          <div className="ds-bottom-sheet__handle ds-feed-product-sheet__handle" />
         </div>
 
         <div className="creator-push-sheet__body">
@@ -401,8 +370,7 @@ function CreatorPushPromptBottomSheet({
             Turn on
           </button>
         </div>
-      </section>
-    </div>
+    </BottomSheet>
   )
 }
 
@@ -496,21 +464,27 @@ function CreatorProfileContentPrototype({
       }
     >
       <PrototypeScreen contentHeight={812} variant="bare">
-        <div className={activeScreen === 'activity' ? 'creator-flow creator-flow--activity' : 'creator-flow'}>
-          <div className="creator-flow__page creator-flow__page--profile">
+        <div className="creator-flow">
+          <PushPage
+            className="creator-flow__page"
+            state={activeScreen === 'profile' ? 'center' : 'peek-left'}
+          >
             <CreatorProfileContentScreen
               onOpenDashboard={openDashboard}
               showScoreGuide={showScoreGuide && activeScreen === 'profile'}
               onCloseScoreGuide={() => setShowScoreGuide(false)}
             />
-          </div>
-          <div className="creator-flow__page creator-flow__page--activity">
+          </PushPage>
+          <PushPage
+            className="creator-flow__page"
+            state={activeScreen === 'activity' ? 'center' : 'offscreen-right'}
+          >
             <CreatorActivityDashboardScreen
               data={populatedCreatorDashboardData}
               isActive={activeScreen === 'activity' && !isThumbnail}
               onBack={() => setShowPushPrompt(true)}
             />
-          </div>
+          </PushPage>
           <CreatorPushPromptBottomSheet
             open={showPushPrompt && activeScreen === 'activity'}
             onAllow={leaveDashboard}

@@ -9,6 +9,7 @@ import {
   TopTabBar,
   sharedPersonalizedBottomNavItems,
 } from '../../system/mobile'
+import { PushPage } from '../../system/overlays'
 import { CreatorActivityDashboardScreen } from './CreatorActivityDashboard'
 import { CreatorDashboardEmptyScreen } from './CreatorDashboardEmpty'
 
@@ -344,35 +345,42 @@ function CreatorOnboardingPrototype({
       }
     >
       <PrototypeScreen contentHeight={812} variant="bare">
-        <div
-          className={
-            activeScreen === 'activity'
-              ? 'creator-flow creator-flow--activity'
-              : activeScreen === 'dashboard'
-                ? 'creator-flow creator-flow--dashboard'
-                : 'creator-flow'
-          }
-        >
-          <div className="creator-flow__page creator-flow__page--profile">
+        <div className="creator-flow">
+          <PushPage
+            className="creator-flow__page"
+            state={activeScreen === 'profile' ? 'center' : 'peek-left'}
+          >
             <CreatorProfileScreen
               onJoinProgram={() => setActiveScreen('dashboard')}
               showCreatorTip={showCreatorTip}
               onDismissTip={() => setShowCreatorTip(false)}
             />
-          </div>
-          <div className="creator-flow__page creator-flow__page--dashboard">
+          </PushPage>
+          <PushPage
+            className="creator-flow__page"
+            state={
+              activeScreen === 'dashboard'
+                ? 'center'
+                : activeScreen === 'activity'
+                  ? 'peek-left'
+                  : 'offscreen-right'
+            }
+          >
             <CreatorDashboardEmptyScreen
               isActive={activeScreen === 'dashboard' && !isThumbnail}
               onBack={() => setActiveScreen('profile')}
               onJoinProgram={() => setActiveScreen('activity')}
             />
-          </div>
-          <div className="creator-flow__page creator-flow__page--activity">
+          </PushPage>
+          <PushPage
+            className="creator-flow__page"
+            state={activeScreen === 'activity' ? 'center' : 'offscreen-right'}
+          >
             <CreatorActivityDashboardScreen
               isActive={activeScreen === 'activity' && !isThumbnail}
               onBack={() => setActiveScreen('dashboard')}
             />
-          </div>
+          </PushPage>
         </div>
       </PrototypeScreen>
     </div>

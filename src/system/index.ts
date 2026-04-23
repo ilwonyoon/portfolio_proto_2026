@@ -1,4 +1,5 @@
 export * from './feed'
+export * from './interactions'
 export * from './mobile'
 export * from './overlays'
 export * from './primitives'

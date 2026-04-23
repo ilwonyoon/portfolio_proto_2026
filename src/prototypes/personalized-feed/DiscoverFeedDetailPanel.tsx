@@ -8,6 +8,7 @@ import {
   sharedPersonalizedBottomNavItems,
 } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
+import { PushPage } from '../../system/overlays'
 
 type DiscoverFeedDetailPanelProps = {
   isOpen: boolean
@@ -30,6 +31,7 @@ export function DiscoverFeedDetailPanel({
 
   useInertialScroll(scrollRef, {
     enabled: isOpen,
+    preset: 'ios-detail',
   })
 
   useEffect(() => {
@@ -47,7 +49,10 @@ export function DiscoverFeedDetailPanel({
       }
       aria-hidden={!isOpen}
     >
-      <div className="personalized-discover-detail__panel">
+      <PushPage
+        className="personalized-discover-detail__panel"
+        state={isOpen ? 'center' : 'offscreen-right'}
+      >
         <div
           ref={scrollRef}
           className="personalized-discover-detail__scroll prototype-screen__scroll-region"
@@ -100,7 +105,7 @@ export function DiscoverFeedDetailPanel({
           iconHeight={20.5}
           label="Upload"
         />
-      </div>
+      </PushPage>
     </section>
   )
 }

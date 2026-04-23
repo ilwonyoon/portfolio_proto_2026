@@ -184,6 +184,8 @@ async function main() {
   console.log(`Created prototype scaffold: ${prototypeId}`)
   console.log(`Component: src/prototypes/${prototypeId}/${componentName}.tsx`)
   console.log(`Registered in: src/app/prototype-registry.ts`)
+  console.log(`Run before implementation: npm run prototype:pre -- ${prototypeId}`)
+  console.log(`Run after implementation: npm run prototype:post -- ${prototypeId}`)
 }
 
 main().catch((error) => {

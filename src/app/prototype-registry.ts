@@ -7,6 +7,7 @@ import { interestProfilingScript } from '../prototypes/portfolio-2026/interest-p
 import CreatorOnboardingPrototype from '../prototypes/creator-onboarding'
 import CreatorProfileContentPrototype from '../prototypes/creator-profile-content'
 import CreatorProgramDashboardPrototype from '../prototypes/creator-program-dashboard'
+import PdpPrototype from '../prototypes/pdp'
 import UploadPrototype from '../prototypes/upload'
 import type { LiquidGlassCursorScript } from '../system/overlays'
 
@@ -110,5 +111,13 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Figma recreation',
     screens: ['Add product tag'],
     Component: UploadPrototype,
+  },
+  {
+    id: 'pdp',
+    title: 'PDP',
+    description: 'Product detail page prototype for the Cuba Chair PDP frame.',
+    status: 'Figma recreation',
+    screens: ['Product detail'],
+    Component: PdpPrototype,
   },
 ]
