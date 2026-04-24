@@ -477,10 +477,10 @@ function PdpPlacementPlusIcon() {
 function PdpPlacementMenuBagIcon() {
   return (
     <FigmaAsset
-      src="/assets/figma/pdp/shopping-bag-24.svg"
+      src={`${assetRoot}/shopping-bag-24.svg`}
       alt=""
-      displayWidth={16.697}
-      displayHeight={20.5}
+      displayWidth={24}
+      displayHeight={24}
     />
   )
 }
@@ -488,10 +488,10 @@ function PdpPlacementMenuBagIcon() {
 function PdpPlacementMenuPhotoIcon() {
   return (
     <FigmaAsset
-      src="/assets/figma/pdp/photo-24.svg"
+      src={`${assetRoot}/photo-24.svg`}
       alt=""
-      displayWidth={18}
-      displayHeight={18}
+      displayWidth={24}
+      displayHeight={24}
     />
   )
 }
@@ -499,7 +499,7 @@ function PdpPlacementMenuPhotoIcon() {
 function PdpPlacementMenuAnalyzeIcon() {
   return (
     <FigmaAsset
-      src="/assets/figma/pdp/analyze-room-24.svg"
+      src={`${assetRoot}/analyze-room-24.svg`}
       alt=""
       displayWidth={24}
       displayHeight={24}
