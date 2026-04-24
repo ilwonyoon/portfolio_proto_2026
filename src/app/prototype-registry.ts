@@ -8,6 +8,7 @@ import CreatorOnboardingPrototype from '../prototypes/creator-onboarding'
 import CreatorProfileContentPrototype from '../prototypes/creator-profile-content'
 import CreatorProgramDashboardPrototype from '../prototypes/creator-program-dashboard'
 import PdpPrototype from '../prototypes/pdp'
+import GeneratingMotionLabPrototype from '../prototypes/generating-motion-lab'
 import UploadPrototype from '../prototypes/upload'
 import type { LiquidGlassCursorScript } from '../system/overlays'
 
@@ -119,5 +120,13 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Figma recreation',
     screens: ['Product detail'],
     Component: PdpPrototype,
+  },
+  {
+    id: 'generating-motion-lab',
+    title: 'Generating motion lab',
+    description: 'Comparison lab for AI generating card motion, sheen, and glass treatments.',
+    status: 'Motion study',
+    screens: ['Generating'],
+    Component: GeneratingMotionLabPrototype,
   },
 ]
