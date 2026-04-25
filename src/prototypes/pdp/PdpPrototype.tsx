@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
@@ -9,6 +15,7 @@ import {
   pdpMyPhotoThumbs,
   pdpSampleSpacesByType,
   pdpSpaceTypeOptions,
+  type PdpSampleSpaceItem,
   type PdpSelectableSpace,
   type PdpSpaceType,
 } from './pdp-room-selector-data'
@@ -27,11 +34,24 @@ type PdpPlacementMenuItemId = 'add-products' | 'style-transfer' | 'analyze-room'
 
 const assetRoot = '/assets/figma/pdp'
 const statusLevelsSrc = '/assets/figma/portfolio-2026/onboarding/status-levels.svg'
-const generatingStatusMessages = [
-  'Matching scale and perspective',
-  'Balancing light and floor contact',
-  'Refining room-ready composition',
-] as const
+const pdpSampleSpaceCardWidth = 167.5
+
+function getPdpSampleSpaceDisplayHeight(item: PdpSampleSpaceItem) {
+  return (pdpSampleSpaceCardWidth * item.height) / item.width
+}
+
+function createPdpWaterfallColumns(items: PdpSampleSpaceItem[]) {
+  const columns: [PdpSampleSpaceItem[], PdpSampleSpaceItem[]] = [[], []]
+  const columnHeights = [0, 0]
+
+  items.forEach((item) => {
+    const columnIndex = columnHeights[0] <= columnHeights[1] ? 0 : 1
+    columns[columnIndex].push(item)
+    columnHeights[columnIndex] += getPdpSampleSpaceDisplayHeight(item) + 8
+  })
+
+  return columns
+}
 
 function PdpIconButton({
   className,
@@ -204,11 +224,11 @@ function PdpHero({ onOpenSelector }: { onOpenSelector: () => void }) {
   return (
     <section className="pdp-hero" aria-label="Product images">
       <FigmaAsset
-        src={`${assetRoot}/cuba-chair-hero-2x.png`}
-        alt="Carl Hansen & Søn MG501 Cuba Chair"
+        src={`${assetRoot}/moss-rug-hero.png`}
+        alt="Nomia Moss Rug"
         displayWidth={375}
         displayHeight={375}
-        exportScale={2}
+        exportScale={1}
         className="pdp-hero__image"
         fetchPriority="high"
       />
@@ -266,7 +286,7 @@ function PdpSelectorPhotoSection({
   return (
     <section className="pdp-selector-section">
       <PdpSelectorSectionHeader title="My Photos" />
-      <div className="pdp-selector-strip pdp-selector-strip--photos">
+      <div className="pdp-selector-strip pdp-selector-strip--photos" data-native-scroll-axis="x">
         <button type="button" className="pdp-selector-camera-tile" aria-label="Add photo">
           <span className="pdp-selector-camera-tile__icon">
             <PdpSelectorCameraIcon />
@@ -301,7 +321,7 @@ function PdpSelectorDesignSection({
   return (
     <section className="pdp-selector-section">
       <PdpSelectorSectionHeader title="My Designs" />
-      <div className="pdp-selector-strip pdp-selector-strip--designs">
+      <div className="pdp-selector-strip pdp-selector-strip--designs" data-native-scroll-axis="x">
         {pdpMyDesignThumbs.map((design) => (
           <button
             key={design.id}
@@ -330,8 +350,7 @@ function PdpSelectorSampleSpacesSection({
 }) {
   const [activeSpaceType, setActiveSpaceType] = useState<PdpSpaceType>('bedroom')
   const spaceItems = pdpSampleSpacesByType[activeSpaceType]
-  const leftColumnItems = spaceItems.filter((_, index) => index % 2 === 0)
-  const rightColumnItems = spaceItems.filter((_, index) => index % 2 === 1)
+  const waterfallColumns = useMemo(() => createPdpWaterfallColumns(spaceItems), [spaceItems])
 
   return (
     <section className="pdp-selector-section pdp-selector-section--sample-spaces">
@@ -339,7 +358,12 @@ function PdpSelectorSampleSpacesSection({
         <h2>Sample spaces</h2>
       </div>
 
-      <div className="pdp-selector-chip-row" role="tablist" aria-label="Space type filters">
+      <div
+        className="pdp-selector-chip-row"
+        role="tablist"
+        aria-label="Space type filters"
+        data-native-scroll-axis="x"
+      >
         {pdpSpaceTypeOptions.map((option) => (
           <button
             key={option.id}
@@ -359,42 +383,33 @@ function PdpSelectorSampleSpacesSection({
       </div>
 
       <div className="pdp-selector-grid" aria-label={`${activeSpaceType} sample spaces`}>
-        <div className="pdp-selector-grid__column">
-          {leftColumnItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="pdp-selector-space-card"
-              style={{ height: `${item.height}px` }}
-              onClick={() => onSelect({ id: item.id, src: item.src, thumbSrc: item.src })}
-            >
-              <FigmaAsset
-                src={item.src}
-                alt=""
-                displayWidth={167.5}
-                displayHeight={item.height}
-              />
-            </button>
-          ))}
-        </div>
-        <div className="pdp-selector-grid__column">
-          {rightColumnItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="pdp-selector-space-card"
-              style={{ height: `${item.height}px` }}
-              onClick={() => onSelect({ id: item.id, src: item.src, thumbSrc: item.src })}
-            >
-              <FigmaAsset
-                src={item.src}
-                alt=""
-                displayWidth={167.5}
-                displayHeight={item.height}
-              />
-            </button>
-          ))}
-        </div>
+        {waterfallColumns.map((columnItems, columnIndex) => (
+          <div
+            key={columnIndex === 0 ? 'left-column' : 'right-column'}
+            className="pdp-selector-grid__column"
+          >
+            {columnItems.map((item) => {
+              const displayHeight = getPdpSampleSpaceDisplayHeight(item)
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="pdp-selector-space-card"
+                  style={{ height: `${displayHeight}px` }}
+                  onClick={() => onSelect({ id: item.id, src: item.src, thumbSrc: item.src })}
+                >
+                  <FigmaAsset
+                    src={item.src}
+                    alt=""
+                    displayWidth={pdpSampleSpaceCardWidth}
+                    displayHeight={displayHeight}
+                  />
+                </button>
+              )
+            })}
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -402,7 +417,6 @@ function PdpSelectorSampleSpacesSection({
 
 function PdpSelectPhotoScreen({
   isActive,
-  isThumbnail,
   onClose,
   onSelectSpace,
 }: {
@@ -414,7 +428,7 @@ function PdpSelectPhotoScreen({
   const selectorScrollRef = useRef<HTMLDivElement | null>(null)
 
   useInertialScroll(selectorScrollRef, {
-    enabled: isActive && !isThumbnail,
+    enabled: isActive,
     preset: 'ios-detail',
   })
 
@@ -442,7 +456,7 @@ function PdpSelectPhotoScreen({
       <main
         ref={selectorScrollRef}
         className="pdp-selector-main prototype-screen__scroll-region"
-        data-inertial-scroll={isActive && !isThumbnail ? 'true' : undefined}
+        data-inertial-scroll={isActive ? 'true' : undefined}
       >
         <PdpSelectorPhotoSection onSelect={onSelectSpace} />
         <PdpSelectorDesignSection onSelect={onSelectSpace} />
@@ -596,12 +610,10 @@ function PdpPlaceObjectScreen({
   isActive,
   selectedSpace,
   onBack,
-  onGenerate,
 }: {
   isActive: boolean
   selectedSpace: PdpSelectableSpace
   onBack: () => void
-  onGenerate: (position: PlacementPosition) => void
 }) {
   const [markerPosition, setMarkerPosition] = useState<PlacementPosition>({
     x: 171.5,
@@ -613,6 +625,7 @@ function PdpPlaceObjectScreen({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isPlusButtonPressed, setIsPlusButtonPressed] = useState(false)
   const [pressedMenuItemId, setPressedMenuItemId] = useState<PdpPlacementMenuItemId | null>(null)
+  const [isRendering, setIsRendering] = useState(false)
   const dragRef = useRef<{
     pointerId: number
     offsetX: number
@@ -634,6 +647,7 @@ function PdpPlaceObjectScreen({
       setIsMenuOpen(false)
       setIsPlusButtonPressed(false)
       setPressedMenuItemId(null)
+      setIsRendering(false)
     }
   }, [isActive, selectedSpace.id])
 
@@ -672,6 +686,10 @@ function PdpPlaceObjectScreen({
   }
 
   function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
+    if (isRendering) {
+      return
+    }
+
     const rect = event.currentTarget.getBoundingClientRect()
     dragRef.current = {
       pointerId: event.pointerId,
@@ -685,6 +703,10 @@ function PdpPlaceObjectScreen({
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLButtonElement>) {
+    if (isRendering) {
+      return
+    }
+
     const drag = dragRef.current
 
     if (drag?.pointerId !== event.pointerId) {
@@ -730,8 +752,26 @@ function PdpPlaceObjectScreen({
     dragRef.current = null
   }
 
+  function startRendering() {
+    setIsMenuOpen(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+    setShowSubmitHint(false)
+    setIsRendering(true)
+  }
+
+  function stopRendering() {
+    setIsRendering(false)
+  }
+
   return (
-    <div className="pdp-placement-screen">
+    <div
+      className={
+        isRendering
+          ? 'pdp-placement-screen pdp-placement-screen--rendering'
+          : 'pdp-placement-screen'
+      }
+    >
       <header className="pdp-selector-header">
         <StatusBar levelsSrc={statusLevelsSrc} className="pdp-selector-status" />
         <TopNav
@@ -753,7 +793,9 @@ function PdpPlaceObjectScreen({
       <main className="pdp-placement-main">
         <section
           className={
-            showInstruction
+            isRendering
+              ? 'pdp-placement-stage pdp-placement-stage--rendering'
+              : showInstruction
               ? 'pdp-placement-stage pdp-placement-stage--dimmed'
               : 'pdp-placement-stage'
           }
@@ -766,21 +808,24 @@ function PdpPlaceObjectScreen({
             displayHeight={460}
             className="pdp-placement-stage__photo"
           />
-          <button
-            type="button"
-            className="pdp-placement-marker pdp-placement-marker--resting"
-            style={{
-              left: `${markerPosition.x}px`,
-              top: `${markerPosition.y}px`,
-            }}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerCancel}
-          >
-            <PdpPlacementTagIcon />
-          </button>
-          {showInstruction ? (
+          <div className="pdp-placement-stage__render-blur" aria-hidden="true" />
+          {!isRendering ? (
+            <button
+              type="button"
+              className="pdp-placement-marker pdp-placement-marker--resting"
+              style={{
+                left: `${markerPosition.x}px`,
+                top: `${markerPosition.y}px`,
+              }}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerCancel}
+            >
+              <PdpPlacementTagIcon />
+            </button>
+          ) : null}
+          {showInstruction && !isRendering ? (
             <div
               className="pdp-placement-coachmark"
               aria-hidden="true"
@@ -793,9 +838,10 @@ function PdpPlaceObjectScreen({
             </div>
           ) : null}
         </section>
+        <span className="pdp-placement-render-dot" aria-hidden="true" />
       </main>
 
-      {isMenuOpen ? (
+      {isMenuOpen && !isRendering ? (
         <button
           type="button"
           className="pdp-placement-menu-backdrop"
@@ -808,7 +854,13 @@ function PdpPlaceObjectScreen({
         />
       ) : null}
 
-      <div className={isMenuOpen ? 'pdp-placement-menu-wrap pdp-placement-menu-wrap--open' : 'pdp-placement-menu-wrap'}>
+      <div
+        className={
+          isMenuOpen && !isRendering
+            ? 'pdp-placement-menu-wrap pdp-placement-menu-wrap--open'
+            : 'pdp-placement-menu-wrap'
+        }
+      >
         <PdpPlacementQuickMenu
           pressedItemId={pressedMenuItemId}
           onPressItemStart={setPressedMenuItemId}
@@ -816,7 +868,13 @@ function PdpPlaceObjectScreen({
         />
       </div>
 
-      <div className="pdp-placement-panel">
+      <div
+        className={
+          isRendering
+            ? 'pdp-placement-panel pdp-placement-panel--rendering'
+            : 'pdp-placement-panel'
+        }
+      >
         <div className="pdp-placement-panel__handle">
           <span />
         </div>
@@ -832,7 +890,11 @@ function PdpPlaceObjectScreen({
           </div>
         </div>
         <div className="pdp-placement-panel__input">
-          <p>Place this object to the designated place</p>
+          <p>
+            {isRendering
+              ? 'Describe what you want to change'
+              : 'Place this object to the designated place'}
+          </p>
         </div>
         <div className="pdp-placement-panel__controls">
           <button
@@ -844,12 +906,16 @@ function PdpPlaceObjectScreen({
             }
             aria-label="Add"
             aria-haspopup="menu"
-            aria-expanded={isMenuOpen}
+            aria-expanded={!isRendering && isMenuOpen}
+            disabled={isRendering}
             onPointerDown={() => setIsPlusButtonPressed(true)}
             onPointerUp={() => setIsPlusButtonPressed(false)}
             onPointerCancel={() => setIsPlusButtonPressed(false)}
             onPointerLeave={() => setIsPlusButtonPressed(false)}
             onClick={() => {
+              if (isRendering) {
+                return
+              }
               setIsMenuOpen((current) => !current)
               setPressedMenuItemId(null)
             }}
@@ -859,21 +925,25 @@ function PdpPlaceObjectScreen({
           <button
             type="button"
             className={
-              hasPlacedObject
+              isRendering
+                ? 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--stop'
+                : hasPlacedObject
                 ? showSubmitHint
                   ? 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--enabled pdp-placement-panel__submit-button--hint'
                   : 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--enabled'
                 : 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--disabled'
             }
-            aria-label="Generate placement"
-            disabled={!hasPlacedObject}
+            aria-label={isRendering ? 'Stop rendering' : 'Generate placement'}
             onClick={() => {
-              if (hasPlacedObject) {
-                onGenerate(markerPosition)
+              if (isRendering) {
+                stopRendering()
+                return
               }
+
+              startRendering()
             }}
           >
-            <PdpPlacementArrowUpIcon />
+            {isRendering ? <PdpGeneratingStopIcon /> : <PdpPlacementArrowUpIcon />}
           </button>
         </div>
         <HomeIndicator />
@@ -882,107 +952,11 @@ function PdpPlaceObjectScreen({
   )
 }
 
-function PdpGeneratingScreen({
-  selectedSpace,
-  placementPosition,
-  onBack,
-}: {
-  selectedSpace: PdpSelectableSpace
-  placementPosition: PlacementPosition
-  onBack: () => void
-}) {
-  const [activeMessageIndex, setActiveMessageIndex] = useState(0)
-  const stageStyle = {
-    ['--pdp-focus-x' as string]: `${placementPosition.x}px`,
-    ['--pdp-focus-y' as string]: `${placementPosition.y}px`,
-  } as CSSProperties
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setActiveMessageIndex((current) => (current + 1) % generatingStatusMessages.length)
-    }, 3600)
-
-    return () => window.clearInterval(intervalId)
-  }, [])
-
+function PdpGeneratingStopIcon() {
   return (
-    <div className="pdp-generating-screen">
-      <header className="pdp-selector-header">
-        <StatusBar levelsSrc={statusLevelsSrc} className="pdp-selector-status" />
-        <TopNav
-          className="pdp-selector-top-nav"
-          leading={
-            <button type="button" className="pdp-selector-close-button" onClick={onBack}>
-              <FigmaAsset
-                src={`${assetRoot}/arrow-left.svg`}
-                alt=""
-                displayWidth={20.5}
-                displayHeight={18.867}
-              />
-            </button>
-          }
-          center={<h1>Generating</h1>}
-        />
-      </header>
-
-      <main className="pdp-generating-main">
-        <section className="pdp-generating-stage" style={stageStyle} aria-label="Generating room preview">
-          <FigmaAsset
-            src={selectedSpace.src}
-            alt=""
-            displayWidth={343}
-            displayHeight={460}
-            className="pdp-generating-stage__photo"
-          />
-          <div className="pdp-generating-stage__veil" />
-          <div className="pdp-generating-stage__glass" aria-hidden="true" />
-          <div className="pdp-generating-stage__scan" aria-hidden="true" />
-        </section>
-        <section className="pdp-generating-status" aria-label="Generating status">
-          <div className="pdp-generating-status__thumb">
-            <FigmaAsset
-              src="/assets/figma/pdp/place-chair-object-2x.png"
-              alt=""
-              displayWidth={56}
-              displayHeight={56}
-              exportScale={2}
-            />
-          </div>
-          <div className="pdp-generating-status__copy">
-            <p className="pdp-generating-status__eyebrow">Creating an image</p>
-            <div className="pdp-generating-status__message-stack" aria-hidden="true">
-              {generatingStatusMessages.map((message, index) => (
-                <p
-                  key={message}
-                  className={
-                    index === activeMessageIndex
-                      ? 'pdp-generating-status__line pdp-generating-status__line--active'
-                      : 'pdp-generating-status__line'
-                  }
-                >
-                  <span className="pdp-generating-status__line-inner">
-                    <span className="pdp-generating-status__line-base">{message}</span>
-                    <span className="pdp-generating-status__line-sheen" aria-hidden="true">
-                      {message}
-                    </span>
-                    <span
-                      className="pdp-generating-status__line-sheen pdp-generating-status__line-sheen--secondary"
-                      aria-hidden="true"
-                    >
-                      {message}
-                    </span>
-                  </span>
-                </p>
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <div className="pdp-generating-home-indicator">
-        <HomeIndicator />
-      </div>
-    </div>
+    <span className="pdp-generating-stop-icon" aria-hidden="true">
+      <span />
+    </span>
   )
 }
 
@@ -990,9 +964,9 @@ function PdpProductInfo() {
   return (
     <section className="pdp-info" aria-label="Product information">
       <div className="pdp-title-block">
-        <p className="pdp-brand">Carl Hansen &amp; Søn</p>
+        <p className="pdp-brand">Nomia</p>
         <div className="pdp-name-row">
-          <h1>Carl Hansen &amp; Søn MG501 Cuba Chair</h1>
+          <h1>Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes</h1>
           <PdpIconButton label="Share product" className="pdp-share-button">
             <PdpShareIcon />
           </PdpIconButton>
@@ -1002,11 +976,11 @@ function PdpProductInfo() {
 
       <div className="pdp-price-block">
         <div className="pdp-list-price">
-          <span>35%</span>
-          <span>399,000</span>
+          <span>31%</span>
+          <span>62,900 KRW</span>
           <InfoIcon />
         </div>
-        <p className="pdp-sale-price">1,090,000</p>
+        <p className="pdp-sale-price">42,900</p>
       </div>
 
       <div className="pdp-price-guarantee">
@@ -1041,7 +1015,7 @@ function PdpBenefitShipping() {
         <div className="pdp-field-row__content">
           <p className="pdp-strong">350P Reward (VIP 3% applied)</p>
           <p className="pdp-line-with-icon">
-            <span>10,000 KRW per month (8 months) interest-free installment</span>
+            <span>8 months interest-free installment</span>
             <ChevronRight />
           </p>
         </div>
@@ -1156,13 +1130,12 @@ function PdpDetailScreen({
 
 export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
   const isThumbnail = mode === 'thumbnail'
-  const [activeScreen, setActiveScreen] = useState<'product' | 'selector' | 'placer' | 'generating'>('product')
+  const [activeScreen, setActiveScreen] = useState<'product' | 'selector' | 'placer'>('product')
   const [selectedSpace, setSelectedSpace] = useState<PdpSelectableSpace>({
     id: 'default-bedroom',
     src: '/assets/figma/pdp/place-chair-room-2x.png',
     thumbSrc: '/assets/figma/pdp/place-chair-thumb-2x.png',
   })
-  const [placementPosition, setPlacementPosition] = useState<PlacementPosition>({ x: 171.5, y: 235 })
 
   return (
     <div className={isThumbnail ? 'pdp-prototype pdp-prototype--thumbnail' : 'pdp-prototype'}>
@@ -1183,7 +1156,7 @@ export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
             state={
               activeScreen === 'selector'
                 ? 'center'
-                : activeScreen === 'placer' || activeScreen === 'generating'
+                : activeScreen === 'placer'
                   ? 'peek-left'
                   : 'offscreen-right'
             }
@@ -1200,26 +1173,12 @@ export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
           </PushPage>
           <PushPage
             className="pdp-flow__page"
-            state={activeScreen === 'placer' ? 'center' : activeScreen === 'generating' ? 'peek-left' : 'offscreen-right'}
+            state={activeScreen === 'placer' ? 'center' : 'offscreen-right'}
           >
             <PdpPlaceObjectScreen
               isActive={activeScreen === 'placer'}
               selectedSpace={selectedSpace}
               onBack={() => setActiveScreen('selector')}
-              onGenerate={(position) => {
-                setPlacementPosition(position)
-                setActiveScreen('generating')
-              }}
-            />
-          </PushPage>
-          <PushPage
-            className="pdp-flow__page"
-            state={activeScreen === 'generating' ? 'center' : 'offscreen-right'}
-          >
-            <PdpGeneratingScreen
-              selectedSpace={selectedSpace}
-              placementPosition={placementPosition}
-              onBack={() => setActiveScreen('placer')}
             />
           </PushPage>
         </div>

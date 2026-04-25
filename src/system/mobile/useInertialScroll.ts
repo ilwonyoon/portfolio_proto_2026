@@ -132,9 +132,9 @@ export function useInertialScroll(
         return
       }
 
-      event.preventDefault()
       const deltaY = normalizeWheelDelta(event, container)
 
+      event.preventDefault()
       velocity = clamp(
         velocity + deltaY * resolvedWheelGain,
         -resolvedMaxVelocity,

@@ -45,8 +45,29 @@ export function resolveScrollPhysicsConfig(
   preset: ScrollPhysicsPresetName = 'ios-feed',
   overrides?: Partial<ScrollPhysicsConfig>,
 ): ScrollPhysicsConfig {
+  const config = { ...scrollPhysicsPresets[preset] }
+
+  if (!overrides) {
+    return config
+  }
+
+  if (overrides.friction !== undefined) {
+    config.friction = overrides.friction
+  }
+
+  if (overrides.maxVelocity !== undefined) {
+    config.maxVelocity = overrides.maxVelocity
+  }
+
+  if (overrides.minVelocity !== undefined) {
+    config.minVelocity = overrides.minVelocity
+  }
+
+  if (overrides.wheelGain !== undefined) {
+    config.wheelGain = overrides.wheelGain
+  }
+
   return {
-    ...scrollPhysicsPresets[preset],
-    ...overrides,
+    ...config,
   }
 }
