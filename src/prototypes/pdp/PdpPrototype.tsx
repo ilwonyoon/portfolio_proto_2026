@@ -3,8 +3,11 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react'
+import gsap from 'gsap'
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
@@ -21,6 +24,8 @@ import {
   type PdpSpaceType,
 } from './pdp-room-selector-data'
 import './pdp.css'
+
+gsap.registerPlugin(MorphSVGPlugin)
 
 type PdpPrototypeProps = {
   mode?: 'full' | 'thumbnail'
@@ -73,11 +78,43 @@ const pdpGeneratedResultSrc = `${assetRoot}/generated-room-result.png`
 const pdpSelectedRoomSrc = `${assetRoot}/place-selected-room.png`
 const pdpProductName = 'Moss Rug'
 const pdpProductFullName = 'Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes'
-const pdpResultDelayMs = 2400
+const pdpResultDelayMs = 12000
 const pdpResultSwipeThreshold = 36
 const pdpResultTagRevealDelayMs = 520
 const pdpResultImageSize = 343
 const pdpProductSheetHeight = 524
+const pdpThinkingStatusTexts = [
+  'Analyzing your room',
+  'Matching product scale',
+  'Blending light and shadows',
+  'Generating your design',
+]
+const pdpLoadingDotGridSize = 32
+const pdpLoadingDots = Array.from(
+  { length: pdpLoadingDotGridSize * pdpLoadingDotGridSize },
+  (_, index) => {
+    const column = index % pdpLoadingDotGridSize
+    const row = Math.floor(index / pdpLoadingDotGridSize)
+    const rowWave = Math.sin(row * 0.86) * 122
+    const diagonalRipple = Math.sin((column + row) * 0.42) * 64
+    const localJitter = ((column * 17 + row * 31) % 29) - 14
+    const delay = Math.round(column * 52 + rowWave + diagonalRipple + localJitter)
+    const driftX = Math.sin((row + column) * 0.55) * 0.52
+    const driftY = Math.cos((row * 1.3 - column) * 0.34) * 0.52
+    const peakScale = 1.05 + ((column * 7 + row * 11) % 9) * 0.045
+
+    return {
+      id: `dot-${row}-${column}`,
+      delay,
+      driftX,
+      driftY,
+      peakScale,
+    }
+  },
+)
+const pdpAiStarPath =
+  'M77.8611 118.868C72.2323 117.121 72.2322 109.154 77.8611 107.407L91.3607 103.217C97.0244 101.46 101.459 97.025 103.217 91.3613L107.406 77.8617C109.153 72.2329 117.12 72.2329 118.867 77.8617L123.057 91.3613C124.814 97.025 129.249 101.46 134.912 103.217L148.412 107.407C154.041 109.154 154.041 117.121 148.412 118.868L134.913 123.057C129.249 124.815 124.814 129.249 123.057 134.913L118.867 148.413C117.12 154.042 109.153 154.042 107.406 148.413L103.217 134.913C101.459 129.249 97.0244 124.815 91.3607 123.057L77.8611 118.868Z'
+const pdpAiCirclePath = 'M113.5 75.5A38 38 0 1 1 113.5 151.5A38 38 0 1 1 113.5 75.5Z'
 const pdpPlacementPromptText = 'Place this object to the designated place'
 const pdpDefaultPlacementPosition: PlacementPosition = {
   x: 171.5,
@@ -784,7 +821,7 @@ function PdpPlacementQuickMenu({
     <div className="pdp-placement-menu" role="menu" aria-label="Placement actions">
       <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuBagIcon />}
-        title="Add Products"
+        title="Add products"
         description="See it in your space before you buy"
         isPressed={pressedItemId === 'add-products'}
         onPressStart={() => onPressItemStart('add-products')}
@@ -793,8 +830,8 @@ function PdpPlacementQuickMenu({
       />
       <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuPhotoIcon />}
-        title="Style Transfer"
-        description="Style your room from a photo"
+        title="Style from photo"
+        description="Restyle your room from an image"
         isPressed={pressedItemId === 'style-transfer'}
         onPressStart={() => onPressItemStart('style-transfer')}
         onPressEnd={onPressItemEnd}
@@ -932,6 +969,239 @@ function clampPlacementPosition(position: PlacementPosition) {
     x: Math.min(Math.max(position.x, 48), 295),
     y: Math.min(Math.max(position.y, 48), 295),
   }
+}
+
+function PdpThinkingStatusIcon() {
+  const shapeRef = useRef<SVGPathElement | null>(null)
+  const groupRef = useRef<SVGGElement | null>(null)
+  const haloRef = useRef<SVGCircleElement | null>(null)
+
+  useEffect(() => {
+    if (!shapeRef.current || !groupRef.current || !haloRef.current) {
+      return
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(shapeRef.current, {
+        attr: { d: pdpAiCirclePath },
+        transformOrigin: '50% 50%',
+      })
+      gsap.set(groupRef.current, {
+        transformOrigin: '50% 50%',
+        rotate: 0,
+        scaleX: 1,
+        scaleY: 1,
+        x: 0,
+        y: 0,
+      })
+      gsap.set(haloRef.current, {
+        transformOrigin: '50% 50%',
+        opacity: 0,
+        scale: 0.78,
+      })
+
+      const timeline = gsap.timeline({
+        repeat: -1,
+        repeatDelay: 0,
+      })
+
+      timeline
+        .to(groupRef.current, {
+          duration: 0.24,
+          x: -3,
+          y: -10,
+          rotate: 16,
+          scaleX: 0.95,
+          scaleY: 1.06,
+          ease: 'sine.out',
+        }, 0)
+        .to(groupRef.current, {
+          duration: 0.22,
+          x: 4,
+          y: 7,
+          rotate: 42,
+          scaleX: 1.06,
+          scaleY: 0.92,
+          ease: 'sine.in',
+        }, 0.24)
+        .to(groupRef.current, {
+          duration: 0.24,
+          x: 6,
+          y: -8,
+          rotate: 76,
+          scaleX: 0.94,
+          scaleY: 1.05,
+          ease: 'sine.out',
+        }, 0.46)
+        .to(groupRef.current, {
+          duration: 0.22,
+          x: -4,
+          y: 5,
+          rotate: 118,
+          scaleX: 1.05,
+          scaleY: 0.94,
+          ease: 'sine.inOut',
+        }, 0.7)
+        .to(groupRef.current, {
+          duration: 0.24,
+          x: -2,
+          y: -6,
+          rotate: 164,
+          scaleX: 0.97,
+          scaleY: 1.03,
+          ease: 'sine.out',
+        }, 0.92)
+        .to(groupRef.current, {
+          duration: 0.28,
+          x: 0,
+          y: 0,
+          rotate: 214,
+          scaleX: 1,
+          scaleY: 1,
+          ease: 'sine.inOut',
+        }, 1.16)
+        .to(haloRef.current, {
+          duration: 0.34,
+          opacity: 0.2,
+          scale: 0.94,
+          ease: 'power2.out',
+        }, 0.86)
+        .to(groupRef.current, {
+          duration: 0.52,
+          x: 2,
+          y: -2,
+          rotate: 238,
+          scaleX: 0.99,
+          scaleY: 1.01,
+          ease: 'sine.inOut',
+        }, 1.62)
+        .to(groupRef.current, {
+          duration: 0.54,
+          x: -1,
+          y: 2,
+          rotate: 252,
+          scaleX: 1.01,
+          scaleY: 0.99,
+          ease: 'sine.inOut',
+        }, 2.14)
+        .to(groupRef.current, {
+          duration: 0.58,
+          x: 0,
+          y: 0,
+          rotate: 266,
+          scaleX: 0.98,
+          scaleY: 0.98,
+          ease: 'sine.inOut',
+        }, 2.68)
+        .to(groupRef.current, {
+          duration: 0.16,
+          x: 0,
+          y: 0,
+          rotate: 280,
+          scaleX: 0.98,
+          scaleY: 0.98,
+          ease: 'power2.in',
+        }, 3.3)
+        .to(groupRef.current, {
+          duration: 0.94,
+          rotate: 1080,
+          scaleX: 1.09,
+          scaleY: 1.09,
+          ease: 'power3.out',
+        }, 3.46)
+        .to(shapeRef.current, {
+          duration: 0.94,
+          morphSVG: {
+            shape: pdpAiStarPath,
+            shapeIndex: 'auto',
+          },
+          ease: 'power2.inOut',
+        }, 3.46)
+        .to(haloRef.current, {
+          duration: 0.36,
+          opacity: 0.42,
+          scale: 1.22,
+          ease: 'power2.out',
+        }, '-=0.36')
+        .to(groupRef.current, {
+          duration: 0.22,
+          scaleX: 1,
+          scaleY: 1,
+          rotate: 1080,
+          ease: 'back.out(1.8)',
+        }, 4.4)
+        .to(haloRef.current, {
+          duration: 0.48,
+          opacity: 0,
+          scale: 1.58,
+          ease: 'power2.out',
+        }, '-=0.4')
+        .to(groupRef.current, {
+          duration: 0.38,
+          rotate: 1170,
+          x: 0,
+          scaleX: 0.96,
+          scaleY: 0.96,
+          ease: 'power3.inOut',
+        }, 4.64)
+        .to(shapeRef.current, {
+          duration: 0.38,
+          morphSVG: {
+            shape: pdpAiCirclePath,
+            shapeIndex: 'auto',
+          },
+          ease: 'power3.inOut',
+        }, 4.64)
+        .to(groupRef.current, {
+          duration: 0.06,
+          rotate: 1080,
+          scaleX: 1,
+          scaleY: 1,
+          ease: 'power2.out',
+        }, 5.02)
+        .set(groupRef.current, {
+          rotate: 0,
+        })
+    })
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <svg className="pdp-thinking-status__icon-svg" viewBox="47.5 47.5 132 132" aria-hidden="true">
+      <circle
+        ref={haloRef}
+        className="pdp-thinking-status__halo"
+        cx="113.5"
+        cy="113.5"
+        r="43"
+      />
+      <g ref={groupRef}>
+        <path ref={shapeRef} className="pdp-thinking-status__mark" d={pdpAiCirclePath} />
+      </g>
+    </svg>
+  )
+}
+
+function PdpThinkingStatus() {
+  return (
+    <div className="pdp-thinking-status" role="status" aria-live="polite">
+      <span className="pdp-thinking-status__icon">
+        <PdpThinkingStatusIcon />
+      </span>
+      <span className="pdp-thinking-status__viewport" aria-hidden="true">
+        <span className="pdp-thinking-status__track">
+          {pdpThinkingStatusTexts.map((text) => (
+            <span key={text} className="pdp-thinking-status__text">
+              {text}
+            </span>
+          ))}
+          <span className="pdp-thinking-status__text">{pdpThinkingStatusTexts[0]}</span>
+        </span>
+      </span>
+      <span className="pdp-thinking-status__sr">{pdpThinkingStatusTexts[0]}</span>
+    </div>
+  )
 }
 
 function PdpPlaceObjectScreen({
@@ -1533,9 +1803,27 @@ function PdpPlaceObjectScreen({
                 alt=""
                 displayWidth={343}
                 displayHeight={343}
+                exportScale={1}
                 className="pdp-placement-stage__photo"
               />
-              <div className="pdp-placement-stage__render-blur" aria-hidden="true" />
+              <div className="pdp-placement-stage__render-blur" aria-hidden="true">
+                {isRendering ? (
+                  <span className="pdp-placement-stage__render-dots">
+                    {pdpLoadingDots.map((dot) => (
+                      <span
+                        key={dot.id}
+                        className="pdp-placement-stage__render-dot"
+                        style={{
+                          '--pdp-dot-delay': `${dot.delay}ms`,
+                          '--pdp-dot-drift-x': `${dot.driftX.toFixed(2)}px`,
+                          '--pdp-dot-drift-y': `${dot.driftY.toFixed(2)}px`,
+                          '--pdp-dot-peak-scale': dot.peakScale.toFixed(2),
+                        } as CSSProperties}
+                      />
+                    ))}
+                  </span>
+                ) : null}
+              </div>
             </>
           )}
           {!isRendering && !isResult
@@ -1590,6 +1878,7 @@ function PdpPlaceObjectScreen({
             </div>
           ) : null}
         </section>
+        {isRendering ? <PdpThinkingStatus /> : null}
         {!isRendering && !isResult ? <span className="pdp-placement-render-dot" aria-hidden="true" /> : null}
         {isResult ? (
           <>
