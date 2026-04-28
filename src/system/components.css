@@ -718,6 +718,67 @@
   display: block;
 }
 
+.ds-try-in-room-button {
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 1248.75px;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transition:
+    width 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding-right 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    gap 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.ds-try-in-room-button--expanded {
+  width: 136px;
+  padding-right: 10px;
+  gap: 2px;
+}
+
+.ds-try-in-room-button:active {
+  transform: scale(0.98);
+}
+
+.ds-try-in-room-button__icon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.ds-try-in-room-button__label {
+  display: block;
+  flex: 0 0 auto;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 260ms ease 160ms,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1) 120ms;
+}
+
+.ds-try-in-room-button--expanded .ds-try-in-room-button__label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .ds-section-divider {
   width: 375px;
   min-height: 12px;

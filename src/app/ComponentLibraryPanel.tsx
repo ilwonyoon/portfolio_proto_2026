@@ -16,7 +16,7 @@ import {
   sharedPersonalizedBottomNavItems,
   sharedPersonalizedHomeSearchNav,
 } from '../system'
-import { Button, Chip } from '../system/primitives'
+import { Button, Chip, TryInRoomButton } from '../system/primitives'
 import { colors, motion, radius, shadows, spacing, typography } from '../system/tokens'
 
 const colorTokens = [
@@ -584,6 +584,10 @@ export function ComponentLibraryPanel() {
                     />
                   </IconButton>
                   <MediaCounter current={3} total={10} />
+                </div>
+                <div className="component-library-panel__primitive-row">
+                  <TryInRoomButton expanded />
+                  <TryInRoomButton expanded={false} aria-label="Try in your room" />
                 </div>
               </div>
             </div>

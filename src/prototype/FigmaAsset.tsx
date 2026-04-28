@@ -12,6 +12,7 @@ type FigmaAssetProps = {
   decoding?: 'async' | 'sync' | 'auto'
   fetchPriority?: 'high' | 'low' | 'auto'
   draggable?: boolean
+  onLoad?: () => void
 }
 
 export function FigmaAsset({
@@ -25,6 +26,7 @@ export function FigmaAsset({
   decoding = 'async',
   fetchPriority = 'auto',
   draggable = false,
+  onLoad,
 }: FigmaAssetProps) {
   const style = {
     width: displayWidth,
@@ -42,6 +44,7 @@ export function FigmaAsset({
       decoding={decoding}
       fetchPriority={fetchPriority}
       draggable={draggable}
+      onLoad={onLoad}
       data-export-scale={exportScale}
       className={className}
       style={style}

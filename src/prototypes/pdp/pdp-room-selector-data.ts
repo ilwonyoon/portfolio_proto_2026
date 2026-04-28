@@ -21,6 +21,7 @@ export type PdpSampleSpaceItem = {
   src: string
   width: number
   height: number
+  displayHeight?: number
 }
 
 export type PdpSelectableSpace = {
@@ -34,8 +35,8 @@ export const pdpSpaceTypeOptions: Array<{ id: PdpSpaceType; label: string }> = [
   { id: 'bedroom', label: 'Bedroom' },
   { id: 'living-room', label: 'Living Room' },
   { id: 'kitchen', label: 'Kitchen' },
-  { id: 'kids-room', label: 'Kids Room' },
-  { id: 'studio', label: 'Studio' },
+  { id: 'kids-room', label: 'Home Assistant' },
+  { id: 'studio', label: 'Stand By Me' },
 ]
 
 export const pdpMyPhotoThumbs: PdpPhotoThumb[] = [
@@ -64,16 +65,18 @@ export const pdpMyDesignThumbs: PdpDesignThumb[] = [
   },
   {
     id: 'my-design-02',
-    src: '/assets/figma/pdp/select-photo-design-01-2x.png',
+    src: '/assets/figma/pdp/select-photo-design-02-2x.png',
   },
   {
     id: 'my-design-03',
-    src: '/assets/figma/pdp/select-photo-design-01-2x.png',
+    src: '/assets/figma/pdp/select-photo-design-03-2x.png',
   },
 ]
 
 export const pdpSampleSpacesByType: Record<PdpSpaceType, PdpSampleSpaceItem[]> = {
   all: [
+    { id: 'all-figma-bedroom-01', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-01-2x.png', width: 1440, height: 1080, displayHeight: 145 },
+    { id: 'all-figma-bedroom-02', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-02-2x.png', width: 1440, height: 1920, displayHeight: 223.333 },
     { id: 'all-empty-living-01', src: '/assets/figma/pdp/sample-spaces/pexels-empty-living-10827192.jpg', width: 1200, height: 800 },
     { id: 'all-korean-living-01', src: '/assets/figma/upload/hero-room-2x.png', width: 1400, height: 787 },
     { id: 'all-small-apartment-01', src: '/assets/figma/pdp/sample-spaces/pexels-small-apartment-18071863.jpg', width: 1200, height: 800 },
@@ -92,14 +95,14 @@ export const pdpSampleSpacesByType: Record<PdpSpaceType, PdpSampleSpaceItem[]> =
     { id: 'all-kids-02', src: '/assets/figma/personalized-feed/discover/discover-kids-new-04-2x.png', width: 750, height: 748 },
   ],
   bedroom: [
-    { id: 'bedroom-01', src: '/assets/figma/pdp/sample-spaces/pexels-bedroom-bright-19878505.jpg', width: 1200, height: 800 },
-    { id: 'bedroom-02', src: '/assets/figma/old-home-feed/article/intro-photo.jpg', width: 720, height: 759 },
-    { id: 'bedroom-03', src: '/assets/figma/personalized-feed/discover/discover-card-01-2x.png', width: 1440, height: 1920 },
-    { id: 'bedroom-04', src: '/assets/figma/old-home-feed/article-next/studio-one-before-2.jpg', width: 720, height: 540 },
-    { id: 'bedroom-05', src: '/assets/figma/personalized-feed/discover/discover-new-01-2x.png', width: 335, height: 447 },
-    { id: 'bedroom-06', src: '/assets/figma/old-home-feed/article/module-2-main.jpg', width: 720, height: 960 },
-    { id: 'bedroom-07', src: '/assets/figma/pdp/sample-spaces/pexels-empty-apartment-10267183.jpg', width: 1200, height: 1600 },
-    { id: 'bedroom-08', src: '/assets/figma/personalized-feed/discover/discover-card-02-2x.png', width: 1440, height: 1920 },
+    { id: 'bedroom-01', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-01-2x.png', width: 1440, height: 1080, displayHeight: 145 },
+    { id: 'bedroom-02', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-02-2x.png', width: 1440, height: 1920, displayHeight: 223.333 },
+    { id: 'bedroom-03', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-01-2x.png', width: 1440, height: 1080, displayHeight: 223.333 },
+    { id: 'bedroom-04', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-02-2x.png', width: 1440, height: 1920, displayHeight: 168 },
+    { id: 'bedroom-05', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-01-2x.png', width: 1440, height: 1080, displayHeight: 105 },
+    { id: 'bedroom-06', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-02-2x.png', width: 1440, height: 1920, displayHeight: 223.333 },
+    { id: 'bedroom-07', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-01-2x.png', width: 1440, height: 1080, displayHeight: 223.333 },
+    { id: 'bedroom-08', src: '/assets/figma/pdp/sample-spaces/figma-bedroom-room-02-2x.png', width: 1440, height: 1920, displayHeight: 223.333 },
     { id: 'bedroom-09', src: '/assets/figma/old-home-feed/article-next/studio-one-finished-1.jpg', width: 720, height: 960 },
     { id: 'bedroom-10', src: '/assets/figma/personalized-feed/discover/discover-new-02-2x.png', width: 320, height: 426 },
     { id: 'bedroom-11', src: '/assets/figma/old-home-feed/article-next/studio-one-1.jpg', width: 720, height: 960 },

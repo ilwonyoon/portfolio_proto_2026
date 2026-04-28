@@ -9,9 +9,10 @@ import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
-import { PushPage } from '../../system/overlays'
+import { BottomSheet, PushPage, useSheetDragGesture } from '../../system/overlays'
+import { FeedProductStrip, type FeedProduct } from '../../system/feed'
+import { Chip, TryInRoomButton } from '../../system/primitives'
 import {
-  pdpMyDesignThumbs,
   pdpMyPhotoThumbs,
   pdpSampleSpacesByType,
   pdpSpaceTypeOptions,
@@ -30,13 +31,195 @@ type PlacementPosition = {
   y: number
 }
 
+type PdpPlacementPhase = 'placing' | 'rendering' | 'result'
+
+type PdpGeneratedSlide = {
+  id: string
+  src: string
+  alt: string
+  hasProductTag: boolean
+}
+
 type PdpPlacementMenuItemId = 'add-products' | 'style-transfer' | 'analyze-room'
+type PdpProductArchiveTab = 'all' | 'saved' | 'recently-viewed'
+
+type PdpProductArchiveItem = {
+  id: string
+  tabIds: PdpProductArchiveTab[]
+  brand: string
+  name: string
+  category?: string
+  price: string
+  discountRate?: string
+  meta?: string
+  imageSrc: string
+  fit?: 'cover' | 'contain'
+}
+
+type PdpProductArchiveSeedItem = Omit<PdpProductArchiveItem, 'tabIds' | 'meta'>
+
+type PdpPlacementItem = {
+  id: string
+  product: PdpProductArchiveItem
+  category: string
+  position: PlacementPosition | null
+}
 
 const assetRoot = '/assets/figma/pdp'
 const statusLevelsSrc = '/assets/figma/portfolio-2026/onboarding/status-levels.svg'
 const pdpSampleSpaceCardWidth = 167.5
+const pdpProductImageSrc = `${assetRoot}/moss-rug-hero.png`
+const pdpGeneratedResultSrc = `${assetRoot}/generated-room-result.png`
+const pdpSelectedRoomSrc = `${assetRoot}/place-selected-room.png`
+const pdpProductName = 'Moss Rug'
+const pdpProductFullName = 'Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes'
+const pdpResultDelayMs = 2400
+const pdpResultSwipeThreshold = 36
+const pdpResultTagRevealDelayMs = 520
+const pdpResultImageSize = 343
+const pdpProductSheetHeight = 524
+const pdpDefaultPlacementPosition: PlacementPosition = {
+  x: 171.5,
+  y: 171.5,
+}
+const pdpResultTagPositions: PlacementPosition[] = [
+  { x: 171.5, y: 266.5 },
+  { x: 248.5, y: 161.5 },
+]
+
+const pdpProductArchiveTabs: { id: PdpProductArchiveTab; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'saved', label: 'Saved' },
+  { id: 'recently-viewed', label: 'Recently Viewed' },
+]
+
+const pdpProductArchiveSeedItems: PdpProductArchiveSeedItem[] = [
+  { id: 'retro-sheer-curtain', brand: 'Dormor', name: 'Retro Pattern Sheer Doorway Curtain, 14 Colors', price: '37,800', discountRate: '28%', imageSrc: `${assetRoot}/product-archive/retro-sheer-curtain.png` },
+  { id: 'module-fabric-sofa', brand: 'Heimish Home', name: '2.5-Seater Modular Fabric Sofa with Ottoman', price: '659,000', discountRate: '15%', imageSrc: `${assetRoot}/product-archive/wood-storage-chest.png` },
+  { id: 'spiano-floor-lamp', brand: 'Spiano', name: 'Adjustable Fabric Shade Floor Lamp', price: '89,900', discountRate: '32%', imageSrc: '/assets/figma/personalized-feed/ad/spiano-product.png' },
+  { id: 'moss-rug', brand: 'Nomia', name: 'Moss Rug, Dust-Free Living Room Carpet', price: '42,900', discountRate: '28%', imageSrc: `${assetRoot}/moss-rug-hero.png` },
+  { id: 'modular-drawer', brand: 'Casaon', name: 'White Modular 3-Drawer Storage Unit', price: '109,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-1.png' },
+  { id: 'boucle-lounge-chair', brand: 'By Heyday', name: 'Ivory Boucle Lounge Chair', price: '239,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-2.png' },
+  { id: 'rattan-laundry-basket', brand: 'Home & House', name: 'Large Rattan Laundry Basket', price: '28,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-3.png' },
+  { id: 'mini-air-purifier', brand: 'Balmuda', name: 'Compact Bedroom Air Purifier', price: '219,000', discountRate: '10%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-4.png' },
+  { id: 'soft-area-rug', brand: 'Daylive', name: 'Soft Low-Pile Area Rug 200x300', price: '86,900', discountRate: '35%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-5.png' },
+  { id: 'cable-organizer-box', brand: 'Sysmax', name: 'Cable Organizer Box for Power Strips', price: '16,900', discountRate: '21%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-6.png' },
+  { id: 'round-side-table', brand: 'Monday House', name: 'White Round Side Table 480', price: '39,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-2.png' },
+  { id: 'warm-table-lamp', brand: 'Olumi', name: 'Warm Fabric Shade Table Lamp', price: '46,900', discountRate: '31%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-3.png' },
+  { id: 'low-storage-cabinet', brand: 'Sornia', name: 'Low Oak Living Room Storage Cabinet', price: '178,000', discountRate: '16%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-4.png' },
+  { id: 'ceramic-vase-set', brand: 'Maison de Room', name: 'Cream Ceramic Object Vase Set', price: '24,900', discountRate: '25%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-5.png' },
+  { id: 'kitchen-runner-mat', brand: 'Hanssem', name: 'Terrazzo PVC Kitchen Runner Mat', price: '32,900', discountRate: '23%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-6.png' },
+  { id: 'walnut-dining-chair', brand: 'Chair Factory', name: 'Walnut Round Dining Chair', price: '76,000', discountRate: '17%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-1.png' },
+  { id: 'steel-wire-shelf', brand: 'Roomnhome', name: 'White Steel Wire Shelf, 3-Tier', price: '49,900', discountRate: '30%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-2.png' },
+  { id: 'cotton-bedspread', brand: 'Bazar', name: 'Washed Cotton Bedspread, Queen', price: '58,900', discountRate: '19%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-3.png' },
+  { id: 'slim-trash-bin', brand: 'Litem', name: 'Slim Recycling Bin Set, 2 Pieces', price: '29,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-4.png' },
+  { id: 'cream-bookcase', brand: 'IKEA', name: 'Cream Open Bookcase 800', price: '119,000', discountRate: '8%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-1.png' },
+  { id: 'entry-bench', brand: 'MarketB', name: 'Natural Entryway Storage Bench', price: '67,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-2.png' },
+  { id: 'glass-coffee-table', brand: 'Casamia', name: 'Oval Tempered Glass Coffee Table', price: '149,000', discountRate: '13%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-3.png' },
+  { id: 'fabric-ottoman', brand: 'Jackson Chameleon', name: 'Mini Fabric Ottoman Stool', price: '98,000', discountRate: '10%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-4.png' },
+  { id: 'beige-floor-cushion', brand: 'Modern House', name: 'Oversized Beige Floor Cushion', price: '35,900', discountRate: '27%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-1.png' },
+  { id: 'wood-wall-clock', brand: 'Muas', name: 'Silent Wood Wall Clock', price: '25,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-2.png' },
+  { id: 'ivory-sheer-curtain', brand: 'ShesHome', name: 'Ivory Soft Sheer Curtain', price: '41,900', discountRate: '34%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-3.png' },
+  { id: 'oak-nightstand', brand: 'Dodot', name: 'Oak Two-Drawer Nightstand', price: '82,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-4.png' },
+  { id: 'dish-drying-rack', brand: 'Silicook', name: 'Stainless Steel Dish Drying Rack', price: '47,900', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-1.png' },
+  { id: 'cream-dinnerware', brand: 'Corelle', name: 'Cream White Dinnerware Set for Two', price: '74,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-2.png' },
+  { id: 'wood-cutting-board', brand: 'Neoflam', name: 'Campo Wood Cutting Board, Medium', price: '31,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-3.png' },
+  { id: 'pantry-basket', brand: 'Changsin Living', name: 'Pantry Organizer Basket Set, 4 Pieces', price: '19,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-4.png' },
+  { id: 'steel-wall-shelf', brand: 'RareRow', name: 'Steel Wall Shelf 600', price: '59,000', discountRate: '11%', imageSrc: '/assets/figma/personalized-feed/brand-promo/product-1.png' },
+  { id: 'round-display-shelf', brand: 'RareRow', name: 'Round Display Shelf in Cream', price: '89,000', discountRate: '13%', imageSrc: '/assets/figma/personalized-feed/brand-promo/product-2.png' },
+  { id: 'linen-pendant-light', brand: 'Tounou', name: 'Linen Pendant Light for Dining Rooms', price: '129,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-1.png' },
+  { id: 'solid-dining-table', brand: 'Tounou', name: 'Solid Wood Dining Table 1200', price: '329,000', discountRate: '14%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-2.png' },
+  { id: 'ceramic-table-lamp', brand: 'Tounou', name: 'Ceramic Bedside Table Lamp', price: '64,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-3.png' },
+  { id: 'low-sideboard', brand: 'Tounou', name: 'Low Sideboard Cabinet in Walnut', price: '268,000', discountRate: '9%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-4.png' },
+  { id: 'compact-plant-pot', brand: 'Soop87', name: 'Compact Ceramic Plant Pot', price: '18,900', discountRate: '16%', imageSrc: '/assets/figma/personalized-feed/btf-soop87/product.png' },
+  { id: 'modern-plate-set', brand: 'Ohouse Select', name: 'Modern Plate Set for Two', price: '45,900', discountRate: '25%', imageSrc: '/assets/figma/personalized-feed/btf-plate/product.png' },
+  { id: 'side-chair', brand: 'Ohouse Select', name: 'Soft Upholstered Side Chair', price: '96,000', discountRate: '19%', imageSrc: '/assets/figma/personalized-feed/ad/product.png' },
+  { id: 'beige-armchair', brand: 'Maison Archive', name: 'Beige Accent Armchair', price: '188,000', discountRate: '17%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-02-2x.png' },
+  { id: 'oak-stool', brand: 'Maison Archive', name: 'Oak Utility Stool', price: '52,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-03-2x.png' },
+  { id: 'framed-art-print', brand: 'Paper Garden', name: 'Framed Art Print 50x50', price: '42,000', discountRate: '30%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-04-2x.png', fit: 'contain' },
+  { id: 'white-storage-bin', brand: 'Like It', name: 'White Stackable Storage Bin', price: '14,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-01-2x.png' },
+  { id: 'modular-shelf', brand: 'Montage Home', name: 'Modular Shelf Unit in Ivory', price: '139,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-02-2x.png' },
+  { id: 'table-mirror', brand: 'Studio Noon', name: 'Rounded Table Mirror', price: '33,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-03-2x.png' },
+  { id: 'cushion-cover', brand: 'Zara Home', name: 'Neutral Cushion Cover Set', price: '29,900', discountRate: '26%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-04-2x.png' },
+  { id: 'ceramic-diffuser', brand: 'Kundal', name: 'Ceramic Diffuser, White Musk', price: '15,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-03-product-01-2x.png' },
+  { id: 'bedside-lamp', brand: 'Lumir', name: 'Bedside Reading Lamp in Warm White', price: '119,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-03-product-02-2x.png' },
+  { id: 'slim-desk-chair', brand: 'Desker', name: 'Slim Mesh Desk Chair for Work Rooms', price: '189,000', discountRate: '11%', imageSrc: '/assets/figma/personalized-feed/discover-detail/ad-product-04-2x.png' },
+]
+
+const pdpProductArchiveItems: PdpProductArchiveItem[] = pdpProductArchiveSeedItems.map(
+  (product, index) => ({
+    ...product,
+    category: product.category ?? inferProductCategory(product),
+    tabIds: index < 30 ? ['saved'] : ['recently-viewed'],
+    meta: index < 30 ? 'Saved' : 'Recently viewed',
+  }),
+)
+
+const pdpPrimaryProduct: PdpProductArchiveItem = {
+  id: 'pdp-moss-rug',
+  tabIds: ['saved'],
+  brand: 'Nomia',
+  name: pdpProductFullName,
+  category: 'Rug',
+  price: '42,900',
+  discountRate: '28%',
+  imageSrc: pdpProductImageSrc,
+}
+
+function inferProductCategory(product: Pick<PdpProductArchiveItem, 'id' | 'name'>) {
+  const text = `${product.id} ${product.name}`.toLowerCase()
+
+  if (text.includes('rug') || text.includes('carpet')) return 'Rug'
+  if (text.includes('coffee table')) return 'Coffee Table'
+  if (text.includes('side table')) return 'Side Table'
+  if (text.includes('dining table')) return 'Dining Table'
+  if (text.includes('table')) return 'Table'
+  if (text.includes('chair') || text.includes('armchair')) return 'Chair'
+  if (text.includes('sofa')) return 'Sofa'
+  if (text.includes('lamp') || text.includes('light')) return 'Lamp'
+  if (text.includes('curtain')) return 'Curtain'
+  if (text.includes('shelf') || text.includes('bookcase')) return 'Shelf'
+  if (
+    text.includes('storage') ||
+    text.includes('cabinet') ||
+    text.includes('drawer') ||
+    text.includes('sideboard')
+  ) {
+    return 'Storage'
+  }
+  if (text.includes('basket')) return 'Basket'
+  if (text.includes('mirror')) return 'Mirror'
+  if (text.includes('vase')) return 'Vase'
+  if (text.includes('ottoman') || text.includes('stool')) return 'Stool'
+  if (text.includes('cushion')) return 'Cushion'
+  if (text.includes('clock')) return 'Clock'
+  if (text.includes('mat')) return 'Mat'
+  if (text.includes('bench')) return 'Bench'
+  if (text.includes('dinnerware') || text.includes('plate')) return 'Dinnerware'
+  if (text.includes('plant pot')) return 'Plant Pot'
+  if (text.includes('diffuser')) return 'Diffuser'
+  if (text.includes('art print')) return 'Art'
+
+  return 'Object'
+}
+
+function createPdpPlacementItem(
+  product: PdpProductArchiveItem,
+  instanceIndex: number,
+): PdpPlacementItem {
+  return {
+    id: `${product.id}-${instanceIndex}`,
+    product,
+    category: product.category ?? inferProductCategory(product),
+    position: null,
+  }
+}
 
 function getPdpSampleSpaceDisplayHeight(item: PdpSampleSpaceItem) {
+  if (typeof item.displayHeight === 'number') {
+    return item.displayHeight
+  }
+
   return (pdpSampleSpaceCardWidth * item.height) / item.width
 }
 
@@ -47,7 +230,7 @@ function createPdpWaterfallColumns(items: PdpSampleSpaceItem[]) {
   items.forEach((item) => {
     const columnIndex = columnHeights[0] <= columnHeights[1] ? 0 : 1
     columns[columnIndex].push(item)
-    columnHeights[columnIndex] += getPdpSampleSpaceDisplayHeight(item) + 8
+    columnHeights[columnIndex] += getPdpSampleSpaceDisplayHeight(item) + 12
   })
 
   return columns
@@ -199,33 +382,18 @@ function ChevronRight() {
   )
 }
 
-function SeeInYourPlaceIcon() {
-  return (
-    <svg
-      className="pdp-see-in-your-place-icon"
-      viewBox="0 0 14 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M4.77222 2.1875C4.96247 2.1875 5.12655 2.31447 5.17311 2.49822L5.45676 3.6208C5.71962 4.66137 6.53283 5.47457 7.57339 5.73744L8.69598 6.02108C8.87972 6.06765 9.00669 6.23172 9.00669 6.42197C9.00669 6.61223 8.87972 6.7763 8.69598 6.82286L7.57339 7.10651C6.53283 7.36937 5.71962 8.18258 5.45676 9.22314L5.17311 10.3457C5.12655 10.5295 4.96247 10.6564 4.77222 10.6564C4.58197 10.6564 4.41789 10.5295 4.37133 10.3457L4.08768 9.22314C3.82482 8.18258 3.01161 7.36937 1.97105 7.10651L0.84847 6.82286C0.664724 6.7763 0.53776 6.61223 0.53776 6.42197C0.53776 6.23172 0.664724 6.06765 0.84847 6.02108L1.97105 5.73744C3.01161 5.47457 3.82482 4.66137 4.08768 3.6208L4.37133 2.49822C4.41789 2.31447 4.58197 2.1875 4.77222 2.1875Z"
-        fill="currentColor"
-      />
-      <path
-        d="M10.4708 0.875C10.6135 0.875 10.7366 0.970431 10.7716 1.1085L10.9482 1.80802C11.127 2.51593 11.6801 3.06895 12.388 3.24776L13.0875 3.42435C13.2256 3.45923 13.321 3.58239 13.321 3.72507C13.321 3.86775 13.2256 3.99091 13.0875 4.02579L12.388 4.20238C11.6801 4.38119 11.127 4.93421 10.9482 5.64212L10.7716 6.34165C10.7366 6.47971 10.6135 6.57514 10.4708 6.57514C10.3281 6.57514 10.205 6.47971 10.17 6.34165L9.99342 5.64212C9.81461 4.93421 9.26159 4.38119 8.55368 4.20238L7.85415 4.02579C7.71608 3.99091 7.62065 3.86775 7.62065 3.72507C7.62065 3.58239 7.71608 3.45923 7.85415 3.42435L8.55368 3.24776C9.26159 3.06895 9.81461 2.51593 9.99342 1.80802L10.17 1.1085C10.205 0.970431 10.3281 0.875 10.4708 0.875Z"
-        fill="currentColor"
-      />
-    </svg>
-  )
-}
-
-function PdpHero({ onOpenSelector }: { onOpenSelector: () => void }) {
+function PdpHero({
+  isThumbnail,
+  onOpenSelector,
+}: {
+  isThumbnail: boolean
+  onOpenSelector: () => void
+}) {
   return (
     <section className="pdp-hero" aria-label="Product images">
       <FigmaAsset
-        src={`${assetRoot}/moss-rug-hero.png`}
-        alt="Nomia Moss Rug"
+        src={pdpProductImageSrc}
+        alt={`Nomia ${pdpProductName}`}
         displayWidth={375}
         displayHeight={375}
         exportScale={1}
@@ -233,21 +401,22 @@ function PdpHero({ onOpenSelector }: { onOpenSelector: () => void }) {
         fetchPriority="high"
       />
       <PdpMediaCounter />
-      <button type="button" className="pdp-hero-secondary-cta" onClick={onOpenSelector}>
-        <SeeInYourPlaceIcon />
-        <span>See it in your place</span>
-      </button>
+      <TryInRoomButton
+        className="pdp-hero-secondary-cta"
+        collapseAfterMs={isThumbnail ? null : 1400}
+        onClick={onOpenSelector}
+      />
     </section>
   )
 }
 
-function PdpSelectorCloseIcon() {
+function PdpSelectorBackIcon() {
   return (
     <FigmaAsset
-      src="/assets/figma/portfolio-2026/recommendations/close.svg"
+      src={`${assetRoot}/arrow-left.svg`}
       alt=""
-      displayWidth={16.8}
-      displayHeight={16.8}
+      displayWidth={20.5}
+      displayHeight={18.867}
     />
   )
 }
@@ -284,7 +453,7 @@ function PdpSelectorPhotoSection({
   onSelect: (space: PdpSelectableSpace) => void
 }) {
   return (
-    <section className="pdp-selector-section">
+    <section className="pdp-selector-section pdp-selector-section--media">
       <PdpSelectorSectionHeader title="My Photos" />
       <div className="pdp-selector-strip pdp-selector-strip--photos" data-native-scroll-axis="x">
         <button type="button" className="pdp-selector-camera-tile" aria-label="Add photo">
@@ -304,36 +473,6 @@ function PdpSelectorPhotoSection({
               alt=""
               displayWidth={75}
               displayHeight={75}
-              exportScale={2}
-            />
-          </button>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function PdpSelectorDesignSection({
-  onSelect,
-}: {
-  onSelect: (space: PdpSelectableSpace) => void
-}) {
-  return (
-    <section className="pdp-selector-section">
-      <PdpSelectorSectionHeader title="My Designs" />
-      <div className="pdp-selector-strip pdp-selector-strip--designs" data-native-scroll-axis="x">
-        {pdpMyDesignThumbs.map((design) => (
-          <button
-            key={design.id}
-            type="button"
-            className="pdp-selector-design-thumb"
-            onClick={() => onSelect({ id: design.id, src: design.src, thumbSrc: design.src })}
-          >
-            <FigmaAsset
-              src={design.src}
-              alt=""
-              displayWidth={140}
-              displayHeight={140}
               exportScale={2}
             />
           </button>
@@ -404,6 +543,7 @@ function PdpSelectorSampleSpacesSection({
                     alt=""
                     displayWidth={pdpSampleSpaceCardWidth}
                     displayHeight={displayHeight}
+                    exportScale={2}
                   />
                 </button>
               )
@@ -445,11 +585,13 @@ function PdpSelectPhotoScreen({
         <TopNav
           className="pdp-selector-top-nav"
           leading={
-            <button type="button" className="pdp-selector-close-button" onClick={onClose}>
-              <PdpSelectorCloseIcon />
-            </button>
+            <div className="pdp-selector-nav-actions" aria-label="Navigation actions">
+              <button type="button" className="pdp-selector-nav-button" onClick={onClose} aria-label="Back">
+                <PdpSelectorBackIcon />
+              </button>
+            </div>
           }
-          center={<h1>Select Photo</h1>}
+          center={<h1>New Design</h1>}
         />
       </header>
 
@@ -459,7 +601,6 @@ function PdpSelectPhotoScreen({
         data-inertial-scroll={isActive ? 'true' : undefined}
       >
         <PdpSelectorPhotoSection onSelect={onSelectSpace} />
-        <PdpSelectorDesignSection onSelect={onSelectSpace} />
         <PdpSelectorSampleSpacesSection onSelect={onSelectSpace} />
       </main>
 
@@ -470,10 +611,13 @@ function PdpSelectPhotoScreen({
   )
 }
 
-function PdpPlacementTagIcon() {
-  return (
-    <span className="pdp-placement-tag-dot" aria-hidden="true" />
-  )
+function createOriginalResultSlide(selectedSpace: PdpSelectableSpace): PdpGeneratedSlide {
+  return {
+    id: `original-${selectedSpace.id}`,
+    src: selectedSpace.src,
+    alt: 'Original room photo',
+    hasProductTag: false,
+  }
 }
 
 function PdpPlacementArrowUpIcon() {
@@ -528,6 +672,7 @@ function PdpPlacementQuickMenuItem({
   isPressed,
   onPressStart,
   onPressEnd,
+  onSelect,
 }: {
   icon: ReactNode
   title: string
@@ -535,6 +680,7 @@ function PdpPlacementQuickMenuItem({
   isPressed: boolean
   onPressStart: () => void
   onPressEnd: () => void
+  onSelect: () => void
 }) {
   return (
     <button
@@ -548,6 +694,7 @@ function PdpPlacementQuickMenuItem({
       onPointerUp={onPressEnd}
       onPointerCancel={onPressEnd}
       onPointerLeave={onPressEnd}
+      onClick={onSelect}
     >
       <span className="pdp-placement-menu__icon" aria-hidden="true">
         {icon}
@@ -564,10 +711,12 @@ function PdpPlacementQuickMenu({
   pressedItemId,
   onPressItemStart,
   onPressItemEnd,
+  onOpenProductSheet,
 }: {
   pressedItemId: PdpPlacementMenuItemId | null
   onPressItemStart: (itemId: PdpPlacementMenuItemId) => void
   onPressItemEnd: () => void
+  onOpenProductSheet: () => void
 }) {
   return (
     <div className="pdp-placement-menu" role="menu" aria-label="Placement actions">
@@ -578,6 +727,7 @@ function PdpPlacementQuickMenu({
         isPressed={pressedItemId === 'add-products'}
         onPressStart={() => onPressItemStart('add-products')}
         onPressEnd={onPressItemEnd}
+        onSelect={onOpenProductSheet}
       />
       <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuPhotoIcon />}
@@ -586,6 +736,7 @@ function PdpPlacementQuickMenu({
         isPressed={pressedItemId === 'style-transfer'}
         onPressStart={() => onPressItemStart('style-transfer')}
         onPressEnd={onPressItemEnd}
+        onSelect={onPressItemEnd}
       />
       <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuAnalyzeIcon />}
@@ -594,15 +745,142 @@ function PdpPlacementQuickMenu({
         isPressed={pressedItemId === 'analyze-room'}
         onPressStart={() => onPressItemStart('analyze-room')}
         onPressEnd={onPressItemEnd}
+        onSelect={onPressItemEnd}
       />
     </div>
+  )
+}
+
+function PdpProductArchiveSheet({
+  isOpen,
+  onClose,
+  onAddProduct,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  onAddProduct: (product: PdpProductArchiveItem) => void
+}) {
+  const [activeTabId, setActiveTabId] = useState<PdpProductArchiveTab>('all')
+  const productSheetBodyRef = useRef<HTMLDivElement | null>(null)
+  const sheetDragGesture = useSheetDragGesture({
+    open: isOpen,
+    closedOffset: pdpProductSheetHeight,
+    closeTriggerThreshold: 140,
+    closeReleaseThreshold: 84,
+    onOpen: () => undefined,
+    onClose,
+  })
+  useInertialScroll(productSheetBodyRef, {
+    enabled: isOpen,
+    preset: 'ios-feed',
+  })
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTabId('all')
+    }
+  }, [isOpen])
+
+  const products =
+    activeTabId === 'all'
+      ? pdpProductArchiveItems
+      : pdpProductArchiveItems.filter((product) => product.tabIds.includes(activeTabId))
+
+  return (
+    <BottomSheet
+      open={isOpen}
+      ariaLabel="Product archive"
+      onClose={onClose}
+      className="pdp-product-sheet"
+      dimClassName="pdp-product-sheet__dim"
+      panelClassName="pdp-product-sheet__panel"
+      panelStyle={{ height: `${pdpProductSheetHeight}px` }}
+      dragOffset={sheetDragGesture.dragOffset}
+      isDragging={sheetDragGesture.isDragging}
+    >
+      <div className="pdp-product-sheet__handle-wrap" {...sheetDragGesture.bind}>
+        <div className="pdp-product-sheet__handle" />
+      </div>
+
+      <div
+        ref={productSheetBodyRef}
+        className="pdp-product-sheet__body"
+        data-inertial-scroll={isOpen ? 'true' : undefined}
+      >
+        <div className="pdp-product-sheet__search-wrap">
+          <div className="pdp-product-sheet__search">
+            <FigmaAsset
+              src="/assets/figma/personalized-feed/search.svg"
+              alt=""
+              displayWidth={18}
+              displayHeight={18}
+            />
+            <span>Search for a product name or brand</span>
+          </div>
+        </div>
+
+        <div className="pdp-product-sheet__action-bar">
+          <div className="pdp-product-sheet__chips" role="tablist" aria-label="Product archive filters">
+            {pdpProductArchiveTabs.map((tab) => (
+              <Chip
+                key={tab.id}
+                selected={activeTabId === tab.id}
+                className="pdp-product-sheet__chip"
+                onClick={() => setActiveTabId(tab.id)}
+              >
+                {tab.label}
+              </Chip>
+            ))}
+          </div>
+        </div>
+
+        <div className="pdp-product-sheet__grid">
+          {products.map((product) => (
+            <button
+              key={product.id}
+              type="button"
+              className="pdp-product-tile"
+              aria-label={`Add ${product.brand} ${product.name} to room`}
+              onClick={(event) => {
+                event.currentTarget.blur()
+                onAddProduct(product)
+              }}
+            >
+              <span className="pdp-product-tile__thumb">
+                <FigmaAsset
+                  src={product.imageSrc}
+                  alt=""
+                  displayWidth={109}
+                  displayHeight={109}
+                  exportScale={1}
+                  className={
+                    product.fit === 'contain'
+                      ? 'pdp-product-tile__image pdp-product-tile__image--contain'
+                      : 'pdp-product-tile__image'
+                  }
+                />
+                <span className="pdp-product-tile__plus" aria-hidden="true" />
+              </span>
+              <span className="pdp-product-tile__title">{product.name}</span>
+              <span className="pdp-product-tile__price-row">
+                {product.discountRate ? (
+                  <span className="pdp-product-tile__discount">{product.discountRate}</span>
+                ) : null}
+                <span className="pdp-product-tile__price">{product.price}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <HomeIndicator />
+    </BottomSheet>
   )
 }
 
 function clampPlacementPosition(position: PlacementPosition) {
   return {
     x: Math.min(Math.max(position.x, 48), 295),
-    y: Math.min(Math.max(position.y, 72), 388),
+    y: Math.min(Math.max(position.y, 48), 295),
   }
 }
 
@@ -615,17 +893,26 @@ function PdpPlaceObjectScreen({
   selectedSpace: PdpSelectableSpace
   onBack: () => void
 }) {
-  const [markerPosition, setMarkerPosition] = useState<PlacementPosition>({
-    x: 171.5,
-    y: 235,
-  })
-  const [hasPlacedObject, setHasPlacedObject] = useState(false)
-  const [showInstruction, setShowInstruction] = useState(true)
+  const [placementItems, setPlacementItems] = useState<PdpPlacementItem[]>(() => [
+    createPdpPlacementItem(pdpPrimaryProduct, 0),
+  ])
+  const [activePlacementItemId, setActivePlacementItemId] = useState('pdp-moss-rug-0')
   const [showSubmitHint, setShowSubmitHint] = useState(false)
+  const [showAddProductTooltip, setShowAddProductTooltip] = useState(false)
+  const [hasSeenPlacementInstruction, setHasSeenPlacementInstruction] = useState(false)
+  const [hasSeenAddProductTooltip, setHasSeenAddProductTooltip] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProductSheetOpen, setIsProductSheetOpen] = useState(false)
   const [isPlusButtonPressed, setIsPlusButtonPressed] = useState(false)
   const [pressedMenuItemId, setPressedMenuItemId] = useState<PdpPlacementMenuItemId | null>(null)
-  const [isRendering, setIsRendering] = useState(false)
+  const [phase, setPhase] = useState<PdpPlacementPhase>('placing')
+  const [renderReturnPhase, setRenderReturnPhase] = useState<PdpPlacementPhase>('placing')
+  const [resultSlides, setResultSlides] = useState<PdpGeneratedSlide[]>(() => [
+    createOriginalResultSlide(selectedSpace),
+  ])
+  const [activeResultSlideIndex, setActiveResultSlideIndex] = useState(0)
+  const [loadedResultSlideIds, setLoadedResultSlideIds] = useState<string[]>([])
+  const [visibleResultTagSlideId, setVisibleResultTagSlideId] = useState<string | null>(null)
   const dragRef = useRef<{
     pointerId: number
     offsetX: number
@@ -634,22 +921,95 @@ function PdpPlaceObjectScreen({
     startClientY: number
     moved: boolean
   } | null>(null)
+  const suppressMarkerClickRef = useRef(false)
+  const placementInstanceCounterRef = useRef(1)
+  const resultSwipeRef = useRef<{
+    pointerId: number
+    startClientX: number
+  } | null>(null)
+  const revealedResultSlideIdsRef = useRef<Set<string>>(new Set())
+  const resultTagRevealTimeoutRef = useRef<number | null>(null)
+  const isRendering = phase === 'rendering'
+  const isResult = phase === 'result'
+  const activeResultSlide = resultSlides[activeResultSlideIndex] ?? resultSlides[0]
+  const activePlacementItem =
+    placementItems.find((item) => item.id === activePlacementItemId) ?? placementItems[0] ?? null
+  const markerPosition = activePlacementItem?.position ?? pdpDefaultPlacementPosition
+  const placedItems = placementItems.filter((item) => item.position !== null)
+  const resultProducts: FeedProduct[] = placedItems.map((item) => ({
+    id: item.id,
+    thumbnailSrc: item.product.imageSrc,
+    thumbnailAlt: item.product.name,
+    name: item.product.name,
+    priceLabel: item.product.price,
+    discountLabel: item.product.discountRate,
+    thumbnailRadius: 12,
+  }))
+  const hasPendingPlacement = placementItems.some((item) => item.position === null)
+  const canStartRendering = placementItems.length > 0 && !hasPendingPlacement
+  const isProductSheetLayoutOpen = isProductSheetOpen && !isRendering && !isResult
+  const shouldShowInstruction = Boolean(
+    activePlacementItem &&
+      activePlacementItem.position === null &&
+      placementItems.length === 1 &&
+      !hasSeenPlacementInstruction &&
+      !isProductSheetLayoutOpen,
+  )
+  const shouldShowAddProductTooltip =
+    Boolean(activePlacementItem?.position) &&
+    showAddProductTooltip &&
+    !isRendering &&
+    !isResult &&
+    !isMenuOpen &&
+    !isProductSheetOpen
 
   useEffect(() => {
     if (isActive) {
-      setMarkerPosition({
-        x: 171.5,
-        y: 235,
-      })
-      setHasPlacedObject(false)
-      setShowInstruction(true)
+      const initialPlacementItem = createPdpPlacementItem(pdpPrimaryProduct, 0)
+      placementInstanceCounterRef.current = 1
+      setPlacementItems([initialPlacementItem])
+      setActivePlacementItemId(initialPlacementItem.id)
       setShowSubmitHint(false)
+      setShowAddProductTooltip(false)
+      setHasSeenPlacementInstruction(false)
+      setHasSeenAddProductTooltip(false)
       setIsMenuOpen(false)
+      setIsProductSheetOpen(false)
       setIsPlusButtonPressed(false)
       setPressedMenuItemId(null)
-      setIsRendering(false)
+      setPhase('placing')
+      setRenderReturnPhase('placing')
+      setResultSlides([createOriginalResultSlide(selectedSpace)])
+      setActiveResultSlideIndex(0)
+      setLoadedResultSlideIds([])
+      setVisibleResultTagSlideId(null)
+      revealedResultSlideIdsRef.current = new Set()
     }
   }, [isActive, selectedSpace.id])
+
+  useEffect(() => {
+    if (!isRendering) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const nextSlideIndex = resultSlides.length
+
+      setResultSlides((currentSlides) => [
+        ...currentSlides,
+        {
+          id: `generated-${currentSlides.length}`,
+          src: pdpGeneratedResultSrc,
+          alt: 'Generated room image with the moss rug placed',
+          hasProductTag: true,
+        },
+      ])
+      setActiveResultSlideIndex(nextSlideIndex)
+      setPhase('result')
+    }, pdpResultDelayMs)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [isRendering, resultSlides.length])
 
   useEffect(() => {
     if (!showSubmitHint) {
@@ -662,6 +1022,42 @@ function PdpPlaceObjectScreen({
 
     return () => window.clearTimeout(timeoutId)
   }, [showSubmitHint])
+
+  useEffect(() => {
+    if (resultTagRevealTimeoutRef.current !== null) {
+      window.clearTimeout(resultTagRevealTimeoutRef.current)
+      resultTagRevealTimeoutRef.current = null
+    }
+
+    if (!isResult || !activeResultSlide?.hasProductTag) {
+      setVisibleResultTagSlideId(null)
+      return
+    }
+
+    if (!loadedResultSlideIds.includes(activeResultSlide.id)) {
+      setVisibleResultTagSlideId(null)
+      return
+    }
+
+    if (revealedResultSlideIdsRef.current.has(activeResultSlide.id)) {
+      setVisibleResultTagSlideId(activeResultSlide.id)
+      return
+    }
+
+    setVisibleResultTagSlideId(null)
+    resultTagRevealTimeoutRef.current = window.setTimeout(() => {
+      revealedResultSlideIdsRef.current.add(activeResultSlide.id)
+      setVisibleResultTagSlideId(activeResultSlide.id)
+      resultTagRevealTimeoutRef.current = null
+    }, pdpResultTagRevealDelayMs)
+
+    return () => {
+      if (resultTagRevealTimeoutRef.current !== null) {
+        window.clearTimeout(resultTagRevealTimeoutRef.current)
+        resultTagRevealTimeoutRef.current = null
+      }
+    }
+  }, [activeResultSlide, isResult, loadedResultSlideIds])
 
   function updatePosition(clientX: number, clientY: number, element: HTMLElement) {
     const stage = element.closest('.pdp-placement-stage')
@@ -677,20 +1073,27 @@ function PdpPlaceObjectScreen({
       return
     }
 
-    setMarkerPosition(
-      clampPlacementPosition({
-        x: clientX - rect.left - drag.offsetX,
-        y: clientY - rect.top - drag.offsetY,
-      }),
+    const nextPosition = clampPlacementPosition({
+      x: clientX - rect.left - drag.offsetX,
+      y: clientY - rect.top - drag.offsetY,
+    })
+
+    setPlacementItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === activePlacementItemId ? { ...item, position: nextPosition } : item,
+      ),
     )
   }
 
   function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
-    if (isRendering) {
+    if (isRendering || !activePlacementItem) {
       return
     }
 
     const rect = event.currentTarget.getBoundingClientRect()
+    if (!activePlacementItem.position) {
+      setHasSeenPlacementInstruction(true)
+    }
     dragRef.current = {
       pointerId: event.pointerId,
       offsetX: event.clientX - rect.left - rect.width / 2,
@@ -699,6 +1102,7 @@ function PdpPlaceObjectScreen({
       startClientY: event.clientY,
       moved: false,
     }
+    setShowAddProductTooltip(false)
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
@@ -724,22 +1128,29 @@ function PdpPlaceObjectScreen({
 
     if (!drag.moved && (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2)) {
       drag.moved = true
-      if (!hasPlacedObject) {
+      if (!activePlacementItem?.position) {
         setShowSubmitHint(true)
       }
-      setHasPlacedObject(true)
-      setShowInstruction(false)
     }
 
     updatePosition(event.clientX, event.clientY, event.currentTarget)
   }
 
   function handlePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
-    if (dragRef.current?.pointerId !== event.pointerId) {
+    const drag = dragRef.current
+
+    if (drag?.pointerId !== event.pointerId) {
       return
     }
 
     event.currentTarget.releasePointerCapture(event.pointerId)
+    if (drag.moved) {
+      suppressMarkerClickRef.current = true
+      if (!hasSeenAddProductTooltip) {
+        setShowAddProductTooltip(true)
+        setHasSeenAddProductTooltip(true)
+      }
+    }
     dragRef.current = null
   }
 
@@ -753,23 +1164,139 @@ function PdpPlaceObjectScreen({
   }
 
   function startRendering() {
+    if (!canStartRendering) {
+      return
+    }
+
     setIsMenuOpen(false)
+    setIsProductSheetOpen(false)
     setIsPlusButtonPressed(false)
     setPressedMenuItemId(null)
     setShowSubmitHint(false)
-    setIsRendering(true)
+    setRenderReturnPhase(phase === 'result' ? 'result' : 'placing')
+    setPhase('rendering')
   }
 
   function stopRendering() {
-    setIsRendering(false)
+    setPhase(renderReturnPhase === 'result' ? 'result' : 'placing')
+  }
+
+  function openProductSheet() {
+    setIsMenuOpen(false)
+    setIsProductSheetOpen(true)
+    setShowAddProductTooltip(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function closeProductSheet() {
+    setIsProductSheetOpen(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function addArchiveProductToRoom(product: PdpProductArchiveItem) {
+    const nextPlacementItem = createPdpPlacementItem(
+      product,
+      placementInstanceCounterRef.current,
+    )
+    placementInstanceCounterRef.current += 1
+
+    setPlacementItems((currentItems) => [...currentItems, nextPlacementItem])
+    setActivePlacementItemId(nextPlacementItem.id)
+    setIsProductSheetOpen(false)
+    setIsMenuOpen(false)
+    setShowAddProductTooltip(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+    setPhase('placing')
+    setShowSubmitHint(true)
+  }
+
+  function removePlacementItem(itemId: string) {
+    setPlacementItems((currentItems) => {
+      if (currentItems.length <= 1) {
+        return currentItems
+      }
+
+      const nextItems = currentItems.filter((item) => item.id !== itemId)
+
+      if (itemId === activePlacementItemId) {
+        setActivePlacementItemId(nextItems[0]?.id ?? currentItems[0].id)
+      }
+
+      return nextItems
+    })
+    setShowAddProductTooltip(false)
+  }
+
+  function markResultSlideLoaded(slideId: string) {
+    setLoadedResultSlideIds((currentIds) =>
+      currentIds.includes(slideId) ? currentIds : [...currentIds, slideId],
+    )
+  }
+
+  function moveResultSlide(direction: 'next' | 'previous') {
+    setActiveResultSlideIndex((currentIndex) => {
+      if (direction === 'next') {
+        return Math.min(currentIndex + 1, resultSlides.length - 1)
+      }
+
+      return Math.max(currentIndex - 1, 0)
+    })
+  }
+
+  function handleResultPointerDown(event: React.PointerEvent<HTMLElement>) {
+    if (!isResult || event.button !== 0) {
+      return
+    }
+
+    event.currentTarget.setPointerCapture(event.pointerId)
+    resultSwipeRef.current = {
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+    }
+  }
+
+  function handleResultPointerUp(event: React.PointerEvent<HTMLElement>) {
+    const swipe = resultSwipeRef.current
+
+    if (!swipe || swipe.pointerId !== event.pointerId) {
+      return
+    }
+
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    resultSwipeRef.current = null
+
+    const deltaX = event.clientX - swipe.startClientX
+
+    if (deltaX <= -pdpResultSwipeThreshold) {
+      moveResultSlide('next')
+    } else if (deltaX >= pdpResultSwipeThreshold) {
+      moveResultSlide('previous')
+    }
+  }
+
+  function handleResultPointerCancel(event: React.PointerEvent<HTMLElement>) {
+    if (resultSwipeRef.current?.pointerId !== event.pointerId) {
+      return
+    }
+
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    resultSwipeRef.current = null
   }
 
   return (
     <div
       className={
-        isRendering
-          ? 'pdp-placement-screen pdp-placement-screen--rendering'
-          : 'pdp-placement-screen'
+        [
+          'pdp-placement-screen',
+          isResult ? 'pdp-placement-screen--result' : '',
+          isRendering ? 'pdp-placement-screen--rendering' : '',
+          isProductSheetLayoutOpen ? 'pdp-placement-screen--product-sheet-open' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')
       }
     >
       <header className="pdp-selector-header">
@@ -786,59 +1313,191 @@ function PdpPlaceObjectScreen({
               />
             </button>
           }
-          center={<h1>Place chair</h1>}
+          center={<h1>Place {activePlacementItem?.category.toLowerCase() ?? 'item'}</h1>}
         />
       </header>
 
-      <main className="pdp-placement-main">
+      <main
+        className={
+          isResult
+            ? 'pdp-placement-main pdp-placement-main--result'
+            : isRendering
+              ? 'pdp-placement-main pdp-placement-main--rendering'
+              : 'pdp-placement-main'
+        }
+      >
         <section
           className={
-            isRendering
+            isResult
+              ? 'pdp-placement-stage pdp-placement-stage--result'
+              : isRendering
               ? 'pdp-placement-stage pdp-placement-stage--rendering'
-              : showInstruction
+              : shouldShowInstruction
               ? 'pdp-placement-stage pdp-placement-stage--dimmed'
               : 'pdp-placement-stage'
           }
-          aria-label="Place object on photo"
+          aria-label={`Place ${activePlacementItem?.category.toLowerCase() ?? 'item'} on photo`}
+          onPointerDown={isResult ? handleResultPointerDown : undefined}
+          onPointerUp={isResult ? handleResultPointerUp : undefined}
+          onPointerCancel={isResult ? handleResultPointerCancel : undefined}
+          onDragStart={(event) => event.preventDefault()}
         >
-          <FigmaAsset
-            src={selectedSpace.src}
-            alt=""
-            displayWidth={343}
-            displayHeight={460}
-            className="pdp-placement-stage__photo"
-          />
-          <div className="pdp-placement-stage__render-blur" aria-hidden="true" />
-          {!isRendering ? (
-            <button
-              type="button"
-              className="pdp-placement-marker pdp-placement-marker--resting"
-              style={{
-                left: `${markerPosition.x}px`,
-                top: `${markerPosition.y}px`,
-              }}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
-            >
-              <PdpPlacementTagIcon />
-            </button>
-          ) : null}
-          {showInstruction && !isRendering ? (
+          {isResult ? (
+            <>
+              <div
+                className="pdp-placement-result-track"
+                style={{ transform: `translateX(-${activeResultSlideIndex * pdpResultImageSize}px)` }}
+              >
+                {resultSlides.map((slide) => (
+                  <div key={slide.id} className="pdp-placement-result-slide">
+                    <FigmaAsset
+                      src={slide.src}
+                      alt={slide.alt}
+                      displayWidth={343}
+                      displayHeight={343}
+                      className="pdp-placement-result-image"
+                      exportScale={1}
+                      onLoad={() => markResultSlideLoaded(slide.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+              {activeResultSlide?.hasProductTag &&
+              visibleResultTagSlideId === activeResultSlide.id
+                ? placedItems.map((item, index) => {
+                    const tagPosition =
+                      pdpResultTagPositions[index] ?? item.position ?? pdpDefaultPlacementPosition
+
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="pdp-placement-result-tag ds-feed-media__tag"
+                        style={{
+                          left: `${tagPosition.x}px`,
+                          top: `${tagPosition.y}px`,
+                        }}
+                        aria-label={`View tagged ${item.category}`}
+                      >
+                        <FigmaAsset
+                          src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
+                          alt=""
+                          displayWidth={18}
+                          displayHeight={18}
+                          className="ds-feed-media__tag-bg"
+                        />
+                        <FigmaAsset
+                          src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
+                          alt=""
+                          displayWidth={7.71429}
+                          displayHeight={7.71429}
+                          className="ds-feed-media__tag-plus"
+                        />
+                      </button>
+                    )
+                  })
+                : null}
+              <div className="pdp-placement-result-dots" aria-label="Generated image carousel">
+                {resultSlides.map((slide, index) => (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    className={
+                      index === activeResultSlideIndex
+                        ? 'pdp-placement-result-dot pdp-placement-result-dot--active'
+                        : 'pdp-placement-result-dot'
+                    }
+                    aria-label={index === 0 ? 'Show original image' : `Show generated image ${index}`}
+                    onClick={() => setActiveResultSlideIndex(index)}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <FigmaAsset
+                src={selectedSpace.src}
+                alt=""
+                displayWidth={343}
+                displayHeight={343}
+                className="pdp-placement-stage__photo"
+              />
+              <div className="pdp-placement-stage__render-blur" aria-hidden="true" />
+            </>
+          )}
+          {!isRendering && !isResult
+            ? placementItems
+                .filter((item) => item.position || item.id === activePlacementItemId)
+                .map((item) => {
+                  const isActive = item.id === activePlacementItemId
+                  const itemPosition = item.position ?? pdpDefaultPlacementPosition
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={
+                        isActive
+                          ? 'pdp-placement-marker pdp-placement-marker--resting pdp-placement-marker--active'
+                          : 'pdp-placement-marker pdp-placement-marker--resting'
+                      }
+                      style={{
+                        left: `${itemPosition.x}px`,
+                        top: `${itemPosition.y}px`,
+                      }}
+                      aria-label={`Place ${item.category}`}
+                      onPointerDown={isActive ? handlePointerDown : undefined}
+                      onPointerMove={isActive ? handlePointerMove : undefined}
+                      onPointerUp={isActive ? handlePointerUp : undefined}
+                      onPointerCancel={isActive ? handlePointerCancel : undefined}
+                      onClick={() => {
+                        if (suppressMarkerClickRef.current) {
+                          suppressMarkerClickRef.current = false
+                          return
+                        }
+                        setActivePlacementItemId(item.id)
+                        setShowAddProductTooltip(false)
+                      }}
+                    >
+                      {item.category}
+                    </button>
+                  )
+                })
+            : null}
+          {shouldShowInstruction && !isRendering && !isResult ? (
             <div
               className="pdp-placement-coachmark"
               aria-hidden="true"
               style={{
                 left: `${markerPosition.x}px`,
-                top: `${markerPosition.y + 32}px`,
+                top: `${markerPosition.y + 31}px`,
               }}
             >
-              <p>Place at desired position</p>
+              <p>Move the pin to place your item</p>
             </div>
           ) : null}
         </section>
-        <span className="pdp-placement-render-dot" aria-hidden="true" />
+        {!isRendering && !isResult ? <span className="pdp-placement-render-dot" aria-hidden="true" /> : null}
+        {isResult ? (
+          <>
+            {activeResultSlide?.hasProductTag && resultProducts.length > 0 ? (
+              <div className="pdp-placement-result-product">
+                <FeedProductStrip
+                  products={resultProducts}
+                  mode="rail"
+                  thumbnailSize={48}
+                  thumbnailRadius={12}
+                  topPadding={0}
+                  bottomPadding={16}
+                  contentPaddingX={16}
+                  itemGap={4}
+                  rowHeight={64}
+                  showRightFade={resultProducts.length > 4}
+                />
+              </div>
+            ) : null}
+          </>
+        ) : null}
       </main>
 
       {isMenuOpen && !isRendering ? (
@@ -848,6 +1507,7 @@ function PdpPlaceObjectScreen({
           aria-label="Close placement actions"
           onClick={() => {
             setIsMenuOpen(false)
+            setIsProductSheetOpen(false)
             setIsPlusButtonPressed(false)
             setPressedMenuItemId(null)
           }}
@@ -865,75 +1525,128 @@ function PdpPlaceObjectScreen({
           pressedItemId={pressedMenuItemId}
           onPressItemStart={setPressedMenuItemId}
           onPressItemEnd={() => setPressedMenuItemId(null)}
+          onOpenProductSheet={openProductSheet}
         />
       </div>
 
+      <PdpProductArchiveSheet
+        isOpen={isProductSheetOpen && !isRendering}
+        onClose={closeProductSheet}
+        onAddProduct={addArchiveProductToRoom}
+      />
+
       <div
         className={
-          isRendering
-            ? 'pdp-placement-panel pdp-placement-panel--rendering'
+          isRendering || isResult
+            ? 'pdp-placement-panel pdp-placement-panel--input'
             : 'pdp-placement-panel'
         }
       >
         <div className="pdp-placement-panel__handle">
           <span />
         </div>
-        <div className="pdp-placement-panel__thumb-row">
-          <div className="pdp-placement-panel__thumb">
-            <FigmaAsset
-              src={selectedSpace.thumbSrc ?? '/assets/figma/pdp/place-chair-thumb-2x.png'}
-              alt=""
-              displayWidth={60}
-              displayHeight={60}
-              exportScale={2}
-            />
-          </div>
+        <div className="pdp-placement-panel__thumb-row" aria-label="Products to place">
+          {placementItems.map((item) => (
+            <div
+              key={item.id}
+              className={
+                item.id === activePlacementItemId
+                  ? 'pdp-placement-panel__thumb pdp-placement-panel__thumb--active'
+                  : item.position
+                    ? 'pdp-placement-panel__thumb pdp-placement-panel__thumb--placed'
+                    : 'pdp-placement-panel__thumb'
+              }
+            >
+              <button
+                type="button"
+                className="pdp-placement-panel__thumb-button"
+                aria-label={`Place ${item.category}`}
+                onClick={() => {
+                  setActivePlacementItemId(item.id)
+                  setShowAddProductTooltip(false)
+                }}
+              >
+                <FigmaAsset
+                  src={item.product.imageSrc}
+                  alt=""
+                  displayWidth={60}
+                  displayHeight={60}
+                  exportScale={1}
+                  className={
+                    item.product.fit === 'contain'
+                      ? 'pdp-placement-panel__thumb-image pdp-placement-panel__thumb-image--contain'
+                      : 'pdp-placement-panel__thumb-image'
+                  }
+                />
+              </button>
+              {placementItems.length > 1 ? (
+                <button
+                  type="button"
+                  className="pdp-placement-panel__thumb-dismiss"
+                  aria-label={`Remove ${item.category}`}
+                  onClick={() => removePlacementItem(item.id)}
+                />
+              ) : null}
+            </div>
+          ))}
         </div>
         <div className="pdp-placement-panel__input">
           <p>
-            {isRendering
+            {isRendering || isResult
               ? 'Describe what you want to change'
               : 'Place this object to the designated place'}
           </p>
         </div>
         <div className="pdp-placement-panel__controls">
-          <button
-            type="button"
-            className={
-              isMenuOpen || isPlusButtonPressed
-                ? 'pdp-placement-panel__plus-button pdp-placement-panel__plus-button--active'
-                : 'pdp-placement-panel__plus-button'
-            }
-            aria-label="Add"
-            aria-haspopup="menu"
-            aria-expanded={!isRendering && isMenuOpen}
-            disabled={isRendering}
-            onPointerDown={() => setIsPlusButtonPressed(true)}
-            onPointerUp={() => setIsPlusButtonPressed(false)}
-            onPointerCancel={() => setIsPlusButtonPressed(false)}
-            onPointerLeave={() => setIsPlusButtonPressed(false)}
-            onClick={() => {
-              if (isRendering) {
-                return
+          <div className="pdp-placement-panel__plus-wrap">
+            {shouldShowAddProductTooltip ? (
+              <div className="pdp-placement-add-tooltip" role="status">
+                Add more products
+              </div>
+            ) : null}
+            <button
+              type="button"
+              className={
+                isMenuOpen || isPlusButtonPressed || isProductSheetOpen
+                  ? 'pdp-placement-panel__plus-button pdp-placement-panel__plus-button--active'
+                  : 'pdp-placement-panel__plus-button'
               }
-              setIsMenuOpen((current) => !current)
-              setPressedMenuItemId(null)
-            }}
-          >
-            <PdpPlacementPlusIcon />
-          </button>
+              aria-label="Add"
+              aria-haspopup="menu"
+              aria-expanded={!isRendering && (isMenuOpen || isProductSheetOpen)}
+              disabled={isRendering}
+              onPointerDown={() => setIsPlusButtonPressed(true)}
+              onPointerUp={() => setIsPlusButtonPressed(false)}
+              onPointerCancel={() => setIsPlusButtonPressed(false)}
+              onPointerLeave={() => setIsPlusButtonPressed(false)}
+              onClick={() => {
+                if (isRendering) {
+                  return
+                }
+                setShowAddProductTooltip(false)
+                setIsMenuOpen((current) => !current)
+                setIsProductSheetOpen(false)
+                setPressedMenuItemId(null)
+              }}
+            >
+              <PdpPlacementPlusIcon />
+            </button>
+          </div>
           <button
             type="button"
             className={
               isRendering
                 ? 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--stop'
-                : hasPlacedObject
+                : isResult
+                  ? 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--disabled'
+                : canStartRendering
                 ? showSubmitHint
                   ? 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--enabled pdp-placement-panel__submit-button--hint'
                   : 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--enabled'
                 : 'pdp-placement-panel__submit-button pdp-placement-panel__submit-button--disabled'
             }
             aria-label={isRendering ? 'Stop rendering' : 'Generate placement'}
+            disabled={!isRendering && !canStartRendering}
             onClick={() => {
               if (isRendering) {
                 stopRendering()
@@ -966,7 +1679,7 @@ function PdpProductInfo() {
       <div className="pdp-title-block">
         <p className="pdp-brand">Nomia</p>
         <div className="pdp-name-row">
-          <h1>Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes</h1>
+          <h1>{pdpProductFullName}</h1>
           <PdpIconButton label="Share product" className="pdp-share-button">
             <PdpShareIcon />
           </PdpIconButton>
@@ -1115,7 +1828,7 @@ function PdpDetailScreen({
         className="pdp-main prototype-screen__scroll-region"
         data-inertial-scroll={isActive && !isThumbnail ? 'true' : undefined}
       >
-        <PdpHero onOpenSelector={onOpenSelector} />
+        <PdpHero isThumbnail={isThumbnail} onOpenSelector={onOpenSelector} />
         <div className="pdp-content-wrap">
           <PdpProductInfo />
           <PdpBenefitShipping />
@@ -1133,8 +1846,7 @@ export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
   const [activeScreen, setActiveScreen] = useState<'product' | 'selector' | 'placer'>('product')
   const [selectedSpace, setSelectedSpace] = useState<PdpSelectableSpace>({
     id: 'default-bedroom',
-    src: '/assets/figma/pdp/place-chair-room-2x.png',
-    thumbSrc: '/assets/figma/pdp/place-chair-thumb-2x.png',
+    src: pdpSelectedRoomSrc,
   })
 
   return (
