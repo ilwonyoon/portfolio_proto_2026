@@ -40,7 +40,7 @@ type PdpGeneratedSlide = {
   hasProductTag: boolean
 }
 
-type PdpPlacementMenuItemId = 'add-products' | 'style-transfer' | 'analyze-room'
+type PdpPlacementMenuItemId = 'add-products' | 'style-transfer'
 type PdpProductArchiveTab = 'all' | 'saved' | 'recently-viewed'
 
 type PdpProductArchiveItem = {
@@ -78,6 +78,7 @@ const pdpResultSwipeThreshold = 36
 const pdpResultTagRevealDelayMs = 520
 const pdpResultImageSize = 343
 const pdpProductSheetHeight = 524
+const pdpPlacementPromptText = 'Place this object to the designated place'
 const pdpDefaultPlacementPosition: PlacementPosition = {
   x: 171.5,
   y: 171.5,
@@ -155,6 +156,51 @@ const pdpProductArchiveItems: PdpProductArchiveItem[] = pdpProductArchiveSeedIte
   }),
 )
 
+const pdpProductArchiveOrderByTab: Record<PdpProductArchiveTab, string[]> = {
+  all: [
+    'moss-rug',
+    'soft-area-rug',
+    'glass-coffee-table',
+    'warm-table-lamp',
+    'linen-pendant-light',
+    'round-side-table',
+    'module-fabric-sofa',
+    'retro-sheer-curtain',
+    'modular-drawer',
+    'low-storage-cabinet',
+    'beige-armchair',
+    'ceramic-table-lamp',
+  ],
+  saved: [
+    'retro-sheer-curtain',
+    'ivory-sheer-curtain',
+    'oak-nightstand',
+    'cream-bookcase',
+    'wood-wall-clock',
+    'beige-floor-cushion',
+    'fabric-ottoman',
+    'entry-bench',
+    'walnut-dining-chair',
+    'cotton-bedspread',
+    'kitchen-runner-mat',
+    'cream-dinnerware',
+  ],
+  'recently-viewed': [
+    'steel-wall-shelf',
+    'round-display-shelf',
+    'linen-pendant-light',
+    'solid-dining-table',
+    'ceramic-table-lamp',
+    'low-sideboard',
+    'compact-plant-pot',
+    'modern-plate-set',
+    'side-chair',
+    'beige-armchair',
+    'oak-stool',
+    'framed-art-print',
+  ],
+}
+
 const pdpPrimaryProduct: PdpProductArchiveItem = {
   id: 'pdp-moss-rug',
   tabIds: ['saved'],
@@ -201,6 +247,33 @@ function inferProductCategory(product: Pick<PdpProductArchiveItem, 'id' | 'name'
   if (text.includes('art print')) return 'Art'
 
   return 'Object'
+}
+
+function orderPdpArchiveProducts(
+  products: PdpProductArchiveItem[],
+  orderIds: string[],
+) {
+  const orderIndexById = new Map(orderIds.map((id, index) => [id, index]))
+
+  return [...products].sort((a, b) => {
+    const aIndex = orderIndexById.get(a.id) ?? Number.MAX_SAFE_INTEGER
+    const bIndex = orderIndexById.get(b.id) ?? Number.MAX_SAFE_INTEGER
+
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex
+    }
+
+    return products.indexOf(a) - products.indexOf(b)
+  })
+}
+
+function getPdpArchiveProductsForTab(tabId: PdpProductArchiveTab) {
+  const tabProducts =
+    tabId === 'all'
+      ? pdpProductArchiveItems
+      : pdpProductArchiveItems.filter((product) => product.tabIds.includes(tabId))
+
+  return orderPdpArchiveProducts(tabProducts, pdpProductArchiveOrderByTab[tabId])
 }
 
 function createPdpPlacementItem(
@@ -487,7 +560,7 @@ function PdpSelectorSampleSpacesSection({
 }: {
   onSelect: (space: PdpSelectableSpace) => void
 }) {
-  const [activeSpaceType, setActiveSpaceType] = useState<PdpSpaceType>('bedroom')
+  const [activeSpaceType, setActiveSpaceType] = useState<PdpSpaceType>('all')
   const spaceItems = pdpSampleSpacesByType[activeSpaceType]
   const waterfallColumns = useMemo(() => createPdpWaterfallColumns(spaceItems), [spaceItems])
 
@@ -654,17 +727,6 @@ function PdpPlacementMenuPhotoIcon() {
   )
 }
 
-function PdpPlacementMenuAnalyzeIcon() {
-  return (
-    <FigmaAsset
-      src={`${assetRoot}/analyze-room-24.svg`}
-      alt=""
-      displayWidth={24}
-      displayHeight={24}
-    />
-  )
-}
-
 function PdpPlacementQuickMenuItem({
   icon,
   title,
@@ -738,15 +800,6 @@ function PdpPlacementQuickMenu({
         onPressEnd={onPressItemEnd}
         onSelect={onPressItemEnd}
       />
-      <PdpPlacementQuickMenuItem
-        icon={<PdpPlacementMenuAnalyzeIcon />}
-        title="Analyze Your Room"
-        description="Find out what your room is missing"
-        isPressed={pressedItemId === 'analyze-room'}
-        onPressStart={() => onPressItemStart('analyze-room')}
-        onPressEnd={onPressItemEnd}
-        onSelect={onPressItemEnd}
-      />
     </div>
   )
 }
@@ -781,10 +834,7 @@ function PdpProductArchiveSheet({
     }
   }, [isOpen])
 
-  const products =
-    activeTabId === 'all'
-      ? pdpProductArchiveItems
-      : pdpProductArchiveItems.filter((product) => product.tabIds.includes(activeTabId))
+  const products = getPdpArchiveProductsForTab(activeTabId)
 
   return (
     <BottomSheet
@@ -911,6 +961,7 @@ function PdpPlaceObjectScreen({
     createOriginalResultSlide(selectedSpace),
   ])
   const [activeResultSlideIndex, setActiveResultSlideIndex] = useState(0)
+  const [isComparingResult, setIsComparingResult] = useState(false)
   const [loadedResultSlideIds, setLoadedResultSlideIds] = useState<string[]>([])
   const [visibleResultTagSlideId, setVisibleResultTagSlideId] = useState<string | null>(null)
   const dragRef = useRef<{
@@ -932,6 +983,8 @@ function PdpPlaceObjectScreen({
   const isRendering = phase === 'rendering'
   const isResult = phase === 'result'
   const activeResultSlide = resultSlides[activeResultSlideIndex] ?? resultSlides[0]
+  const comparisonResultSlide =
+    activeResultSlideIndex > 0 ? resultSlides[activeResultSlideIndex - 1] : null
   const activePlacementItem =
     placementItems.find((item) => item.id === activePlacementItemId) ?? placementItems[0] ?? null
   const markerPosition = activePlacementItem?.position ?? pdpDefaultPlacementPosition
@@ -962,6 +1015,8 @@ function PdpPlaceObjectScreen({
     !isResult &&
     !isMenuOpen &&
     !isProductSheetOpen
+  const panelPromptText =
+    isRendering || isResult ? 'Describe what you want to change' : pdpPlacementPromptText
 
   useEffect(() => {
     if (isActive) {
@@ -981,11 +1036,16 @@ function PdpPlaceObjectScreen({
       setRenderReturnPhase('placing')
       setResultSlides([createOriginalResultSlide(selectedSpace)])
       setActiveResultSlideIndex(0)
+      setIsComparingResult(false)
       setLoadedResultSlideIds([])
       setVisibleResultTagSlideId(null)
       revealedResultSlideIdsRef.current = new Set()
     }
   }, [isActive, selectedSpace.id])
+
+  useEffect(() => {
+    setIsComparingResult(false)
+  }, [activeResultSlideIndex, phase])
 
   useEffect(() => {
     if (!isRendering) {
@@ -1286,6 +1346,28 @@ function PdpPlaceObjectScreen({
     resultSwipeRef.current = null
   }
 
+  function handleComparePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
+    if (!comparisonResultSlide || event.button !== 0) {
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setIsComparingResult(true)
+  }
+
+  function stopComparingResult(event: React.PointerEvent<HTMLButtonElement>) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+
+    setIsComparingResult(false)
+  }
+
   return (
     <div
       className={
@@ -1362,8 +1444,39 @@ function PdpPlaceObjectScreen({
                   </div>
                 ))}
               </div>
+              {comparisonResultSlide ? (
+                <>
+                  {isComparingResult ? (
+                    <FigmaAsset
+                      src={comparisonResultSlide.src}
+                      alt=""
+                      displayWidth={343}
+                      displayHeight={343}
+                      className="pdp-placement-result-compare-image"
+                      exportScale={1}
+                    />
+                  ) : null}
+                  <button
+                    type="button"
+                    className="pdp-placement-result-compare-button"
+                    aria-label="Hold to compare with previous result"
+                    aria-pressed={isComparingResult}
+                    onPointerDown={handleComparePointerDown}
+                    onPointerUp={stopComparingResult}
+                    onPointerCancel={stopComparingResult}
+                    onLostPointerCapture={() => setIsComparingResult(false)}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                    }}
+                  >
+                    <span aria-hidden="true" />
+                  </button>
+                </>
+              ) : null}
               {activeResultSlide?.hasProductTag &&
-              visibleResultTagSlideId === activeResultSlide.id
+              visibleResultTagSlideId === activeResultSlide.id &&
+              !isComparingResult
                 ? placedItems.map((item, index) => {
                     const tagPosition =
                       pdpResultTagPositions[index] ?? item.position ?? pdpDefaultPlacementPosition
@@ -1537,9 +1650,12 @@ function PdpPlaceObjectScreen({
 
       <div
         className={
-          isRendering || isResult
-            ? 'pdp-placement-panel pdp-placement-panel--input'
-            : 'pdp-placement-panel'
+          [
+            'pdp-placement-panel',
+            isRendering || isResult ? 'pdp-placement-panel--input' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')
         }
       >
         <div className="pdp-placement-panel__handle">
@@ -1591,11 +1707,7 @@ function PdpPlaceObjectScreen({
           ))}
         </div>
         <div className="pdp-placement-panel__input">
-          <p>
-            {isRendering || isResult
-              ? 'Describe what you want to change'
-              : 'Place this object to the designated place'}
-          </p>
+          <p className="pdp-placement-panel__prompt">{panelPromptText}</p>
         </div>
         <div className="pdp-placement-panel__controls">
           <div className="pdp-placement-panel__plus-wrap">
