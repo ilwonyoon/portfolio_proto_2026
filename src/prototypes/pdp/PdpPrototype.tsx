@@ -31,6 +31,17 @@ type PdpPrototypeProps = {
   mode?: 'full' | 'thumbnail'
 }
 
+type PdpFlowScreen = 'product' | 'selector' | 'placer'
+
+type PdpAiRoomFlowProps = {
+  mode?: 'full' | 'thumbnail'
+}
+
+type PdpFlowContentProps = PdpPrototypeProps & {
+  includeProductEntry: boolean
+  initialScreen: PdpFlowScreen
+}
+
 type PlacementPosition = {
   x: number
   y: number
@@ -2242,60 +2253,116 @@ function PdpDetailScreen({
   )
 }
 
-export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
+function PdpFlowContent({
+  includeProductEntry,
+  initialScreen,
+  mode = 'full',
+}: PdpFlowContentProps) {
   const isThumbnail = mode === 'thumbnail'
-  const [activeScreen, setActiveScreen] = useState<'product' | 'selector' | 'placer'>('product')
+  const [activeScreen, setActiveScreen] = useState<PdpFlowScreen>(initialScreen)
   const [selectedSpace, setSelectedSpace] = useState<PdpSelectableSpace>({
     id: 'default-bedroom',
     src: pdpSelectedRoomSrc,
   })
 
   return (
+    <div className="pdp-flow">
+      {includeProductEntry ? (
+        <PushPage
+          className="pdp-flow__page"
+          state={activeScreen === 'product' ? 'center' : 'peek-left'}
+        >
+          <PdpDetailScreen
+            isActive={activeScreen === 'product'}
+            isThumbnail={isThumbnail}
+            onOpenSelector={() => setActiveScreen('selector')}
+          />
+        </PushPage>
+      ) : null}
+      <PushPage
+        className="pdp-flow__page"
+        state={
+          activeScreen === 'selector'
+            ? 'center'
+            : activeScreen === 'placer'
+              ? 'peek-left'
+              : 'offscreen-right'
+        }
+      >
+        <PdpSelectPhotoScreen
+          isActive={activeScreen === 'selector'}
+          isThumbnail={isThumbnail}
+          onClose={() =>
+            includeProductEntry
+              ? setActiveScreen('product')
+              : setActiveScreen('selector')
+          }
+          onSelectSpace={(space) => {
+            setSelectedSpace(space)
+            setActiveScreen('placer')
+          }}
+        />
+      </PushPage>
+      <PushPage
+        className="pdp-flow__page"
+        state={activeScreen === 'placer' ? 'center' : 'offscreen-right'}
+      >
+        <PdpPlaceObjectScreen
+          isActive={activeScreen === 'placer'}
+          selectedSpace={selectedSpace}
+          onBack={() => setActiveScreen('selector')}
+        />
+      </PushPage>
+    </div>
+  )
+}
+
+function PdpFlowRoot({
+  includeProductEntry,
+  initialScreen,
+  mode = 'full',
+}: PdpFlowContentProps) {
+  const isThumbnail = mode === 'thumbnail'
+
+  return (
     <div className={isThumbnail ? 'pdp-prototype pdp-prototype--thumbnail' : 'pdp-prototype'}>
       <PrototypeScreen contentHeight={812} variant="bare">
-        <div className="pdp-flow">
-          <PushPage
-            className="pdp-flow__page"
-            state={activeScreen === 'product' ? 'center' : 'peek-left'}
-          >
-            <PdpDetailScreen
-              isActive={activeScreen === 'product'}
-              isThumbnail={isThumbnail}
-              onOpenSelector={() => setActiveScreen('selector')}
-            />
-          </PushPage>
-          <PushPage
-            className="pdp-flow__page"
-            state={
-              activeScreen === 'selector'
-                ? 'center'
-                : activeScreen === 'placer'
-                  ? 'peek-left'
-                  : 'offscreen-right'
-            }
-          >
-            <PdpSelectPhotoScreen
-              isActive={activeScreen === 'selector'}
-              isThumbnail={isThumbnail}
-              onClose={() => setActiveScreen('product')}
-              onSelectSpace={(space) => {
-                setSelectedSpace(space)
-                setActiveScreen('placer')
-              }}
-            />
-          </PushPage>
-          <PushPage
-            className="pdp-flow__page"
-            state={activeScreen === 'placer' ? 'center' : 'offscreen-right'}
-          >
-            <PdpPlaceObjectScreen
-              isActive={activeScreen === 'placer'}
-              selectedSpace={selectedSpace}
-              onBack={() => setActiveScreen('selector')}
-            />
-          </PushPage>
-        </div>
+        <PdpFlowContent
+          includeProductEntry={includeProductEntry}
+          initialScreen={initialScreen}
+          mode={mode}
+        />
       </PrototypeScreen>
     </div>
+  )
+}
+
+export function PdpAiRoomFlowContent({ mode = 'full' }: PdpAiRoomFlowProps) {
+  return (
+    <PdpFlowContent
+      includeProductEntry={false}
+      initialScreen="selector"
+      mode={mode}
+    />
+  )
+}
+
+export function PdpAiRoomFlow({ mode = 'full' }: PdpAiRoomFlowProps) {
+  return (
+    <PdpFlowRoot
+      includeProductEntry={false}
+      initialScreen="selector"
+      mode={mode}
+    />
+  )
+}
+
+export default function PdpPrototype({ mode = 'full' }: PdpPrototypeProps) {
+  return (
+    <PdpFlowRoot
+      includeProductEntry
+      initialScreen="product"
+      mode={mode}
+    />
   )
 }

@@ -1,7 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { FigmaAsset } from '../../prototype/FigmaAsset'
 import { PrototypeScreen } from '../../prototype/PrototypeScreen'
-import { Chip } from '../../system/primitives'
+import { Chip, TryInRoomButton } from '../../system/primitives'
+import { FeedMediaCarousel } from '../../system/feed/FeedMediaCarousel'
+import type { FeedMediaSlide } from '../../system/feed/FeedMediaCarousel'
+import { FeedReactionBar } from '../../system/feed/FeedReactionBar'
 import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
 import { BottomSheet, PushPage } from '../../system/overlays'
@@ -13,7 +16,24 @@ type ConstructionAiPrototypeProps = {
   mode?: 'full' | 'thumbnail'
 }
 
-type ConstructionScreen = 'contractors' | 'project-photo' | 'ai-room'
+type ConstructionScreen =
+  | 'contractors'
+  | 'portfolio'
+  | 'project-photo'
+  | 'ai-room'
+
+type PortfolioCase = {
+  id: string
+  title: string
+  cover: string
+  saved: number
+  views: string
+  isFeatured: boolean
+  photos: string[]
+}
+
+type PortfolioTabId = 'all' | 'portfolio' | 'reviews' | 'profile'
+type PortfolioCategoryId = 'cases' | 'photos'
 
 type SpaceFilterId = 'all' | 'living' | 'kitchen' | 'bedroom' | 'bathroom'
 
@@ -32,7 +52,8 @@ type Contractor = {
   contractCount: number
   distanceLabel: string
   neighborhood: string
-  priceRangeLabel: string
+  priceTierLabel: string
+  pricePerPyeongLabel: string
   mapX: number
   mapY: number
   photos: ContractorProjectPhoto[]
@@ -61,26 +82,6 @@ const roomLabels: Record<Exclude<SpaceFilterId, 'all'>, string> = {
   bathroom: 'bathroom',
 }
 
-const figmaMapLabelPins = [
-  { id: 'joy-design', label: '조이디자인', left: 56, top: 113 },
-  { id: 'line-terior', label: '라인테리어', left: 301, top: 113, width: 72 },
-  { id: 'line-design-center', label: '라인디자인', left: 188, top: 153 },
-  { id: 'line-design-left', label: '라인디자인', left: 55, top: 226 },
-  { id: 'raon-design', label: '라온디자인', left: 267, top: 200 },
-  { id: 'line-design-bottom', label: '라인디자인', left: 127, top: 291 },
-  { id: 'line-design-right', label: '라인디자인', left: 275, top: 287 },
-  { id: 'line-design-lower', label: '라인디자인', left: 288, top: 374 },
-]
-
-const figmaMapDotPins = [
-  { id: 'dot-01', left: 218, top: 90 },
-  { id: 'dot-02', left: 296, top: 97 },
-  { id: 'dot-03', left: 213, top: 115 },
-  { id: 'dot-04', left: 213, top: 262 },
-  { id: 'dot-05', left: 80, top: 318 },
-  { id: 'dot-06', left: 335, top: 366 },
-]
-
 function makePortfolioPhotos(
   room: Exclude<SpaceFilterId, 'all'>,
   count: number,
@@ -103,16 +104,144 @@ const koreanRenovationPortfolio = [
   ...makePortfolioPhotos('bathroom', 15),
 ]
 
+const portfolioAssetRoot = `${assetRoot}/portfolio`
+
+function makePortfolioCasePhotos(caseId: string, count: number): string[] {
+  return Array.from({ length: count }, (_, index) => {
+    const number = String(index + 1).padStart(2, '0')
+    return `${portfolioAssetRoot}/${caseId}/photo-${number}.jpg`
+  })
+}
+
+const caseCoverRoot = `${portfolioAssetRoot}/cases`
+
+const portfolioCases: PortfolioCase[] = [
+  {
+    id: 'case-01',
+    title: 'Simple, restrained, and warmly inviting',
+    saved: 5,
+    views: '100',
+    isFeatured: true,
+    photos: makePortfolioCasePhotos('case-01', 24),
+    cover: `${caseCoverRoot}/case-cover-01.avif`,
+  },
+  {
+    id: 'case-02',
+    title: 'Sticking to the basics: a warm yet understated home interior',
+    saved: 4,
+    views: '96',
+    isFeatured: true,
+    photos: makePortfolioCasePhotos('case-02', 22),
+    cover: `${caseCoverRoot}/case-cover-02.avif`,
+  },
+  {
+    id: 'case-03',
+    title:
+      'One roof, two families: a duplex with a separate entrance for parents and children',
+    saved: 5,
+    views: '144',
+    isFeatured: true,
+    photos: makePortfolioCasePhotos('case-03', 16),
+    cover: `${caseCoverRoot}/case-cover-03.avif`,
+  },
+  {
+    id: 'case-04',
+    title:
+      'Mid-century meets modern, planned from the styling stage onward',
+    saved: 6,
+    views: '153',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-04', 23),
+    cover: `${caseCoverRoot}/case-cover-04.avif`,
+  },
+  {
+    id: 'case-05',
+    title:
+      'A newlywed home full of warmth — our special first place, just for the two of us',
+    saved: 11,
+    views: '242',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-01', 24),
+    cover: `${caseCoverRoot}/case-cover-05.avif`,
+  },
+  {
+    id: 'case-06',
+    title: 'Building a denser space with custom-made furniture',
+    saved: 8,
+    views: '183',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-02', 22),
+    cover: `${caseCoverRoot}/case-cover-06.avif`,
+  },
+  {
+    id: 'case-07',
+    title:
+      'A home shaped around how we live: capturing my own warmth in space',
+    saved: 7,
+    views: '149',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-03', 16),
+    cover: `${caseCoverRoot}/case-cover-07.avif`,
+  },
+  {
+    id: 'case-08',
+    title: 'Partial renovation, done this way',
+    saved: 4,
+    views: '176',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-04', 23),
+    cover: `${caseCoverRoot}/case-cover-08.avif`,
+  },
+  {
+    id: 'case-09',
+    title: 'A modern gallery-like home with a touch of mid-century mood',
+    saved: 9,
+    views: '205',
+    isFeatured: false,
+    photos: makePortfolioCasePhotos('case-01', 24),
+    cover: `${caseCoverRoot}/case-cover-09.avif`,
+  },
+]
+
+const portfolioAllPhotos: string[] = (() => {
+  const photoExtensions: Array<{ index: number; ext: string }> = [
+    { index: 1, ext: 'avif' },
+    { index: 2, ext: 'avif' },
+    { index: 3, ext: 'avif' },
+    { index: 4, ext: 'avif' },
+    { index: 5, ext: 'avif' },
+    { index: 6, ext: 'avif' },
+    { index: 7, ext: 'avif' },
+    { index: 8, ext: 'avif' },
+    { index: 9, ext: 'avif' },
+    { index: 10, ext: 'avif' },
+    { index: 11, ext: 'jpg' },
+    { index: 12, ext: 'avif' },
+    { index: 13, ext: 'avif' },
+    { index: 14, ext: 'jpg' },
+    { index: 15, ext: 'avif' },
+    { index: 16, ext: 'avif' },
+    { index: 17, ext: 'avif' },
+    { index: 18, ext: 'avif' },
+  ]
+
+  return photoExtensions.map(
+    ({ index, ext }) =>
+      `${portfolioAssetRoot}/photos/photo-${String(index).padStart(2, '0')}.${ext}`,
+  )
+})()
+
 const contractors: Contractor[] = [
   {
     id: 'taesung-interior',
-    name: 'Taesung Interior',
+    name: 'Raon R Design',
     rating: '4.9',
     reviewCount: 28,
     contractCount: 8,
     distanceLabel: '0.5km',
     neighborhood: 'Hwamyeong-dong',
-    priceRangeLabel: 'Mainly mid-to-low cost construction',
+    priceTierLabel: 'Mid-range',
+    pricePerPyeongLabel: '₩2.4M/py',
     mapX: 45,
     mapY: 38,
     photos: [
@@ -120,39 +249,40 @@ const contractors: Contractor[] = [
         id: 'taesung-cover-01',
         room: 'living',
         src: `${o2oRoot}/contractor-01-1.avif`,
-        alt: 'Representative renovation portfolio image from Taesung Interior.',
+        alt: 'Representative renovation portfolio image from Raon R Design.',
       },
       {
         id: 'taesung-cover-02',
         room: 'living',
         src: `${o2oRoot}/contractor-01-2.avif`,
-        alt: 'Second representative renovation portfolio image from Taesung Interior.',
+        alt: 'Second representative renovation portfolio image from Raon R Design.',
       },
       {
         id: 'taesung-cover-03',
         room: 'living',
         src: `${o2oRoot}/contractor-01-3.jpg`,
-        alt: 'Third representative renovation portfolio image from Taesung Interior.',
+        alt: 'Third representative renovation portfolio image from Raon R Design.',
       },
     ],
     portfolioPhotos: koreanRenovationPortfolio,
   },
   {
     id: 'raon-r-design',
-    name: 'Raon R Design',
+    name: 'Taesung Interior',
     rating: '4.8',
     reviewCount: 41,
     contractCount: 12,
     distanceLabel: '1.2km',
     neighborhood: 'Nogyang-dong',
-    priceRangeLabel: 'Mainly mid-to-low cost construction',
+    priceTierLabel: 'Premium',
+    pricePerPyeongLabel: '₩3.6M/py',
     mapX: 68,
     mapY: 53,
     photos: Array.from({ length: 8 }, (_, index) => ({
       id: `raon-cover-${index + 1}`,
       room: 'living' as const,
       src: `${o2oRoot}/contractor-02-${index + 1}.${index === 4 ? 'avif' : 'jpg'}`,
-      alt: `Representative renovation portfolio image ${index + 1} from Raon R Design.`,
+      alt: `Representative renovation portfolio image ${index + 1} from Taesung Interior.`,
     })),
     portfolioPhotos: koreanRenovationPortfolio,
   },
@@ -164,7 +294,8 @@ const contractors: Contractor[] = [
     contractCount: 10,
     distanceLabel: '2.4km',
     neighborhood: 'Ujangsan-dong',
-    priceRangeLabel: 'Mainly mid-to-low cost construction',
+    priceTierLabel: 'Budget',
+    pricePerPyeongLabel: '₩1.8M/py',
     mapX: 32,
     mapY: 62,
     photos: Array.from({ length: 4 }, (_, index) => ({
@@ -266,51 +397,11 @@ function MapLocationPill() {
 function ContractorMapFrame() {
   return (
     <div className="construction-ai-map-frame" aria-hidden="true">
-      <FigmaAsset
-        src={`${mapRoot}/map-tile-top.png`}
+      <img
+        src={`${mapRoot}/map-static.png`}
         alt=""
-        displayWidth={535}
-        displayHeight={379}
-        exportScale={1}
-        className="construction-ai-map-frame__tile construction-ai-map-frame__tile--top"
+        className="construction-ai-map-frame__static"
       />
-      <FigmaAsset
-        src={`${mapRoot}/map-tile-bottom.png`}
-        alt=""
-        displayWidth={579}
-        displayHeight={386}
-        exportScale={1}
-        className="construction-ai-map-frame__tile construction-ai-map-frame__tile--bottom"
-      />
-      {figmaMapLabelPins.map((pin) => (
-        <span
-          key={pin.id}
-          className="construction-ai-map-label-pin"
-          style={{
-            left: pin.left,
-            top: pin.top,
-            width: pin.width ?? 60,
-          }}
-        >
-          {pin.label}
-        </span>
-      ))}
-      {figmaMapDotPins.map((pin) => (
-        <span
-          key={pin.id}
-          className="construction-ai-map-dot-pin"
-          style={{ left: pin.left, top: pin.top }}
-        />
-      ))}
-      <span className="construction-ai-map-home-pin" style={{ left: 146, top: 128 }}>
-        <FigmaAsset
-          src={`${mapRoot}/map-marker-home.svg`}
-          alt=""
-          displayWidth={18}
-          displayHeight={18}
-          exportScale={1}
-        />
-      </span>
     </div>
   )
 }
@@ -358,10 +449,18 @@ function ContractorCard({
 }) {
   return (
     <article className="construction-ai-contractor-card">
-      <ContractorImageRail
-        photos={contractor.photos}
-        onSelectPhoto={(photo) => onSelectPhoto(contractor, photo)}
-      />
+      <div className="construction-ai-contractor-card__media">
+        <ContractorImageRail
+          photos={contractor.photos}
+          onSelectPhoto={(photo) => onSelectPhoto(contractor, photo)}
+        />
+        <TryInRoomButton
+          className="construction-ai-contractor-card__try-in-room"
+          expanded={false}
+          collapseAfterMs={null}
+          aria-label="Try in your room"
+        />
+      </div>
       <div className="construction-ai-contractor-card__body">
         <div className="construction-ai-contractor-card__name-row">
           <h2>{contractor.name}</h2>
@@ -374,13 +473,15 @@ function ContractorCard({
               <span className="construction-ai-rating__text">
                 <strong>{contractor.rating}</strong>{' '}
                 <span>
-                  ({contractor.reviewCount} Reviews) · {contractor.contractCount} Recents
+                  ({contractor.reviewCount} Reviews) · {contractor.contractCount} Hired
                 </span>
               </span>
             </span>
           </div>
           <div className="construction-ai-contractor-card__price">
-            <span>{contractor.priceRangeLabel}</span>
+            <span>
+              {contractor.priceTierLabel} ({contractor.pricePerPyeongLabel})
+            </span>
             <ConstructionInfoIcon />
           </div>
         </div>
@@ -398,13 +499,124 @@ function ContractorListScreen({
   isThumbnail: boolean
   onSelectPhoto: (contractor: Contractor, photo: ContractorProjectPhoto) => void
 }) {
-  const mainRef = useRef<HTMLDivElement | null>(null)
+  const sheetRef = useRef<HTMLElement | null>(null)
   const [activeSort, setActiveSort] = useState(sortOptions[0])
+  const [isSheetExpanded, setIsSheetExpanded] = useState(false)
+  const isSheetExpandedRef = useRef(false)
+  isSheetExpandedRef.current = isSheetExpanded
 
-  useInertialScroll(mainRef, {
-    enabled: isActive && !isThumbnail,
+  useInertialScroll(sheetRef, {
+    enabled: isActive && !isThumbnail && isSheetExpanded,
     preset: 'ios-feed',
   })
+
+  useEffect(() => {
+    if (!isActive || isThumbnail) {
+      return
+    }
+
+    const sheetEl = sheetRef.current
+    if (!sheetEl) {
+      return
+    }
+
+    let isWheelGestureConsumed = false
+    let wheelIdleTimerId: number | null = null
+    let activeTouchConsumed = false
+
+    const resetWheelGesture = () => {
+      isWheelGestureConsumed = false
+      wheelIdleTimerId = null
+    }
+
+    const armWheelGestureReset = () => {
+      if (wheelIdleTimerId !== null) {
+        window.clearTimeout(wheelIdleTimerId)
+      }
+      wheelIdleTimerId = window.setTimeout(resetWheelGesture, 180)
+    }
+
+    const handleWheel = (event: WheelEvent) => {
+      if (isWheelGestureConsumed) {
+        event.preventDefault()
+        armWheelGestureReset()
+        return
+      }
+
+      if (!isSheetExpandedRef.current && event.deltaY > 0) {
+        event.preventDefault()
+        setIsSheetExpanded(true)
+        isWheelGestureConsumed = true
+        armWheelGestureReset()
+        return
+      }
+
+      if (
+        isSheetExpandedRef.current &&
+        sheetEl.scrollTop <= 0 &&
+        event.deltaY < 0
+      ) {
+        event.preventDefault()
+        setIsSheetExpanded(false)
+        isWheelGestureConsumed = true
+        armWheelGestureReset()
+      }
+    }
+
+    let touchStartY = 0
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartY = event.touches[0]?.clientY ?? 0
+      activeTouchConsumed = false
+    }
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (activeTouchConsumed) {
+        event.preventDefault()
+        return
+      }
+
+      const currentY = event.touches[0]?.clientY ?? 0
+      const deltaY = touchStartY - currentY
+
+      if (!isSheetExpandedRef.current && deltaY > 4) {
+        event.preventDefault()
+        setIsSheetExpanded(true)
+        activeTouchConsumed = true
+        return
+      }
+
+      if (
+        isSheetExpandedRef.current &&
+        sheetEl.scrollTop <= 0 &&
+        deltaY < -4
+      ) {
+        event.preventDefault()
+        setIsSheetExpanded(false)
+        activeTouchConsumed = true
+      }
+    }
+
+    const handleTouchEnd = () => {
+      activeTouchConsumed = false
+    }
+
+    sheetEl.addEventListener('wheel', handleWheel, { passive: false })
+    sheetEl.addEventListener('touchstart', handleTouchStart, { passive: true })
+    sheetEl.addEventListener('touchmove', handleTouchMove, { passive: false })
+    sheetEl.addEventListener('touchend', handleTouchEnd, { passive: true })
+    sheetEl.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+
+    return () => {
+      if (wheelIdleTimerId !== null) {
+        window.clearTimeout(wheelIdleTimerId)
+      }
+      sheetEl.removeEventListener('wheel', handleWheel)
+      sheetEl.removeEventListener('touchstart', handleTouchStart)
+      sheetEl.removeEventListener('touchmove', handleTouchMove)
+      sheetEl.removeEventListener('touchend', handleTouchEnd)
+      sheetEl.removeEventListener('touchcancel', handleTouchEnd)
+    }
+  }, [isActive, isThumbnail])
 
   return (
     <div className="construction-ai-screen">
@@ -428,29 +640,38 @@ function ContractorListScreen({
           <MapLocationPill />
         </section>
         <section
-          ref={mainRef}
-          className="construction-ai-contractor-sheet prototype-screen__scroll-region"
-          data-inertial-scroll={isActive && !isThumbnail ? 'true' : undefined}
+          ref={sheetRef}
+          className={
+            isSheetExpanded
+              ? 'construction-ai-contractor-sheet construction-ai-contractor-sheet--expanded prototype-screen__scroll-region'
+              : 'construction-ai-contractor-sheet prototype-screen__scroll-region'
+          }
+          data-inertial-scroll={
+            isActive && !isThumbnail && isSheetExpanded ? 'true' : undefined
+          }
           aria-label="Nearby renovation pros"
         >
-          <div className="construction-ai-contractor-sheet__handle" aria-hidden="true" />
-          <header className="construction-ai-contractor-sheet__header">
-            <div>
-              <h2>Nearby renovation pros</h2>
-              <p>3 Ohouse standards partners around you</p>
+          <div
+            className="construction-ai-contractor-sheet__sticky"
+            onClick={() => {
+              if (!isSheetExpanded) {
+                setIsSheetExpanded(true)
+              }
+            }}
+          >
+            <div className="construction-ai-contractor-sheet__handle" aria-hidden="true" />
+            <div className="construction-ai-sort-row" data-native-scroll-axis="x">
+              {sortOptions.map((option) => (
+                <Chip
+                  key={option}
+                  selected={activeSort === option}
+                  className="construction-ai-sort-chip"
+                  onClick={() => setActiveSort(option)}
+                >
+                  {option}
+                </Chip>
+              ))}
             </div>
-          </header>
-          <div className="construction-ai-sort-row" data-native-scroll-axis="x">
-            {sortOptions.map((option) => (
-              <Chip
-                key={option}
-                selected={activeSort === option}
-                className="construction-ai-sort-chip"
-                onClick={() => setActiveSort(option)}
-              >
-                {option}
-              </Chip>
-            ))}
           </div>
           <div className="construction-ai-contractor-list">
             {contractors.map((contractor) => (
@@ -468,13 +689,315 @@ function ContractorListScreen({
   )
 }
 
-function ContractorPhotoPickerScreen({
+function ContractorPortfolioScreen({
   isActive,
   isThumbnail,
   contractor,
+  onBack,
+  onSelectPhoto,
+}: {
+  isActive: boolean
+  isThumbnail: boolean
+  contractor: Contractor
+  onBack: () => void
+  onSelectPhoto: (photoSrc: string) => void
+}) {
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [activeTab, setActiveTab] = useState<PortfolioTabId>('portfolio')
+  const [activeCategory, setActiveCategory] =
+    useState<PortfolioCategoryId>('cases')
+
+  useInertialScroll(scrollRef, {
+    enabled: isActive && !isThumbnail,
+    preset: 'ios-feed',
+  })
+
+  useEffect(() => {
+    if (!isActive) {
+      return
+    }
+    const node = scrollRef.current
+    if (node) {
+      node.scrollTop = 0
+    }
+  }, [isActive, activeCategory])
+
+  const tabs: Array<{
+    id: PortfolioTabId
+    label: string
+    count?: number
+  }> = [
+    { id: 'all', label: 'All' },
+    { id: 'portfolio', label: 'Portfolio', count: 200 },
+    { id: 'reviews', label: 'Reviews', count: 68 },
+    { id: 'profile', label: 'Profile' },
+  ]
+
+  return (
+    <div className="construction-ai-screen construction-ai-portfolio-screen">
+      <header className="construction-ai-portfolio-header">
+        <StatusBar levelsSrc={statusLevelsSrc} />
+        <div className="construction-ai-portfolio-nav">
+          <button
+            type="button"
+            className="construction-ai-nav-button"
+            aria-label="Back"
+            onClick={onBack}
+          >
+            <ConstructionBackIcon />
+          </button>
+          <button
+            type="button"
+            className="construction-ai-nav-button"
+            aria-label="Home"
+          >
+            <PortfolioHomeIcon />
+          </button>
+        </div>
+        <div className="ds-top-tab-bar construction-ai-portfolio-tabs">
+          {tabs.map((tab) => {
+            const isActive = tab.id === activeTab
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                className={
+                  isActive
+                    ? 'ds-top-tab-bar__item ds-top-tab-bar__item--active'
+                    : 'ds-top-tab-bar__item'
+                }
+                aria-pressed={isActive}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="ds-top-tab-bar__label construction-ai-portfolio-tab-label">
+                  <span>{tab.label}</span>
+                  {tab.count !== undefined ? (
+                    <span className="construction-ai-portfolio-tab-count">
+                      {tab.count}
+                    </span>
+                  ) : null}
+                </span>
+                {isActive ? (
+                  <span
+                    className="ds-top-tab-bar__indicator"
+                    aria-hidden="true"
+                  />
+                ) : null}
+              </button>
+            )
+          })}
+        </div>
+      </header>
+
+      <main
+        ref={scrollRef}
+        className="construction-ai-portfolio-main prototype-screen__scroll-region"
+        data-inertial-scroll={isActive && !isThumbnail ? 'true' : undefined}
+      >
+        <div className="construction-ai-portfolio-categories">
+          <button
+            type="button"
+            className={
+              activeCategory === 'cases'
+                ? 'construction-ai-portfolio-category construction-ai-portfolio-category--active'
+                : 'construction-ai-portfolio-category'
+            }
+            onClick={() => setActiveCategory('cases')}
+            aria-pressed={activeCategory === 'cases'}
+          >
+            <span
+              className="construction-ai-portfolio-category__image"
+              style={{
+                backgroundImage: `url(${portfolioAssetRoot}/categories/cases-thumb.avif)`,
+              }}
+            />
+            <span className="construction-ai-portfolio-category__label">
+              Projects
+            </span>
+          </button>
+          <button
+            type="button"
+            className={
+              activeCategory === 'photos'
+                ? 'construction-ai-portfolio-category construction-ai-portfolio-category--active'
+                : 'construction-ai-portfolio-category'
+            }
+            onClick={() => setActiveCategory('photos')}
+            aria-pressed={activeCategory === 'photos'}
+          >
+            <span
+              className="construction-ai-portfolio-category__image"
+              style={{
+                backgroundImage: `url(${portfolioAssetRoot}/categories/photos-thumb.avif)`,
+              }}
+            />
+            <span className="construction-ai-portfolio-category__label">
+              Photos
+            </span>
+          </button>
+        </div>
+
+        <div className="construction-ai-portfolio-filters" data-native-scroll-axis="x">
+          {['Sort', 'Size', 'Style', 'Budget'].map((label) => (
+            <Chip key={label} className="construction-ai-portfolio-filter-chip">
+              <span>{label}</span>
+              <PortfolioCaretIcon />
+            </Chip>
+          ))}
+        </div>
+
+        {activeCategory === 'cases' ? (
+          <div className="construction-ai-portfolio-cases">
+            {portfolioCases.map((kase) => (
+              <button
+                key={kase.id}
+                type="button"
+                className="construction-ai-portfolio-case"
+                onClick={() => onSelectPhoto(kase.cover)}
+              >
+                <span className="construction-ai-portfolio-case__cover">
+                  <img src={kase.cover} alt="" loading="lazy" />
+                  {kase.isFeatured ? (
+                    <span className="construction-ai-portfolio-case__badge">
+                      Featured case
+                    </span>
+                  ) : null}
+                </span>
+                <span className="construction-ai-portfolio-case__title">
+                  {kase.title}
+                </span>
+                <span className="construction-ai-portfolio-case__meta">
+                  Saved {kase.saved} · {kase.views} views
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="construction-ai-portfolio-photo-grid">
+            {portfolioAllPhotos.map((src) => (
+              <button
+                key={src}
+                type="button"
+                className="construction-ai-portfolio-photo"
+                onClick={() => onSelectPhoto(src)}
+              >
+                <img src={src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
+      </main>
+
+      <footer className="construction-ai-portfolio-cta-bar">
+        <button
+          type="button"
+          className="construction-ai-portfolio-cta-bar__secondary"
+        >
+          Review
+        </button>
+        <button
+          type="button"
+          className="construction-ai-portfolio-cta-bar__primary"
+        >
+          Get a quote
+        </button>
+      </footer>
+      <HomeIndicator />
+    </div>
+  )
+}
+
+function PortfolioHomeIcon() {
+  return (
+    <span
+      className="construction-ai-icon-box construction-ai-icon-box--nav"
+      aria-hidden="true"
+    >
+      <FigmaAsset
+        src="/assets/figma/pdp/home-outline.svg"
+        alt=""
+        displayWidth={20.8}
+        displayHeight={19.85}
+        exportScale={1}
+      />
+    </span>
+  )
+}
+
+function PhotoViewerBackIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 19 17" fill="none">
+      <path
+        d="M8.7 1L1 8.5M1 8.5L8.7 16M1 8.5H18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function PhotoViewerHomeIcon() {
+  return (
+    <FigmaAsset
+      src="/assets/figma/pdp/home-outline.svg"
+      alt=""
+      displayWidth={20.8}
+      displayHeight={19.85}
+      exportScale={1}
+    />
+  )
+}
+
+function PortfolioCaretIcon() {
+  return (
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M2 3.75L5 6.75L8 3.75"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+type PhotoReactions = {
+  likes: number
+  comments: number
+  shares: number
+  saves: number
+}
+
+function getReactionsForPhoto(src: string, index: number): PhotoReactions {
+  void src
+  const likeSeed = (index * 73 + 37) % 1500
+  const commentSeed = (index * 11 + 7) % 120
+  const shareSeed = (index * 5 + 2) % 60
+  const saveSeed = (index * 41 + 23) % 600
+  return {
+    likes: 12 + likeSeed,
+    comments: commentSeed,
+    shares: 1 + shareSeed,
+    saves: 32 + saveSeed,
+  }
+}
+
+function ContractorPhotoPickerScreen({
+  isActive,
+  isThumbnail,
+  contractor: _contractor,
   selectedPhoto,
   onBack,
-  onSelectProjectPhoto,
+  onSelectProjectPhoto: _onSelectProjectPhoto,
 }: {
   isActive: boolean
   isThumbnail: boolean
@@ -483,90 +1006,119 @@ function ContractorPhotoPickerScreen({
   onBack: () => void
   onSelectProjectPhoto: (photo: ContractorProjectPhoto) => void
 }) {
-  const mainRef = useRef<HTMLDivElement | null>(null)
-  const [activeSpace, setActiveSpace] = useState<SpaceFilterId>('all')
-  const filteredPhotos =
-    activeSpace === 'all'
-      ? contractor.portfolioPhotos
-      : contractor.portfolioPhotos.filter((photo) => photo.room === activeSpace)
+  const orderedPhotos = useMemo(() => {
+    const startIndex = portfolioAllPhotos.indexOf(selectedPhoto.src)
+    if (startIndex < 0) {
+      return portfolioAllPhotos
+    }
+    return [
+      ...portfolioAllPhotos.slice(startIndex),
+      ...portfolioAllPhotos.slice(0, startIndex),
+    ]
+  }, [selectedPhoto.src])
 
-  useInertialScroll(mainRef, {
-    enabled: isActive && !isThumbnail,
-    preset: 'ios-detail',
-  })
+  const slides: FeedMediaSlide[] = useMemo(
+    () =>
+      orderedPhotos.map((src, index) => ({
+        id: `${src}-${index}`,
+        src,
+        alt: '',
+        tags: [],
+      })),
+    [orderedPhotos],
+  )
+
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+  const collapsedSlideIndexesRef = useRef<Set<number>>(new Set())
+  const [, forceRerender] = useState(0)
+
+  void isActive
+  void isThumbnail
+
+  const activeSrc = orderedPhotos[activeSlideIndex] ?? orderedPhotos[0] ?? ''
+  const activeReactions = getReactionsForPhoto(activeSrc, activeSlideIndex)
+  const isTryInRoomCollapsed = collapsedSlideIndexesRef.current.has(activeSlideIndex)
 
   return (
-    <div className="construction-ai-screen">
-      <header className="construction-ai-header construction-ai-header--compact">
-        <StatusBar levelsSrc={statusLevelsSrc} />
-        <TopNav
-          className="construction-ai-top-nav"
-          leading={
-            <button
-              type="button"
-              className="construction-ai-nav-button"
-              aria-label="Back"
-              onClick={onBack}
-            >
-              <ConstructionBackIcon />
-            </button>
-          }
-          center={<h1>Select Project Photo</h1>}
-        />
-      </header>
-      <main
-        ref={mainRef}
-        className="construction-ai-photo-picker prototype-screen__scroll-region"
-        data-inertial-scroll={isActive && !isThumbnail ? 'true' : undefined}
-      >
-        <section className="construction-ai-photo-picker__hero">
-          <FigmaAsset
-            src={selectedPhoto.src}
-            alt={selectedPhoto.alt}
-            displayWidth={343}
-            displayHeight={228}
-            exportScale={1}
-            className="construction-ai-photo-picker__hero-image"
-          />
-          <div>
-            <ConstructionStandardBadge />
-            <h2>{contractor.name}</h2>
-            <p>Choose a contractor project, then preview the style in your own room.</p>
-          </div>
-        </section>
-        <div className="construction-ai-space-filter" data-native-scroll-axis="x">
-          {spaceFilters.map((filter) => (
-            <Chip
-              key={filter.id}
-              selected={activeSpace === filter.id}
-              className="construction-ai-space-filter__chip"
-              onClick={() => setActiveSpace(filter.id)}
-            >
-              {filter.label}
-            </Chip>
-          ))}
+    <div className="construction-ai-screen construction-ai-photo-viewer">
+      <StatusBar
+        levelsSrc={statusLevelsSrc}
+        className="construction-ai-photo-viewer__status-bar"
+      />
+      <header className="construction-ai-photo-viewer__nav">
+        <div className="construction-ai-photo-viewer__nav-group">
+          <button
+            type="button"
+            className="construction-ai-photo-viewer__nav-button"
+            aria-label="Back"
+            onClick={onBack}
+          >
+            <PhotoViewerBackIcon />
+          </button>
+          <button
+            type="button"
+            className="construction-ai-photo-viewer__nav-button"
+            aria-label="Home"
+          >
+            <PhotoViewerHomeIcon />
+          </button>
         </div>
-        <section className="construction-ai-photo-grid" aria-label="Project photos">
-          {filteredPhotos.map((photo) => (
-            <button
-              key={photo.id}
-              type="button"
-              className="construction-ai-photo-grid__item"
-              onClick={() => onSelectProjectPhoto(photo)}
-            >
-              <FigmaAsset
-                src={photo.src}
-                alt={photo.alt}
-                displayWidth={167.5}
-                displayHeight={112}
-                exportScale={1}
-                className="construction-ai-photo-grid__image"
-              />
-            </button>
-          ))}
-        </section>
+      </header>
+      <main className="construction-ai-photo-viewer__media">
+        <FeedMediaCarousel
+          slides={slides}
+          imageWidth={375}
+          imageHeight={500}
+          topPadding={0}
+          showCounter={false}
+          showDots={false}
+          showTagReveal={false}
+          onSlideChange={(index) => setActiveSlideIndex(index)}
+        />
+        <div className="construction-ai-photo-viewer__try-in-room-slot">
+          <TryInRoomButton
+            key={`try-${activeSlideIndex}-${isTryInRoomCollapsed ? 'collapsed' : 'expanded'}`}
+            expanded={isTryInRoomCollapsed ? false : undefined}
+            collapseAfterMs={isTryInRoomCollapsed ? null : 1400}
+            aria-label="Try in your room"
+            onTransitionEnd={(event) => {
+              if (
+                event.propertyName === 'width' &&
+                !collapsedSlideIndexesRef.current.has(activeSlideIndex)
+              ) {
+                const target = event.currentTarget as HTMLButtonElement
+                if (!target.classList.contains('ds-try-in-room-button--expanded')) {
+                  collapsedSlideIndexesRef.current.add(activeSlideIndex)
+                  forceRerender((value) => value + 1)
+                }
+              }
+            }}
+          />
+        </div>
       </main>
-      <HomeIndicator />
+      <FeedReactionBar
+        key={`reaction-${activeSlideIndex}`}
+        topPadding={0}
+        metrics={[
+          {
+            id: 'like',
+            iconSrc: '/assets/figma/personalized-feed/reaction-bar/heart-24.svg',
+            count: activeReactions.likes,
+          },
+          {
+            id: 'comment',
+            iconSrc: '/assets/figma/personalized-feed/reaction-bar/comment-24.svg',
+            count: activeReactions.comments,
+          },
+          {
+            id: 'share',
+            iconSrc: '/assets/figma/personalized-feed/reaction-bar/export-24.svg',
+            count: activeReactions.shares,
+          },
+        ]}
+        saveIconSrc="/assets/figma/personalized-feed/reaction-bar/scrap-24.svg"
+        saveCount={activeReactions.saves}
+      />
     </div>
   )
 }
@@ -579,10 +1131,19 @@ export default function ConstructionAiPrototype({
   const [selectedContractor, setSelectedContractor] = useState(contractors[0])
   const [selectedPhoto, setSelectedPhoto] = useState(contractors[0].photos[0])
 
-  function selectContractorPhoto(contractor: Contractor, photo: ContractorProjectPhoto) {
+  function selectContractorPhoto(contractor: Contractor, _photo: ContractorProjectPhoto) {
     setSelectedContractor(contractor)
-    setSelectedPhoto(photo)
-    setActiveScreen('project-photo')
+    setActiveScreen('portfolio')
+  }
+
+  function getPortfolioScreenState() {
+    if (activeScreen === 'portfolio') {
+      return 'center'
+    }
+    if (activeScreen === 'project-photo' || activeScreen === 'ai-room') {
+      return 'peek-left'
+    }
+    return 'offscreen-right'
   }
 
   return (
@@ -597,12 +1158,34 @@ export default function ConstructionAiPrototype({
         <div className="construction-ai-flow">
           <PushPage
             className="construction-ai-flow__page"
-            state={activeScreen === 'contractors' ? 'center' : 'peek-left'}
+            state={
+              activeScreen === 'contractors' ? 'center' : 'peek-left'
+            }
           >
             <ContractorListScreen
               isActive={activeScreen === 'contractors'}
               isThumbnail={isThumbnail}
               onSelectPhoto={selectContractorPhoto}
+            />
+          </PushPage>
+          <PushPage
+            className="construction-ai-flow__page"
+            state={getPortfolioScreenState()}
+          >
+            <ContractorPortfolioScreen
+              isActive={activeScreen === 'portfolio'}
+              isThumbnail={isThumbnail}
+              contractor={selectedContractor}
+              onBack={() => setActiveScreen('contractors')}
+              onSelectPhoto={(photoSrc) => {
+                setSelectedPhoto({
+                  id: photoSrc,
+                  room: 'living',
+                  src: photoSrc,
+                  alt: '',
+                })
+                setActiveScreen('project-photo')
+              }}
             />
           </PushPage>
           <PushPage
@@ -620,7 +1203,7 @@ export default function ConstructionAiPrototype({
               isThumbnail={isThumbnail}
               contractor={selectedContractor}
               selectedPhoto={selectedPhoto}
-              onBack={() => setActiveScreen('contractors')}
+              onBack={() => setActiveScreen('portfolio')}
               onSelectProjectPhoto={(photo) => {
                 setSelectedPhoto(photo)
                 setActiveScreen('ai-room')

@@ -1,11 +1,15 @@
 .construction-ai-prototype {
-  width: 375px;
-  height: 812px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   display: grid;
   place-items: center;
 }
 
 .construction-ai-prototype--thumbnail {
+  width: 375px;
+  height: 812px;
+  display: block;
   pointer-events: none;
 }
 
@@ -169,121 +173,14 @@
   background: #edf4f8;
 }
 
-.construction-ai-map-frame__tile {
+.construction-ai-map-frame__static {
   position: absolute;
-  max-width: none;
-  object-fit: cover;
+  top: 0;
+  left: 0;
+  width: 375px;
+  height: auto;
   pointer-events: none;
   user-select: none;
-}
-
-.construction-ai-map-frame__tile--top {
-  left: -72px;
-  top: 0;
-  width: 535px;
-  height: 379px;
-}
-
-.construction-ai-map-frame__tile--bottom {
-  left: -7px;
-  top: 290px;
-  width: 579px;
-  height: 386px;
-}
-
-.construction-ai-map-label-pin {
-  position: absolute;
-  z-index: 2;
-  height: 40px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  color: #111111;
-  font-family: 'Pretendard', var(--font-body);
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: -0.3px;
-  font-weight: 700;
-  text-align: center;
-  white-space: nowrap;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.86);
-}
-
-.construction-ai-map-label-pin::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 26px;
-  height: 26px;
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  background: #0aa5ff;
-  box-shadow: 0 4px 12px rgba(47, 52, 56, 0.24);
-  transform: translateX(-50%);
-}
-
-.construction-ai-map-label-pin::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 8px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ffffff;
-  transform: translateX(-50%);
-}
-
-.construction-ai-map-dot-pin {
-  position: absolute;
-  z-index: 2;
-  width: 14px;
-  height: 14px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  background: #0aa5ff;
-  box-shadow: 0 4px 10px rgba(47, 52, 56, 0.22);
-}
-
-.construction-ai-map-home-pin {
-  position: absolute;
-  z-index: 3;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #2f3438;
-  box-shadow: 0 6px 14px rgba(47, 52, 56, 0.28);
-}
-
-/* Legacy numbered pin retained for older thumbnails that may still reference it. */
-.construction-ai-map-pin {
-  position: absolute;
-  z-index: 2;
-  width: 34px;
-  height: 34px;
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #2f3438;
-  color: #ffffff;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
-  transform: translate(-50%, -50%);
-  font-family: 'SF Pro Text', 'SF Pro', var(--font-body);
-  font-size: 13px;
-  line-height: 16px;
-  letter-spacing: -0.2px;
-  font-weight: 700;
-}
-
-.construction-ai-map-pin--active {
-  width: 40px;
-  height: 40px;
-  background: #00a1ff;
-  box-shadow: 0 12px 26px rgba(0, 161, 255, 0.3);
 }
 
 .construction-ai-contractor-sheet {
@@ -292,50 +189,52 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: 432px;
+  top: 292px;
   padding: 0 0 34px;
   border-radius: 24px 24px 0 0;
   background: #ffffff;
   box-shadow: 0 -12px 42px rgba(15, 23, 42, 0.16);
-  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  transition: top 280ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-radius 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.construction-ai-contractor-sheet__handle {
+.construction-ai-contractor-sheet--expanded {
+  top: 0;
+  border-radius: 0;
+  overflow-y: auto;
+}
+
+.construction-ai-contractor-sheet--expanded .construction-ai-sort-row {
+  padding-top: 8px;
+}
+
+.construction-ai-contractor-sheet__sticky {
   position: sticky;
   z-index: 5;
   top: 0;
+  background: #ffffff;
+}
+
+.construction-ai-contractor-sheet__handle {
   width: 42px;
   height: 5px;
   margin: 10px auto 0;
   border-radius: 999px;
   background: #eaedef;
+  opacity: 1;
+  transition: opacity 200ms ease, height 200ms ease, margin 200ms ease;
 }
 
-.construction-ai-contractor-sheet__header {
-  padding: 14px 16px 4px;
-  background: #ffffff;
-}
-
-.construction-ai-contractor-sheet__header h2 {
-  margin: 0;
-  color: #2f3438;
-  font-family: 'Pretendard', var(--font-body);
-  font-size: 18px;
-  line-height: 24px;
-  letter-spacing: -0.3px;
-  font-weight: 700;
-}
-
-.construction-ai-contractor-sheet__header p {
-  margin: 2px 0 0;
-  color: #828c94;
-  font-family: 'SF Pro Text', 'SF Pro', var(--font-body);
-  font-size: 12px;
-  line-height: 18px;
-  letter-spacing: -0.2px;
-  font-weight: 400;
+.construction-ai-contractor-sheet--expanded
+  .construction-ai-contractor-sheet__handle {
+  opacity: 0;
+  height: 0;
+  margin: 0 auto;
+  pointer-events: none;
 }
 
 .construction-ai-main::-webkit-scrollbar,
@@ -347,11 +246,7 @@
 }
 
 .construction-ai-sort-row {
-  position: sticky;
-  z-index: 5;
-  top: 15px;
-  height: 48px;
-  padding: 8px 16px;
+  padding: 14px 16px 12px;
   display: flex;
   gap: 8px;
   overflow-x: auto;
@@ -360,24 +255,13 @@
 }
 
 .construction-ai-sort-chip.ds-chip {
-  height: 32px;
-  padding: 4px 12px;
-  border: 0;
-  border-radius: 50px;
-  background: #f7f9fa;
-  color: #2f3438;
   white-space: nowrap;
-}
-
-.construction-ai-sort-chip.ds-chip--selected {
-  background: #141414;
-  color: #ffffff;
 }
 
 .construction-ai-contractor-list {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 20px;
   padding: 0 0 36px;
 }
 
@@ -418,6 +302,18 @@
 
 .construction-ai-card-rail__image--small-radius {
   border-radius: 4px;
+}
+
+.construction-ai-contractor-card__media {
+  position: relative;
+}
+
+.construction-ai-contractor-card__try-in-room {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  bottom: 8px;
+  pointer-events: auto;
 }
 
 .construction-ai-contractor-card__body {
@@ -691,4 +587,376 @@
   height: 112px;
   border-radius: 8px;
   object-fit: cover;
+}
+
+/* Portfolio screen */
+.construction-ai-portfolio-screen {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.construction-ai-portfolio-header {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 auto;
+  background: #ffffff;
+}
+
+.construction-ai-portfolio-nav {
+  height: 44px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.construction-ai-portfolio-nav__spacer {
+  flex: 1 1 auto;
+}
+
+.construction-ai-portfolio-tabs {
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.construction-ai-portfolio-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.construction-ai-portfolio-tabs .ds-top-tab-bar__item {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+}
+
+.construction-ai-portfolio-tab-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.construction-ai-portfolio-tab-count {
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  color: #c2c8cc;
+  font-variant-numeric: tabular-nums;
+}
+
+.construction-ai-portfolio-tabs
+  .ds-top-tab-bar__item--active
+  .construction-ai-portfolio-tab-count {
+  color: #828c94;
+}
+
+.construction-ai-portfolio-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 0 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: #ffffff;
+}
+
+.construction-ai-portfolio-main::-webkit-scrollbar {
+  display: none;
+}
+
+.construction-ai-portfolio-categories {
+  display: flex;
+  gap: 12px;
+  padding: 16px 16px 0;
+}
+
+.construction-ai-portfolio-category {
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.construction-ai-portfolio-category--active {
+  border-color: #00a1ff;
+}
+
+.construction-ai-portfolio-category__image {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f1f3f5;
+}
+
+.construction-ai-portfolio-category__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.32);
+}
+
+.construction-ai-portfolio-category__label {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 8px;
+  left: 0;
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Pretendard', var(--font-body);
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.32);
+}
+
+.construction-ai-portfolio-filters {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.construction-ai-portfolio-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.construction-ai-portfolio-filter-chip.ds-chip {
+  flex: 0 0 auto;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.construction-ai-portfolio-cases {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 8px;
+  padding: 4px 16px 12px;
+}
+
+.construction-ai-portfolio-case {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.construction-ai-portfolio-case__cover {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-subtle);
+}
+
+.construction-ai-portfolio-case__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.construction-ai-portfolio-case__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-brand);
+  color: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: var(--oh-type-detail-12-size);
+  line-height: var(--oh-type-detail-12-line-height);
+  letter-spacing: var(--oh-type-detail-12-letter-spacing);
+  font-weight: 600;
+}
+
+.construction-ai-portfolio-case__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--oh-type-body-14-size);
+  line-height: var(--oh-type-body-14-line-height);
+  letter-spacing: var(--oh-type-body-14-letter-spacing);
+  font-weight: 500;
+}
+
+.construction-ai-portfolio-case__meta {
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--oh-type-detail-12-size);
+  line-height: var(--oh-type-detail-12-line-height);
+  letter-spacing: var(--oh-type-detail-12-letter-spacing);
+  font-weight: 400;
+}
+
+.construction-ai-portfolio-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 0 0 12px;
+}
+
+.construction-ai-portfolio-photo {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+}
+
+.construction-ai-portfolio-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.construction-ai-portfolio-cta-bar {
+  flex: 0 0 auto;
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
+  background: var(--color-surface);
+}
+
+.construction-ai-portfolio-cta-bar__secondary,
+.construction-ai-portfolio-cta-bar__primary {
+  height: 48px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--oh-type-body-15-size);
+  line-height: var(--oh-type-body-15-line-height);
+  letter-spacing: var(--oh-type-body-15-letter-spacing);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.construction-ai-portfolio-cta-bar__secondary {
+  flex: 0 0 auto;
+  min-width: 96px;
+  padding: 0 var(--space-16);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+}
+
+.construction-ai-portfolio-cta-bar__primary {
+  flex: 1 1 auto;
+  background: var(--color-brand);
+  color: var(--color-surface);
+}
+
+/* Photo viewer (full-screen black) */
+.construction-ai-photo-viewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #000000;
+  color: #ffffff;
+}
+
+.construction-ai-photo-viewer__status-bar.ds-status-bar {
+  background: #000000;
+  color: #ffffff;
+}
+
+.construction-ai-photo-viewer__status-bar.ds-status-bar
+  .ds-status-bar__time {
+  color: #ffffff;
+}
+
+.construction-ai-photo-viewer__status-bar.ds-status-bar
+  .ds-status-bar__levels,
+.construction-ai-photo-viewer__status-bar.ds-status-bar
+  .ds-status-bar__levels img {
+  filter: invert(1) brightness(2);
+}
+
+.construction-ai-photo-viewer__nav {
+  position: relative;
+  z-index: 5;
+  height: 44px;
+  padding: 0 var(--space-12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000000;
+}
+
+.construction-ai-photo-viewer__nav-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.construction-ai-photo-viewer__nav-button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.construction-ai-photo-viewer__media {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  overflow: hidden;
+}
+
+.construction-ai-photo-viewer__media .ds-feed-media {
+  background: #000000;
+}
+
+.construction-ai-photo-viewer__try-in-room-slot {
+  position: absolute;
+  z-index: 4;
+  left: 12px;
+  bottom: 12px;
+  pointer-events: auto;
+}
+
+.construction-ai-photo-viewer .ds-feed-reaction-bar {
+  background: #000000;
+  padding: 12px 16px 16px;
+  --fill-0: #ffffff;
+}
+
+.construction-ai-photo-viewer .ds-feed-reaction-bar__metric {
+  color: #ffffff;
 }

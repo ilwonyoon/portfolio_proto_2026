@@ -4,6 +4,8 @@ import type {
   PersonalizedFeedApiResponse,
 } from './feed-api-contract'
 
+const creatorProfileAssetRoot = '/assets/figma/personalized-feed/creator-profiles'
+
 const reactionIcons = {
   like: {
     src: '/assets/figma/personalized-feed/reaction-bar/heart-24.svg',
@@ -604,12 +606,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 24',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/feed-card/avatar.png',
-          alt: 'H.House profile',
+          src: `${creatorProfileAssetRoot}/nari-collects.png`,
+          alt: 'nari.collects profile',
         },
-        name: 'H.House',
-        subtitle: 'Cultivating today',
-        actionLabel: 'Follow',
+        name: 'nari.collects',
+        subtitle: 'Small-space styling, warm wood, and secondhand finds',
       },
       media: {
         slides: userUploadedSlides.slice(0, 7),
@@ -680,11 +681,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 4',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-routine/avatar.png',
-          alt: 'H.House profile',
+          src: `${creatorProfileAssetRoot}/minju-homebook.png`,
+          alt: 'minju.homebook profile',
         },
-        name: 'H.House',
-        subtitle: 'Cultivating today',
+        name: 'minju.homebook',
+        subtitle: 'Quiet routines, tea corners, and everyday storage',
         actionLabel: 'Follow',
       },
       media: {
@@ -813,12 +814,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 4',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-tounou/avatar.png',
-          alt: 'H.House profile',
+          src: `${creatorProfileAssetRoot}/studio-yun.png`,
+          alt: 'studio.yun profile',
         },
-        name: 'H.House',
-        subtitle: 'Cultivating today',
-        actionLabel: 'Follow',
+        name: 'studio.yun',
+        subtitle: 'Art prints, textile details, and soft color edits',
       },
       media: {
         slides: tounouSlides,
@@ -942,11 +942,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       type: 'renovation-review',
       profile: {
         avatar: {
-          src: '/assets/figma/personalized-feed/renovation-review/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/june-archive.png`,
+          alt: 'june.archive profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
+        name: 'june.archive',
+        subtitle: 'Renovation notes from compact Seoul apartments',
         actionLabel: 'Follow',
       },
       media: {
@@ -963,11 +963,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 0',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-camping/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/camping-jae.png`,
+          alt: 'camping.jae profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
+        name: 'camping.jae',
+        subtitle: 'Low-key camping gear and foldable home comforts',
         actionLabel: 'Follow',
         showOverflowAction: true,
       },
@@ -1022,12 +1022,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 1',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-plate/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/plate-mina.png`,
+          alt: 'plate.mina profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
-        actionLabel: 'Follow',
+        name: 'plate.mina',
+        subtitle: 'Tableware moments, small shelves, and weekend styling',
         showOverflowAction: true,
       },
       media: {
@@ -1088,11 +1087,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 4',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-kitchen/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/cafe-soo.png`,
+          alt: 'cafe.soo profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
+        name: 'cafe.soo',
+        subtitle: 'Home cafe corners and practical kitchen storage',
         actionLabel: 'Follow',
         showOverflowAction: true,
       },
@@ -1161,11 +1160,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 1',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-soop87/avatar.png',
-          alt: 'soop87 profile',
+          src: `${creatorProfileAssetRoot}/green-haru.png`,
+          alt: 'green.haru profile',
         },
-        name: 'soop87',
-        subtitle: '#MostBusyAtHome',
+        name: 'green.haru',
+        subtitle: 'Plant care experiments for bright apartment windows',
         showOverflowAction: true,
       },
       media: {
@@ -1230,11 +1229,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       },
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-recommended/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/plantroom-chae.png`,
+          alt: 'plantroom.chae profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
+        name: 'plantroom.chae',
+        subtitle: 'Dining-room greenery, ceramics, and natural light',
         actionLabel: 'Follow',
         showOverflowAction: true,
         topPadding: 0,
@@ -1296,12 +1295,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       productSheetTitle: 'In this photo 4',
       header: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-postcard/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/postcard-room.png`,
+          alt: 'postcard.room profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
-        actionLabel: 'Follow',
+        name: 'postcard.room',
+        subtitle: 'Bedroom vignettes with postcards and quiet objects',
         showOverflowAction: true,
       },
       media: {
@@ -1368,11 +1366,11 @@ export const personalizedFeedApiResponse: PersonalizedFeedApiResponse = {
       type: 'longform-advice',
       profile: {
         avatar: {
-          src: '/assets/figma/personalized-feed/btf-longform/avatar.png',
-          alt: 'slow_luu profile',
+          src: `${creatorProfileAssetRoot}/storage-maker.png`,
+          alt: 'storage.maker profile',
         },
-        name: 'slow_luu',
-        subtitle: 'Storage tips organized like J',
+        name: 'storage.maker',
+        subtitle: 'Tested storage buys for renters and busy couples',
         actionLabel: 'Follow',
         showOverflowAction: true,
       },
