@@ -1,15 +1,18 @@
-import type { ComponentType } from 'react'
-import OldHomeFeedPrototype from '../prototypes/old-home-feed/OldHomeFeedPrototype'
-import PersonalizedFeedPrototype from '../prototypes/personalized-feed/PersonalizedFeedPrototype'
-import PersonalizedDiscoverFeedPrototype from '../prototypes/personalized-discover-feed'
-import Portfolio2026Prototype from '../prototypes/portfolio-2026/Portfolio2026Prototype'
+import { lazy, type ComponentType } from 'react'
 import { interestProfilingScript } from '../prototypes/portfolio-2026/interest-profiling-script'
-import CreatorOnboardingPrototype from '../prototypes/creator-onboarding'
-import CreatorProfileContentPrototype from '../prototypes/creator-profile-content'
-import CreatorProgramDashboardPrototype from '../prototypes/creator-program-dashboard'
-import PdpPrototype from '../prototypes/pdp'
-import UploadPrototype from '../prototypes/upload'
 import type { LiquidGlassCursorScript } from '../system/overlays'
+
+const OldHomeFeedPrototype = lazy(() => import('../prototypes/old-home-feed/OldHomeFeedPrototype'))
+const PersonalizedFeedPrototype = lazy(() => import('../prototypes/personalized-feed/PersonalizedFeedPrototype'))
+const PersonalizedDiscoverFeedPrototype = lazy(() => import('../prototypes/personalized-discover-feed'))
+const Portfolio2026Prototype = lazy(() => import('../prototypes/portfolio-2026/Portfolio2026Prototype'))
+const CreatorOnboardingPrototype = lazy(() => import('../prototypes/creator-onboarding'))
+const CreatorProfileContentPrototype = lazy(() => import('../prototypes/creator-profile-content'))
+const CreatorProgramDashboardPrototype = lazy(() => import('../prototypes/creator-program-dashboard'))
+const AiRoomFlowPrototype = lazy(() => import('../prototypes/ai-room-flow'))
+const ConstructionAiPrototype = lazy(() => import('../prototypes/construction-ai'))
+const PdpPrototype = lazy(() => import('../prototypes/pdp'))
+const UploadPrototype = lazy(() => import('../prototypes/upload'))
 
 type PrototypeRendererProps = {
   mode?: 'full' | 'thumbnail'
@@ -119,5 +122,21 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Figma recreation',
     screens: ['Product detail'],
     Component: PdpPrototype,
+  },
+  {
+    id: 'ai-room-flow',
+    title: 'AI room flow',
+    description: 'Reusable AI room selection, placement, rendering, and result flow.',
+    status: 'Shared flow',
+    screens: ['Photo picker', 'Placement', 'Rendering', 'Result'],
+    Component: AiRoomFlowPrototype,
+  },
+  {
+    id: 'construction-ai',
+    title: 'Construction AI',
+    description: 'Contractor entry point connected to the reusable AI room flow.',
+    status: 'Active build',
+    screens: ['Pros', 'Project photo', 'AI room flow'],
+    Component: ConstructionAiPrototype,
   },
 ]

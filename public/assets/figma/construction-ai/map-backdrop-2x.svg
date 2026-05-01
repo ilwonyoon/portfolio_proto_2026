@@ -1,0 +1,28 @@
+<svg width="750" height="1448" viewBox="0 0 750 1448" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="750" height="1448" fill="#E9EEF1"/>
+  <rect width="750" height="1448" fill="url(#bg)"/>
+  <circle cx="558" cy="180" r="198" fill="#8EC8AC" fill-opacity="0.23"/>
+  <path d="M-184 452L924 88" stroke="white" stroke-opacity="0.84" stroke-width="60" stroke-linecap="round"/>
+  <path d="M58 136L802 760" stroke="white" stroke-opacity="0.72" stroke-width="44" stroke-linecap="round"/>
+  <path d="M-64 722L590 994" stroke="white" stroke-opacity="0.72" stroke-width="36" stroke-linecap="round"/>
+  <path d="M142 -70L186 780" stroke="white" stroke-opacity="0.42" stroke-width="22" stroke-linecap="round"/>
+  <path d="M510 -30L454 776" stroke="white" stroke-opacity="0.4" stroke-width="20" stroke-linecap="round"/>
+  <path d="M-90 266L774 302" stroke="white" stroke-opacity="0.36" stroke-width="18" stroke-linecap="round"/>
+  <rect x="502" y="168" width="214" height="166" rx="54" fill="#A4D2B5" fill-opacity="0.42"/>
+  <rect x="502" y="168" width="214" height="166" rx="54" stroke="#5B906D" stroke-opacity="0.12" stroke-width="2"/>
+  <path d="M-80 1136L834 862" stroke="white" stroke-opacity="0.62" stroke-width="42" stroke-linecap="round"/>
+  <path d="M262 790L788 1358" stroke="white" stroke-opacity="0.46" stroke-width="28" stroke-linecap="round"/>
+  <g opacity="0.36" transform="translate(-100 -80) rotate(-8 475 720)">
+    <path d="M0 0H1050V1600H0V0Z" fill="url(#grid)"/>
+  </g>
+  <defs>
+    <linearGradient id="bg" x1="40" y1="20" x2="740" y2="1360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF3F5"/>
+      <stop offset="0.5" stop-color="#DCE6EB"/>
+      <stop offset="1" stop-color="#EDF1F3"/>
+    </linearGradient>
+    <pattern id="grid" width="92" height="92" patternUnits="userSpaceOnUse">
+      <path d="M92 0H0V92" stroke="white" stroke-opacity="0.72" stroke-width="2"/>
+    </pattern>
+  </defs>
+</svg>

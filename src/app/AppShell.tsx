@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type KeyboardEvent, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './app-shell.css'
 import { type PrototypeDefinition, prototypeRegistry } from './prototype-registry'
 import { ComponentLibraryPanel } from './ComponentLibraryPanel'
@@ -292,7 +292,13 @@ export function AppShell() {
                 >
                   <span className="prototype-list__preview" aria-hidden="true">
                     <span className="prototype-list__preview-scale">
-                      <PreviewComponent mode="thumbnail" />
+                      {isActive ? (
+                        <Suspense fallback={null}>
+                          <PreviewComponent mode="thumbnail" />
+                        </Suspense>
+                      ) : (
+                        <span className="prototype-list__preview-placeholder" />
+                      )}
                     </span>
                   </span>
                   <span className="prototype-list__name">{prototype.title}</span>
@@ -337,10 +343,12 @@ export function AppShell() {
           {activeView === 'component-library' ? (
             <ComponentLibraryPanel />
           ) : (
-            <ActivePrototypeComponent
-              key={`${activePrototype.id}-${demoMode}-${scriptRunId}`}
-              mode="full"
-            />
+            <Suspense fallback={null}>
+              <ActivePrototypeComponent
+                key={`${activePrototype.id}-${demoMode}-${scriptRunId}`}
+                mode="full"
+              />
+            </Suspense>
           )}
         </div>
       </section>

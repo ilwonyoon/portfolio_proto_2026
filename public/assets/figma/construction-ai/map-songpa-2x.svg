@@ -1,0 +1,56 @@
+<svg width="750" height="1448" viewBox="0 0 750 1448" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="750" height="1448" fill="#EEF2F4"/>
+  <path d="M0 0H750V1448H0V0Z" fill="url(#paper)"/>
+  <g opacity="0.95">
+    <path d="M-96 344C76 264 212 228 354 220C514 210 606 176 850 66" stroke="#FFFFFF" stroke-width="42" stroke-linecap="round"/>
+    <path d="M-108 354C76 266 208 232 356 224C518 214 608 178 852 70" stroke="#D5DEE4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-122 842C54 752 220 714 358 696C532 674 640 616 844 502" stroke="#FFFFFF" stroke-width="38" stroke-linecap="round"/>
+    <path d="M-120 846C54 756 222 718 360 700C536 678 642 620 846 506" stroke="#D5DEE4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M120 -92C156 104 168 276 158 424C146 604 164 788 218 1036" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round"/>
+    <path d="M124 -92C160 104 172 276 162 426C150 604 168 788 222 1036" stroke="#D5DEE4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M514 -90C488 118 482 302 496 468C510 634 494 816 424 1066" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round"/>
+    <path d="M518 -90C492 118 486 302 500 468C514 636 498 818 428 1068" stroke="#D5DEE4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-58 140L812 1058" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round"/>
+    <path d="M-54 144L816 1062" stroke="#D5DEE4" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g opacity="0.82">
+    <path d="M236 492L450 438L534 534L322 594L236 492Z" fill="#D8EEDF"/>
+    <path d="M236 492L450 438L534 534L322 594L236 492Z" stroke="#9DCCAD" stroke-width="2"/>
+    <path d="M534 196C636 188 712 232 748 310V456C702 506 626 534 540 526C418 516 340 444 350 346C360 254 424 204 534 196Z" fill="#D2EBDD"/>
+    <path d="M536 590C640 574 720 608 750 678V860C704 910 624 934 540 912C430 884 364 808 386 716C404 642 452 604 536 590Z" fill="#D7ECE1"/>
+  </g>
+  <g opacity="0.28">
+    <path d="M42 64H708M42 184H708M42 304H708M42 424H708M42 544H708M42 664H708M42 784H708M42 904H708M42 1024H708M42 1144H708" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M80 18V1180M200 18V1180M320 18V1180M440 18V1180M560 18V1180M680 18V1180" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g>
+    <rect x="74" y="234" width="192" height="78" rx="22" fill="#E5EBEF" stroke="#D2DBE1" stroke-width="2"/>
+    <rect x="74" y="634" width="218" height="92" rx="24" fill="#E5EBEF" stroke="#D2DBE1" stroke-width="2"/>
+    <rect x="494" y="356" width="178" height="104" rx="26" fill="#E7EEF1" stroke="#D2DBE1" stroke-width="2"/>
+    <rect x="502" y="782" width="166" height="86" rx="24" fill="#E7EEF1" stroke="#D2DBE1" stroke-width="2"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="22" font-weight="650" fill="#7B8790" opacity="0.68">
+    <text x="92" y="282">Jamsil</text>
+    <text x="510" y="418">Seokchon</text>
+    <text x="96" y="688">Olympic-ro</text>
+    <text x="512" y="838">Songpa</text>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-size="18" font-weight="600" fill="#9AA4AC" opacity="0.72">
+    <text x="438" y="306">Seokchon Lake</text>
+    <text x="252" y="538">Community park</text>
+    <text x="104" y="920">Renovation area</text>
+  </g>
+  <g opacity="0.55">
+    <circle cx="422" cy="304" r="8" fill="#8BBFE1"/>
+    <circle cx="452" cy="306" r="8" fill="#8BBFE1"/>
+    <circle cx="482" cy="310" r="8" fill="#8BBFE1"/>
+    <rect x="412" y="286" width="88" height="44" rx="22" stroke="#8BBFE1" stroke-width="3"/>
+  </g>
+  <defs>
+    <linearGradient id="paper" x1="90" y1="0" x2="720" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F7F8"/>
+      <stop offset="0.54" stop-color="#E3EBEF"/>
+      <stop offset="1" stop-color="#F0F4F6"/>
+    </linearGradient>
+  </defs>
+</svg>
