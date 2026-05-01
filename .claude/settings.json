@@ -1,0 +1,12 @@
+{
+  "enabledPlugins": {
+    "oh-my-claudecode@omc": false,
+    "swift-lsp@claude-plugins-official": false,
+    "codex@openai-codex": false
+  },
+  "enableAllProjectMcpServers": false,
+  "mcpServers": {
+    "figma": true,
+    "playwright": true
+  }
+}
