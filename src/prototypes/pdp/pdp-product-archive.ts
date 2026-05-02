@@ -2,7 +2,8 @@
 // The AI Room flow re-uses these via getPdpArchiveProductsForTab; derivative
 // prototypes can import the seed list and remap as needed.
 
-import { inferProductCategory } from './pdp-helpers'
+import { inferProductCategory, orderPdpArchiveProducts } from './pdp-helpers'
+import type { PlacementPosition } from './pdp-placement-data'
 
 export type PdpProductArchiveTab = 'all' | 'saved' | 'recently-viewed'
 
@@ -142,4 +143,51 @@ export const pdpProductArchiveOrderByTab: Record<
     'oak-stool',
     'framed-art-print',
   ],
+}
+
+export function getPdpArchiveProductsForTab(tabId: PdpProductArchiveTab) {
+  const tabProducts =
+    tabId === 'all'
+      ? pdpProductArchiveItems
+      : pdpProductArchiveItems.filter((product) =>
+          product.tabIds.includes(tabId),
+        )
+
+  return orderPdpArchiveProducts(tabProducts, pdpProductArchiveOrderByTab[tabId])
+}
+
+// Placement items hold a product reference + the user-chosen marker position
+// in the AI room flow. Lives here so that helpers and screens can share
+// the same shape without circular imports.
+export type PdpPlacementItem = {
+  id: string
+  product: PdpProductArchiveItem
+  category: string
+  position: PlacementPosition | null
+}
+
+export function createPdpPlacementItem(
+  product: PdpProductArchiveItem,
+  instanceIndex: number,
+): PdpPlacementItem {
+  return {
+    id: `${product.id}-${instanceIndex}`,
+    product,
+    category: product.category ?? inferProductCategory(product),
+    position: null,
+  }
+}
+
+export const pdpProductFullName =
+  'Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes'
+
+export const pdpPrimaryProduct: PdpProductArchiveItem = {
+  id: 'pdp-moss-rug',
+  tabIds: ['saved'],
+  brand: 'Nomia',
+  name: pdpProductFullName,
+  category: 'Rug',
+  price: '42,900',
+  discountRate: '28%',
+  imageSrc: `${pdpAssetRoot}/moss-rug-hero.png`,
 }
