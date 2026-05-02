@@ -4,12 +4,12 @@ import { PrototypeScreen } from '../../prototype/PrototypeScreen'
 import { Chip, TryInRoomButton } from '../../system/primitives'
 import { FeedMediaCarousel } from '../../system/feed/FeedMediaCarousel'
 import type { FeedMediaSlide } from '../../system/feed/FeedMediaCarousel'
-import { FeedReactionBar } from '../../system/feed/FeedReactionBar'
 import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
 import { BottomSheet, PushPage } from '../../system/overlays'
 import { useSheetDragGesture } from '../../system/overlays/useSheetDragGesture'
 import { PdpAiRoomFlowContent } from '../pdp/PdpPrototype'
+import { constructionAiRoomData } from './ai-room-data'
 import './construction-ai.css'
 
 type ConstructionAiPrototypeProps = {
@@ -453,12 +453,6 @@ function ContractorCard({
         <ContractorImageRail
           photos={contractor.photos}
           onSelectPhoto={(photo) => onSelectPhoto(contractor, photo)}
-        />
-        <TryInRoomButton
-          className="construction-ai-contractor-card__try-in-room"
-          expanded={false}
-          collapseAfterMs={null}
-          aria-label="Try in your room"
         />
       </div>
       <div className="construction-ai-contractor-card__body">
@@ -938,18 +932,6 @@ function PhotoViewerBackIcon() {
   )
 }
 
-function PhotoViewerHomeIcon() {
-  return (
-    <FigmaAsset
-      src="/assets/figma/pdp/home-outline.svg"
-      alt=""
-      displayWidth={20.8}
-      displayHeight={19.85}
-      exportScale={1}
-    />
-  )
-}
-
 function PortfolioCaretIcon() {
   return (
     <svg
@@ -970,34 +952,13 @@ function PortfolioCaretIcon() {
   )
 }
 
-type PhotoReactions = {
-  likes: number
-  comments: number
-  shares: number
-  saves: number
-}
-
-function getReactionsForPhoto(src: string, index: number): PhotoReactions {
-  void src
-  const likeSeed = (index * 73 + 37) % 1500
-  const commentSeed = (index * 11 + 7) % 120
-  const shareSeed = (index * 5 + 2) % 60
-  const saveSeed = (index * 41 + 23) % 600
-  return {
-    likes: 12 + likeSeed,
-    comments: commentSeed,
-    shares: 1 + shareSeed,
-    saves: 32 + saveSeed,
-  }
-}
-
 function ContractorPhotoPickerScreen({
   isActive,
   isThumbnail,
   contractor: _contractor,
   selectedPhoto,
   onBack,
-  onSelectProjectPhoto: _onSelectProjectPhoto,
+  onSelectProjectPhoto,
 }: {
   isActive: boolean
   isThumbnail: boolean
@@ -1029,15 +990,19 @@ function ContractorPhotoPickerScreen({
   )
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
-  const collapsedSlideIndexesRef = useRef<Set<number>>(new Set())
-  const [, forceRerender] = useState(0)
+  const [isTryInRoomCollapsed, setIsTryInRoomCollapsed] = useState(false)
+  const [hasEntered, setHasEntered] = useState(false)
 
-  void isActive
   void isThumbnail
 
-  const activeSrc = orderedPhotos[activeSlideIndex] ?? orderedPhotos[0] ?? ''
-  const activeReactions = getReactionsForPhoto(activeSrc, activeSlideIndex)
-  const isTryInRoomCollapsed = collapsedSlideIndexesRef.current.has(activeSlideIndex)
+  useEffect(() => {
+    if (!isActive) {
+      setHasEntered(false)
+      return
+    }
+    const id = window.setTimeout(() => setHasEntered(true), 320)
+    return () => window.clearTimeout(id)
+  }, [isActive])
 
   return (
     <div className="construction-ai-screen construction-ai-photo-viewer">
@@ -1046,23 +1011,14 @@ function ContractorPhotoPickerScreen({
         className="construction-ai-photo-viewer__status-bar"
       />
       <header className="construction-ai-photo-viewer__nav">
-        <div className="construction-ai-photo-viewer__nav-group">
-          <button
-            type="button"
-            className="construction-ai-photo-viewer__nav-button"
-            aria-label="Back"
-            onClick={onBack}
-          >
-            <PhotoViewerBackIcon />
-          </button>
-          <button
-            type="button"
-            className="construction-ai-photo-viewer__nav-button"
-            aria-label="Home"
-          >
-            <PhotoViewerHomeIcon />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="construction-ai-photo-viewer__nav-button"
+          aria-label="Back"
+          onClick={onBack}
+        >
+          <PhotoViewerBackIcon />
+        </button>
       </header>
       <main className="construction-ai-photo-viewer__media">
         <FeedMediaCarousel
@@ -1075,50 +1031,37 @@ function ContractorPhotoPickerScreen({
           showTagReveal={false}
           onSlideChange={(index) => setActiveSlideIndex(index)}
         />
-        <div className="construction-ai-photo-viewer__try-in-room-slot">
-          <TryInRoomButton
-            key={`try-${activeSlideIndex}-${isTryInRoomCollapsed ? 'collapsed' : 'expanded'}`}
-            expanded={isTryInRoomCollapsed ? false : undefined}
-            collapseAfterMs={isTryInRoomCollapsed ? null : 1400}
-            aria-label="Try in your room"
-            onTransitionEnd={(event) => {
-              if (
-                event.propertyName === 'width' &&
-                !collapsedSlideIndexesRef.current.has(activeSlideIndex)
-              ) {
-                const target = event.currentTarget as HTMLButtonElement
-                if (!target.classList.contains('ds-try-in-room-button--expanded')) {
-                  collapsedSlideIndexesRef.current.add(activeSlideIndex)
-                  forceRerender((value) => value + 1)
+        {hasEntered ? (
+          <div className="construction-ai-photo-viewer__try-in-room-slot">
+            <TryInRoomButton
+              expanded={isTryInRoomCollapsed ? false : undefined}
+              collapseAfterMs={isTryInRoomCollapsed ? null : 1400}
+              aria-label="Try in your room"
+              onClick={() => {
+                const activeSrc =
+                  orderedPhotos[activeSlideIndex] ?? selectedPhoto.src
+                onSelectProjectPhoto({
+                  id: activeSrc,
+                  src: activeSrc,
+                  alt: '',
+                  room: 'living',
+                })
+              }}
+              onTransitionEnd={(event) => {
+                if (
+                  event.propertyName === 'width' &&
+                  !isTryInRoomCollapsed
+                ) {
+                  const target = event.currentTarget as HTMLButtonElement
+                  if (!target.classList.contains('ds-try-in-room-button--expanded')) {
+                    setIsTryInRoomCollapsed(true)
+                  }
                 }
-              }
-            }}
-          />
-        </div>
+              }}
+            />
+          </div>
+        ) : null}
       </main>
-      <FeedReactionBar
-        key={`reaction-${activeSlideIndex}`}
-        topPadding={0}
-        metrics={[
-          {
-            id: 'like',
-            iconSrc: '/assets/figma/personalized-feed/reaction-bar/heart-24.svg',
-            count: activeReactions.likes,
-          },
-          {
-            id: 'comment',
-            iconSrc: '/assets/figma/personalized-feed/reaction-bar/comment-24.svg',
-            count: activeReactions.comments,
-          },
-          {
-            id: 'share',
-            iconSrc: '/assets/figma/personalized-feed/reaction-bar/export-24.svg',
-            count: activeReactions.shares,
-          },
-        ]}
-        saveIconSrc="/assets/figma/personalized-feed/reaction-bar/scrap-24.svg"
-        saveCount={activeReactions.saves}
-      />
     </div>
   )
 }
@@ -1214,7 +1157,7 @@ export default function ConstructionAiPrototype({
             className="construction-ai-flow__page"
             state={activeScreen === 'ai-room' ? 'center' : 'offscreen-right'}
           >
-            <PdpAiRoomFlowContent mode={mode} />
+            <PdpAiRoomFlowContent mode={mode} data={constructionAiRoomData} />
           </PushPage>
         </div>
       </PrototypeScreen>

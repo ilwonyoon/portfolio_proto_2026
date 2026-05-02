@@ -30,6 +30,12 @@ export type PdpSelectableSpace = {
   thumbSrc?: string
 }
 
+export type PdpAiRoomDataOverrides = {
+  myPhotos?: PdpPhotoThumb[]
+  spaceTypeOptions?: Array<{ id: PdpSpaceType; label: string }>
+  sampleSpacesByType?: Record<PdpSpaceType, PdpSampleSpaceItem[]>
+}
+
 export const pdpSpaceTypeOptions: Array<{ id: PdpSpaceType; label: string }> = [
   { id: 'all', label: 'All' },
   { id: 'bedroom', label: 'Bedroom' },

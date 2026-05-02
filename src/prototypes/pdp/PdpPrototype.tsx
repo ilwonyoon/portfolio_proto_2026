@@ -19,10 +19,49 @@ import {
   pdpMyPhotoThumbs,
   pdpSampleSpacesByType,
   pdpSpaceTypeOptions,
+  type PdpAiRoomDataOverrides,
+  type PdpPhotoThumb,
   type PdpSampleSpaceItem,
   type PdpSelectableSpace,
   type PdpSpaceType,
 } from './pdp-room-selector-data'
+import {
+  pdpAiCirclePath,
+  pdpAiStarPath,
+  pdpDefaultPlacementPosition,
+  pdpGeneratedResultSrc,
+  pdpLoadingDotGridSize,
+  pdpLoadingDots,
+  pdpPlacementPromptText,
+  pdpProductSheetHeight,
+  pdpResultDelayMs,
+  pdpResultImageSize,
+  pdpResultSwipeThreshold,
+  pdpResultTagPositions,
+  pdpResultTagRevealDelayMs,
+  pdpSampleSpaceCardWidth,
+  pdpSelectedRoomSrc,
+  pdpThinkingStatusTexts,
+  type PdpGeneratedSlide,
+  type PdpPlacementMenuItemId,
+  type PdpPlacementPhase,
+  type PlacementPosition,
+} from './pdp-placement-data'
+import {
+  clampPlacementPosition,
+  createOriginalResultSlide,
+  createPdpWaterfallColumns,
+  getPdpSampleSpaceDisplayHeight,
+  inferProductCategory,
+  orderPdpArchiveProducts,
+} from './pdp-helpers'
+import {
+  pdpProductArchiveItems,
+  pdpProductArchiveOrderByTab,
+  pdpProductArchiveTabs,
+  type PdpProductArchiveItem,
+  type PdpProductArchiveTab,
+} from './pdp-product-archive'
 import './pdp.css'
 
 gsap.registerPlugin(MorphSVGPlugin)
@@ -35,44 +74,14 @@ type PdpFlowScreen = 'product' | 'selector' | 'placer'
 
 type PdpAiRoomFlowProps = {
   mode?: 'full' | 'thumbnail'
+  data?: PdpAiRoomDataOverrides
 }
 
 type PdpFlowContentProps = PdpPrototypeProps & {
   includeProductEntry: boolean
   initialScreen: PdpFlowScreen
+  data?: PdpAiRoomDataOverrides
 }
-
-type PlacementPosition = {
-  x: number
-  y: number
-}
-
-type PdpPlacementPhase = 'placing' | 'rendering' | 'result'
-
-type PdpGeneratedSlide = {
-  id: string
-  src: string
-  alt: string
-  hasProductTag: boolean
-}
-
-type PdpPlacementMenuItemId = 'add-products' | 'style-transfer'
-type PdpProductArchiveTab = 'all' | 'saved' | 'recently-viewed'
-
-type PdpProductArchiveItem = {
-  id: string
-  tabIds: PdpProductArchiveTab[]
-  brand: string
-  name: string
-  category?: string
-  price: string
-  discountRate?: string
-  meta?: string
-  imageSrc: string
-  fit?: 'cover' | 'contain'
-}
-
-type PdpProductArchiveSeedItem = Omit<PdpProductArchiveItem, 'tabIds' | 'meta'>
 
 type PdpPlacementItem = {
   id: string
@@ -83,171 +92,9 @@ type PdpPlacementItem = {
 
 const assetRoot = '/assets/figma/pdp'
 const statusLevelsSrc = '/assets/figma/portfolio-2026/onboarding/status-levels.svg'
-const pdpSampleSpaceCardWidth = 167.5
 const pdpProductImageSrc = `${assetRoot}/moss-rug-hero.png`
-const pdpGeneratedResultSrc = `${assetRoot}/generated-room-result.png`
-const pdpSelectedRoomSrc = `${assetRoot}/place-selected-room.png`
 const pdpProductName = 'Moss Rug'
 const pdpProductFullName = 'Moss Rug, Large Dust-Free Living Room Carpet, 3 Sizes'
-const pdpResultDelayMs = 12000
-const pdpResultSwipeThreshold = 36
-const pdpResultTagRevealDelayMs = 520
-const pdpResultImageSize = 343
-const pdpProductSheetHeight = 524
-const pdpThinkingStatusTexts = [
-  'Analyzing your room',
-  'Matching product scale',
-  'Blending light and shadows',
-  'Generating your design',
-]
-const pdpLoadingDotGridSize = 32
-const pdpLoadingDots = Array.from(
-  { length: pdpLoadingDotGridSize * pdpLoadingDotGridSize },
-  (_, index) => {
-    const column = index % pdpLoadingDotGridSize
-    const row = Math.floor(index / pdpLoadingDotGridSize)
-    const rowWave = Math.sin(row * 0.86) * 122
-    const diagonalRipple = Math.sin((column + row) * 0.42) * 64
-    const localJitter = ((column * 17 + row * 31) % 29) - 14
-    const delay = Math.round(column * 52 + rowWave + diagonalRipple + localJitter)
-    const driftX = Math.sin((row + column) * 0.55) * 0.52
-    const driftY = Math.cos((row * 1.3 - column) * 0.34) * 0.52
-    const peakScale = 1.05 + ((column * 7 + row * 11) % 9) * 0.045
-
-    return {
-      id: `dot-${row}-${column}`,
-      delay,
-      driftX,
-      driftY,
-      peakScale,
-    }
-  },
-)
-const pdpAiStarPath =
-  'M77.8611 118.868C72.2323 117.121 72.2322 109.154 77.8611 107.407L91.3607 103.217C97.0244 101.46 101.459 97.025 103.217 91.3613L107.406 77.8617C109.153 72.2329 117.12 72.2329 118.867 77.8617L123.057 91.3613C124.814 97.025 129.249 101.46 134.912 103.217L148.412 107.407C154.041 109.154 154.041 117.121 148.412 118.868L134.913 123.057C129.249 124.815 124.814 129.249 123.057 134.913L118.867 148.413C117.12 154.042 109.153 154.042 107.406 148.413L103.217 134.913C101.459 129.249 97.0244 124.815 91.3607 123.057L77.8611 118.868Z'
-const pdpAiCirclePath = 'M113.5 75.5A38 38 0 1 1 113.5 151.5A38 38 0 1 1 113.5 75.5Z'
-const pdpPlacementPromptText = 'Place this object to the designated place'
-const pdpDefaultPlacementPosition: PlacementPosition = {
-  x: 171.5,
-  y: 171.5,
-}
-const pdpResultTagPositions: PlacementPosition[] = [
-  { x: 171.5, y: 266.5 },
-  { x: 248.5, y: 161.5 },
-]
-
-const pdpProductArchiveTabs: { id: PdpProductArchiveTab; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'saved', label: 'Saved' },
-  { id: 'recently-viewed', label: 'Recently Viewed' },
-]
-
-const pdpProductArchiveSeedItems: PdpProductArchiveSeedItem[] = [
-  { id: 'retro-sheer-curtain', brand: 'Dormor', name: 'Retro Pattern Sheer Doorway Curtain, 14 Colors', price: '37,800', discountRate: '28%', imageSrc: `${assetRoot}/product-archive/retro-sheer-curtain.png` },
-  { id: 'module-fabric-sofa', brand: 'Heimish Home', name: '2.5-Seater Modular Fabric Sofa with Ottoman', price: '659,000', discountRate: '15%', imageSrc: `${assetRoot}/product-archive/wood-storage-chest.png` },
-  { id: 'spiano-floor-lamp', brand: 'Spiano', name: 'Adjustable Fabric Shade Floor Lamp', price: '89,900', discountRate: '32%', imageSrc: '/assets/figma/personalized-feed/ad/spiano-product.png' },
-  { id: 'moss-rug', brand: 'Nomia', name: 'Moss Rug, Dust-Free Living Room Carpet', price: '42,900', discountRate: '28%', imageSrc: `${assetRoot}/moss-rug-hero.png` },
-  { id: 'modular-drawer', brand: 'Casaon', name: 'White Modular 3-Drawer Storage Unit', price: '109,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-1.png' },
-  { id: 'boucle-lounge-chair', brand: 'By Heyday', name: 'Ivory Boucle Lounge Chair', price: '239,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-2.png' },
-  { id: 'rattan-laundry-basket', brand: 'Home & House', name: 'Large Rattan Laundry Basket', price: '28,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-3.png' },
-  { id: 'mini-air-purifier', brand: 'Balmuda', name: 'Compact Bedroom Air Purifier', price: '219,000', discountRate: '10%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-4.png' },
-  { id: 'soft-area-rug', brand: 'Daylive', name: 'Soft Low-Pile Area Rug 200x300', price: '86,900', discountRate: '35%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-5.png' },
-  { id: 'cable-organizer-box', brand: 'Sysmax', name: 'Cable Organizer Box for Power Strips', price: '16,900', discountRate: '21%', imageSrc: '/assets/figma/personalized-feed/product-ad/product-6.png' },
-  { id: 'round-side-table', brand: 'Monday House', name: 'White Round Side Table 480', price: '39,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-2.png' },
-  { id: 'warm-table-lamp', brand: 'Olumi', name: 'Warm Fabric Shade Table Lamp', price: '46,900', discountRate: '31%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-3.png' },
-  { id: 'low-storage-cabinet', brand: 'Sornia', name: 'Low Oak Living Room Storage Cabinet', price: '178,000', discountRate: '16%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-4.png' },
-  { id: 'ceramic-vase-set', brand: 'Maison de Room', name: 'Cream Ceramic Object Vase Set', price: '24,900', discountRate: '25%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-5.png' },
-  { id: 'kitchen-runner-mat', brand: 'Hanssem', name: 'Terrazzo PVC Kitchen Runner Mat', price: '32,900', discountRate: '23%', imageSrc: '/assets/figma/personalized-feed/view-more/product-sheet-6.png' },
-  { id: 'walnut-dining-chair', brand: 'Chair Factory', name: 'Walnut Round Dining Chair', price: '76,000', discountRate: '17%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-1.png' },
-  { id: 'steel-wire-shelf', brand: 'Roomnhome', name: 'White Steel Wire Shelf, 3-Tier', price: '49,900', discountRate: '30%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-2.png' },
-  { id: 'cotton-bedspread', brand: 'Bazar', name: 'Washed Cotton Bedspread, Queen', price: '58,900', discountRate: '19%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-3.png' },
-  { id: 'slim-trash-bin', brand: 'Litem', name: 'Slim Recycling Bin Set, 2 Pieces', price: '29,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/btf-routine/product-4.png' },
-  { id: 'cream-bookcase', brand: 'IKEA', name: 'Cream Open Bookcase 800', price: '119,000', discountRate: '8%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-1.png' },
-  { id: 'entry-bench', brand: 'MarketB', name: 'Natural Entryway Storage Bench', price: '67,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-2.png' },
-  { id: 'glass-coffee-table', brand: 'Casamia', name: 'Oval Tempered Glass Coffee Table', price: '149,000', discountRate: '13%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-3.png' },
-  { id: 'fabric-ottoman', brand: 'Jackson Chameleon', name: 'Mini Fabric Ottoman Stool', price: '98,000', discountRate: '10%', imageSrc: '/assets/figma/personalized-feed/btf-postcard/product-4.png' },
-  { id: 'beige-floor-cushion', brand: 'Modern House', name: 'Oversized Beige Floor Cushion', price: '35,900', discountRate: '27%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-1.png' },
-  { id: 'wood-wall-clock', brand: 'Muas', name: 'Silent Wood Wall Clock', price: '25,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-2.png' },
-  { id: 'ivory-sheer-curtain', brand: 'ShesHome', name: 'Ivory Soft Sheer Curtain', price: '41,900', discountRate: '34%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-3.png' },
-  { id: 'oak-nightstand', brand: 'Dodot', name: 'Oak Two-Drawer Nightstand', price: '82,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/btf-recommended/product-4.png' },
-  { id: 'dish-drying-rack', brand: 'Silicook', name: 'Stainless Steel Dish Drying Rack', price: '47,900', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-1.png' },
-  { id: 'cream-dinnerware', brand: 'Corelle', name: 'Cream White Dinnerware Set for Two', price: '74,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-2.png' },
-  { id: 'wood-cutting-board', brand: 'Neoflam', name: 'Campo Wood Cutting Board, Medium', price: '31,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-3.png' },
-  { id: 'pantry-basket', brand: 'Changsin Living', name: 'Pantry Organizer Basket Set, 4 Pieces', price: '19,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/btf-kitchen/product-4.png' },
-  { id: 'steel-wall-shelf', brand: 'RareRow', name: 'Steel Wall Shelf 600', price: '59,000', discountRate: '11%', imageSrc: '/assets/figma/personalized-feed/brand-promo/product-1.png' },
-  { id: 'round-display-shelf', brand: 'RareRow', name: 'Round Display Shelf in Cream', price: '89,000', discountRate: '13%', imageSrc: '/assets/figma/personalized-feed/brand-promo/product-2.png' },
-  { id: 'linen-pendant-light', brand: 'Tounou', name: 'Linen Pendant Light for Dining Rooms', price: '129,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-1.png' },
-  { id: 'solid-dining-table', brand: 'Tounou', name: 'Solid Wood Dining Table 1200', price: '329,000', discountRate: '14%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-2.png' },
-  { id: 'ceramic-table-lamp', brand: 'Tounou', name: 'Ceramic Bedside Table Lamp', price: '64,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-3.png' },
-  { id: 'low-sideboard', brand: 'Tounou', name: 'Low Sideboard Cabinet in Walnut', price: '268,000', discountRate: '9%', imageSrc: '/assets/figma/personalized-feed/btf-tounou/product-4.png' },
-  { id: 'compact-plant-pot', brand: 'Soop87', name: 'Compact Ceramic Plant Pot', price: '18,900', discountRate: '16%', imageSrc: '/assets/figma/personalized-feed/btf-soop87/product.png' },
-  { id: 'modern-plate-set', brand: 'Ohouse Select', name: 'Modern Plate Set for Two', price: '45,900', discountRate: '25%', imageSrc: '/assets/figma/personalized-feed/btf-plate/product.png' },
-  { id: 'side-chair', brand: 'Ohouse Select', name: 'Soft Upholstered Side Chair', price: '96,000', discountRate: '19%', imageSrc: '/assets/figma/personalized-feed/ad/product.png' },
-  { id: 'beige-armchair', brand: 'Maison Archive', name: 'Beige Accent Armchair', price: '188,000', discountRate: '17%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-02-2x.png' },
-  { id: 'oak-stool', brand: 'Maison Archive', name: 'Oak Utility Stool', price: '52,900', discountRate: '20%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-03-2x.png' },
-  { id: 'framed-art-print', brand: 'Paper Garden', name: 'Framed Art Print 50x50', price: '42,000', discountRate: '30%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-01-product-04-2x.png', fit: 'contain' },
-  { id: 'white-storage-bin', brand: 'Like It', name: 'White Stackable Storage Bin', price: '14,900', discountRate: '24%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-01-2x.png' },
-  { id: 'modular-shelf', brand: 'Montage Home', name: 'Modular Shelf Unit in Ivory', price: '139,000', discountRate: '18%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-02-2x.png' },
-  { id: 'table-mirror', brand: 'Studio Noon', name: 'Rounded Table Mirror', price: '33,900', discountRate: '15%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-03-2x.png' },
-  { id: 'cushion-cover', brand: 'Zara Home', name: 'Neutral Cushion Cover Set', price: '29,900', discountRate: '26%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-02-product-04-2x.png' },
-  { id: 'ceramic-diffuser', brand: 'Kundal', name: 'Ceramic Diffuser, White Musk', price: '15,900', discountRate: '22%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-03-product-01-2x.png' },
-  { id: 'bedside-lamp', brand: 'Lumir', name: 'Bedside Reading Lamp in Warm White', price: '119,000', discountRate: '12%', imageSrc: '/assets/figma/personalized-feed/discover-detail/post-03-product-02-2x.png' },
-  { id: 'slim-desk-chair', brand: 'Desker', name: 'Slim Mesh Desk Chair for Work Rooms', price: '189,000', discountRate: '11%', imageSrc: '/assets/figma/personalized-feed/discover-detail/ad-product-04-2x.png' },
-]
-
-const pdpProductArchiveItems: PdpProductArchiveItem[] = pdpProductArchiveSeedItems.map(
-  (product, index) => ({
-    ...product,
-    category: product.category ?? inferProductCategory(product),
-    tabIds: index < 30 ? ['saved'] : ['recently-viewed'],
-    meta: index < 30 ? 'Saved' : 'Recently viewed',
-  }),
-)
-
-const pdpProductArchiveOrderByTab: Record<PdpProductArchiveTab, string[]> = {
-  all: [
-    'moss-rug',
-    'soft-area-rug',
-    'glass-coffee-table',
-    'warm-table-lamp',
-    'linen-pendant-light',
-    'round-side-table',
-    'module-fabric-sofa',
-    'retro-sheer-curtain',
-    'modular-drawer',
-    'low-storage-cabinet',
-    'beige-armchair',
-    'ceramic-table-lamp',
-  ],
-  saved: [
-    'retro-sheer-curtain',
-    'ivory-sheer-curtain',
-    'oak-nightstand',
-    'cream-bookcase',
-    'wood-wall-clock',
-    'beige-floor-cushion',
-    'fabric-ottoman',
-    'entry-bench',
-    'walnut-dining-chair',
-    'cotton-bedspread',
-    'kitchen-runner-mat',
-    'cream-dinnerware',
-  ],
-  'recently-viewed': [
-    'steel-wall-shelf',
-    'round-display-shelf',
-    'linen-pendant-light',
-    'solid-dining-table',
-    'ceramic-table-lamp',
-    'low-sideboard',
-    'compact-plant-pot',
-    'modern-plate-set',
-    'side-chair',
-    'beige-armchair',
-    'oak-stool',
-    'framed-art-print',
-  ],
-}
 
 const pdpPrimaryProduct: PdpProductArchiveItem = {
   id: 'pdp-moss-rug',
@@ -258,61 +105,6 @@ const pdpPrimaryProduct: PdpProductArchiveItem = {
   price: '42,900',
   discountRate: '28%',
   imageSrc: pdpProductImageSrc,
-}
-
-function inferProductCategory(product: Pick<PdpProductArchiveItem, 'id' | 'name'>) {
-  const text = `${product.id} ${product.name}`.toLowerCase()
-
-  if (text.includes('rug') || text.includes('carpet')) return 'Rug'
-  if (text.includes('coffee table')) return 'Coffee Table'
-  if (text.includes('side table')) return 'Side Table'
-  if (text.includes('dining table')) return 'Dining Table'
-  if (text.includes('table')) return 'Table'
-  if (text.includes('chair') || text.includes('armchair')) return 'Chair'
-  if (text.includes('sofa')) return 'Sofa'
-  if (text.includes('lamp') || text.includes('light')) return 'Lamp'
-  if (text.includes('curtain')) return 'Curtain'
-  if (text.includes('shelf') || text.includes('bookcase')) return 'Shelf'
-  if (
-    text.includes('storage') ||
-    text.includes('cabinet') ||
-    text.includes('drawer') ||
-    text.includes('sideboard')
-  ) {
-    return 'Storage'
-  }
-  if (text.includes('basket')) return 'Basket'
-  if (text.includes('mirror')) return 'Mirror'
-  if (text.includes('vase')) return 'Vase'
-  if (text.includes('ottoman') || text.includes('stool')) return 'Stool'
-  if (text.includes('cushion')) return 'Cushion'
-  if (text.includes('clock')) return 'Clock'
-  if (text.includes('mat')) return 'Mat'
-  if (text.includes('bench')) return 'Bench'
-  if (text.includes('dinnerware') || text.includes('plate')) return 'Dinnerware'
-  if (text.includes('plant pot')) return 'Plant Pot'
-  if (text.includes('diffuser')) return 'Diffuser'
-  if (text.includes('art print')) return 'Art'
-
-  return 'Object'
-}
-
-function orderPdpArchiveProducts(
-  products: PdpProductArchiveItem[],
-  orderIds: string[],
-) {
-  const orderIndexById = new Map(orderIds.map((id, index) => [id, index]))
-
-  return [...products].sort((a, b) => {
-    const aIndex = orderIndexById.get(a.id) ?? Number.MAX_SAFE_INTEGER
-    const bIndex = orderIndexById.get(b.id) ?? Number.MAX_SAFE_INTEGER
-
-    if (aIndex !== bIndex) {
-      return aIndex - bIndex
-    }
-
-    return products.indexOf(a) - products.indexOf(b)
-  })
 }
 
 function getPdpArchiveProductsForTab(tabId: PdpProductArchiveTab) {
@@ -334,27 +126,6 @@ function createPdpPlacementItem(
     category: product.category ?? inferProductCategory(product),
     position: null,
   }
-}
-
-function getPdpSampleSpaceDisplayHeight(item: PdpSampleSpaceItem) {
-  if (typeof item.displayHeight === 'number') {
-    return item.displayHeight
-  }
-
-  return (pdpSampleSpaceCardWidth * item.height) / item.width
-}
-
-function createPdpWaterfallColumns(items: PdpSampleSpaceItem[]) {
-  const columns: [PdpSampleSpaceItem[], PdpSampleSpaceItem[]] = [[], []]
-  const columnHeights = [0, 0]
-
-  items.forEach((item) => {
-    const columnIndex = columnHeights[0] <= columnHeights[1] ? 0 : 1
-    columns[columnIndex].push(item)
-    columnHeights[columnIndex] += getPdpSampleSpaceDisplayHeight(item) + 12
-  })
-
-  return columns
 }
 
 function PdpIconButton({
@@ -570,9 +341,12 @@ function PdpSelectorSectionHeader({
 
 function PdpSelectorPhotoSection({
   onSelect,
+  myPhotos,
 }: {
   onSelect: (space: PdpSelectableSpace) => void
+  myPhotos?: PdpPhotoThumb[]
 }) {
+  const photos = myPhotos ?? pdpMyPhotoThumbs
   return (
     <section className="pdp-selector-section pdp-selector-section--media">
       <PdpSelectorSectionHeader title="My Photos" />
@@ -582,7 +356,7 @@ function PdpSelectorPhotoSection({
             <PdpSelectorCameraIcon />
           </span>
         </button>
-        {pdpMyPhotoThumbs.map((photo) => (
+        {photos.map((photo) => (
           <button
             key={photo.id}
             type="button"
@@ -605,11 +379,19 @@ function PdpSelectorPhotoSection({
 
 function PdpSelectorSampleSpacesSection({
   onSelect,
+  spaceTypeOptions,
+  sampleSpacesByType,
 }: {
   onSelect: (space: PdpSelectableSpace) => void
+  spaceTypeOptions?: Array<{ id: PdpSpaceType; label: string }>
+  sampleSpacesByType?: Record<PdpSpaceType, PdpSampleSpaceItem[]>
 }) {
-  const [activeSpaceType, setActiveSpaceType] = useState<PdpSpaceType>('all')
-  const spaceItems = pdpSampleSpacesByType[activeSpaceType]
+  const options = spaceTypeOptions ?? pdpSpaceTypeOptions
+  const spacesByType = sampleSpacesByType ?? pdpSampleSpacesByType
+  const [activeSpaceType, setActiveSpaceType] = useState<PdpSpaceType>(
+    options[0]?.id ?? 'all',
+  )
+  const spaceItems = spacesByType[activeSpaceType] ?? []
   const waterfallColumns = useMemo(() => createPdpWaterfallColumns(spaceItems), [spaceItems])
 
   return (
@@ -624,7 +406,7 @@ function PdpSelectorSampleSpacesSection({
         aria-label="Space type filters"
         data-native-scroll-axis="x"
       >
-        {pdpSpaceTypeOptions.map((option) => (
+        {options.map((option) => (
           <button
             key={option.id}
             type="button"
@@ -680,11 +462,13 @@ function PdpSelectPhotoScreen({
   isActive,
   onClose,
   onSelectSpace,
+  data,
 }: {
   isActive: boolean
   isThumbnail: boolean
   onClose: () => void
   onSelectSpace: (space: PdpSelectableSpace) => void
+  data?: PdpAiRoomDataOverrides
 }) {
   const selectorScrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -721,8 +505,15 @@ function PdpSelectPhotoScreen({
         className="pdp-selector-main prototype-screen__scroll-region"
         data-inertial-scroll={isActive ? 'true' : undefined}
       >
-        <PdpSelectorPhotoSection onSelect={onSelectSpace} />
-        <PdpSelectorSampleSpacesSection onSelect={onSelectSpace} />
+        <PdpSelectorPhotoSection
+          onSelect={onSelectSpace}
+          myPhotos={data?.myPhotos}
+        />
+        <PdpSelectorSampleSpacesSection
+          onSelect={onSelectSpace}
+          spaceTypeOptions={data?.spaceTypeOptions}
+          sampleSpacesByType={data?.sampleSpacesByType}
+        />
       </main>
 
       <div className="pdp-selector-home-indicator">
@@ -730,15 +521,6 @@ function PdpSelectPhotoScreen({
       </div>
     </div>
   )
-}
-
-function createOriginalResultSlide(selectedSpace: PdpSelectableSpace): PdpGeneratedSlide {
-  return {
-    id: `original-${selectedSpace.id}`,
-    src: selectedSpace.src,
-    alt: 'Original room photo',
-    hasProductTag: false,
-  }
 }
 
 function PdpPlacementArrowUpIcon() {
@@ -973,13 +755,6 @@ function PdpProductArchiveSheet({
       <HomeIndicator />
     </BottomSheet>
   )
-}
-
-function clampPlacementPosition(position: PlacementPosition) {
-  return {
-    x: Math.min(Math.max(position.x, 48), 295),
-    y: Math.min(Math.max(position.y, 48), 295),
-  }
 }
 
 function PdpThinkingStatusIcon() {
@@ -2257,6 +2032,7 @@ function PdpFlowContent({
   includeProductEntry,
   initialScreen,
   mode = 'full',
+  data,
 }: PdpFlowContentProps) {
   const isThumbnail = mode === 'thumbnail'
   const [activeScreen, setActiveScreen] = useState<PdpFlowScreen>(initialScreen)
@@ -2292,6 +2068,7 @@ function PdpFlowContent({
         <PdpSelectPhotoScreen
           isActive={activeScreen === 'selector'}
           isThumbnail={isThumbnail}
+          data={data}
           onClose={() =>
             includeProductEntry
               ? setActiveScreen('product')
@@ -2321,6 +2098,7 @@ function PdpFlowRoot({
   includeProductEntry,
   initialScreen,
   mode = 'full',
+  data,
 }: PdpFlowContentProps) {
   const isThumbnail = mode === 'thumbnail'
 
@@ -2331,28 +2109,31 @@ function PdpFlowRoot({
           includeProductEntry={includeProductEntry}
           initialScreen={initialScreen}
           mode={mode}
+          data={data}
         />
       </PrototypeScreen>
     </div>
   )
 }
 
-export function PdpAiRoomFlowContent({ mode = 'full' }: PdpAiRoomFlowProps) {
+export function PdpAiRoomFlowContent({ mode = 'full', data }: PdpAiRoomFlowProps) {
   return (
     <PdpFlowContent
       includeProductEntry={false}
       initialScreen="selector"
       mode={mode}
+      data={data}
     />
   )
 }
 
-export function PdpAiRoomFlow({ mode = 'full' }: PdpAiRoomFlowProps) {
+export function PdpAiRoomFlow({ mode = 'full', data }: PdpAiRoomFlowProps) {
   return (
     <PdpFlowRoot
       includeProductEntry={false}
       initialScreen="selector"
       mode={mode}
+      data={data}
     />
   )
 }

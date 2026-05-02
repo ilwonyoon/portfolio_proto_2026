@@ -308,14 +308,6 @@
   position: relative;
 }
 
-.construction-ai-contractor-card__try-in-room {
-  position: absolute;
-  z-index: 2;
-  left: 12px;
-  bottom: 8px;
-  pointer-events: auto;
-}
-
 .construction-ai-contractor-card__body {
   padding-top: 12px;
   display: flex;
@@ -874,12 +866,18 @@
 }
 
 /* Photo viewer (full-screen black) */
+.construction-ai-photo-viewer.construction-ai-screen {
+  background: #000000;
+}
+
 .construction-ai-photo-viewer {
   position: relative;
   display: flex;
   flex-direction: column;
   background: #000000;
   color: #ffffff;
+  border-radius: 40px;
+  overflow: hidden;
 }
 
 .construction-ai-photo-viewer__status-bar.ds-status-bar {
@@ -906,14 +904,7 @@
   padding: 0 var(--space-12);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: #000000;
-}
-
-.construction-ai-photo-viewer__nav-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 
 .construction-ai-photo-viewer__nav-button {
@@ -941,22 +932,18 @@
 
 .construction-ai-photo-viewer__media .ds-feed-media {
   background: #000000;
+  padding-top: 0;
+  position: relative;
+}
+
+.construction-ai-photo-viewer__media .ds-feed-media__viewport {
+  position: relative;
 }
 
 .construction-ai-photo-viewer__try-in-room-slot {
   position: absolute;
   z-index: 4;
   left: 12px;
-  bottom: 12px;
+  bottom: calc(50% - 250px + 12px);
   pointer-events: auto;
-}
-
-.construction-ai-photo-viewer .ds-feed-reaction-bar {
-  background: #000000;
-  padding: 12px 16px 16px;
-  --fill-0: #ffffff;
-}
-
-.construction-ai-photo-viewer .ds-feed-reaction-bar__metric {
-  color: #ffffff;
 }
