@@ -8,7 +8,7 @@ import { HomeIndicator, StatusBar, TopNav } from '../../system/mobile'
 import { useInertialScroll } from '../../system/mobile/useInertialScroll'
 import { BottomSheet, PushPage } from '../../system/overlays'
 import { useSheetDragGesture } from '../../system/overlays/useSheetDragGesture'
-import { PdpAiRoomFlowContent } from '../pdp/PdpPrototype'
+import { ConstructionRoomFlowContent } from './ai-room/AiRoomFlow'
 import { constructionAiRoomData } from './ai-room-data'
 import './construction-ai.css'
 
@@ -1157,7 +1157,7 @@ export default function ConstructionAiPrototype({
             className="construction-ai-flow__page"
             state={activeScreen === 'ai-room' ? 'center' : 'offscreen-right'}
           >
-            <PdpAiRoomFlowContent mode={mode} data={constructionAiRoomData} />
+            <ConstructionRoomFlowContent mode={mode} data={constructionAiRoomData} />
           </PushPage>
         </div>
       </PrototypeScreen>

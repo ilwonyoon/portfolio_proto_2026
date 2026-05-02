@@ -1,4 +1,4 @@
-import { PdpAiRoomFlow } from '../pdp/PdpPrototype'
+import { PdpAiRoomFlow } from '../pdp/AiRoomFlow'
 
 type AiRoomFlowPrototypeProps = {
   mode?: 'full' | 'thumbnail'
