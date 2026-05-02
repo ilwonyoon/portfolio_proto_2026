@@ -9,10 +9,20 @@ import {
   getPdpArchiveProductsForTab,
   pdpProductArchiveTabs,
   pdpProductSheetHeight,
-  type PdpPlacementMenuItemId,
   type PdpProductArchiveItem,
   type PdpProductArchiveTab,
 } from './deps'
+import {
+  constructionMaterialCategories,
+  constructionMaterials,
+  type ConstructionMaterial,
+  type ConstructionMaterialCategory,
+} from './materials-data'
+
+export type ConstructionPlacementMenuItemId =
+  | 'add-products'
+  | 'apply-materials'
+  | 'style-transfer'
 
 const assetRoot = '/assets/figma/pdp'
 
@@ -51,6 +61,17 @@ function PdpPlacementMenuPhotoIcon() {
   return (
     <FigmaAsset
       src={`${assetRoot}/photo-24.svg`}
+      alt=""
+      displayWidth={24}
+      displayHeight={24}
+    />
+  )
+}
+
+function ConstructionMenuMaterialsIcon() {
+  return (
+    <FigmaAsset
+      src="/assets/figma/construction-ai/material.svg"
       alt=""
       displayWidth={24}
       displayHeight={24}
@@ -105,11 +126,13 @@ export function PdpPlacementQuickMenu({
   onPressItemStart,
   onPressItemEnd,
   onOpenProductSheet,
+  onOpenMaterialsSheet,
 }: {
-  pressedItemId: PdpPlacementMenuItemId | null
-  onPressItemStart: (itemId: PdpPlacementMenuItemId) => void
+  pressedItemId: ConstructionPlacementMenuItemId | null
+  onPressItemStart: (itemId: ConstructionPlacementMenuItemId) => void
   onPressItemEnd: () => void
   onOpenProductSheet: () => void
+  onOpenMaterialsSheet?: () => void
 }) {
   return (
     <div
@@ -119,7 +142,7 @@ export function PdpPlacementQuickMenu({
     >
       <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuBagIcon />}
-        title="Add products"
+        title="Add Products"
         description="See it in your space before you buy"
         isPressed={pressedItemId === 'add-products'}
         onPressStart={() => onPressItemStart('add-products')}
@@ -127,9 +150,18 @@ export function PdpPlacementQuickMenu({
         onSelect={onOpenProductSheet}
       />
       <PdpPlacementQuickMenuItem
+        icon={<ConstructionMenuMaterialsIcon />}
+        title="Apply Materials"
+        description="Find out what your room is missing"
+        isPressed={pressedItemId === 'apply-materials'}
+        onPressStart={() => onPressItemStart('apply-materials')}
+        onPressEnd={onPressItemEnd}
+        onSelect={onOpenMaterialsSheet ?? onPressItemEnd}
+      />
+      <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuPhotoIcon />}
-        title="Style from photo"
-        description="Restyle your room from an image"
+        title="Style Transfer"
+        description="Style your room from a photo"
         isPressed={pressedItemId === 'style-transfer'}
         onPressStart={() => onPressItemStart('style-transfer')}
         onPressEnd={onPressItemEnd}
@@ -261,6 +293,134 @@ export function PdpProductArchiveSheet({
                   </span>
                 ) : null}
                 <span className="pdp-product-tile__price">{product.price}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <HomeIndicator />
+    </BottomSheet>
+  )
+}
+
+export function ConstructionMaterialsSheet({
+  isOpen,
+  onClose,
+  onAddMaterial,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  onAddMaterial: (material: ConstructionMaterial) => void
+}) {
+  const [activeCategory, setActiveCategory] =
+    useState<ConstructionMaterialCategory>('wallpaper')
+  const sheetBodyRef = useRef<HTMLDivElement | null>(null)
+  const sheetDragGesture = useSheetDragGesture({
+    open: isOpen,
+    closedOffset: pdpProductSheetHeight,
+    closeTriggerThreshold: 140,
+    closeReleaseThreshold: 84,
+    onOpen: () => undefined,
+    onClose,
+  })
+  useInertialScroll(sheetBodyRef, {
+    enabled: isOpen,
+    preset: 'ios-feed',
+  })
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveCategory('wallpaper')
+    }
+  }, [isOpen])
+
+  const visibleMaterials = constructionMaterials.filter(
+    (material) => material.category === activeCategory,
+  )
+
+  return (
+    <BottomSheet
+      open={isOpen}
+      ariaLabel="Materials"
+      onClose={onClose}
+      className="pdp-product-sheet"
+      dimClassName="pdp-product-sheet__dim"
+      panelClassName="pdp-product-sheet__panel"
+      panelStyle={{ height: `${pdpProductSheetHeight}px` }}
+      dragOffset={sheetDragGesture.dragOffset}
+      isDragging={sheetDragGesture.isDragging}
+    >
+      <div
+        className="pdp-product-sheet__handle-wrap"
+        {...sheetDragGesture.bind}
+      >
+        <div className="pdp-product-sheet__handle" />
+      </div>
+
+      <div
+        ref={sheetBodyRef}
+        className="pdp-product-sheet__body"
+        data-inertial-scroll={isOpen ? 'true' : undefined}
+      >
+        <div className="pdp-product-sheet__search-wrap">
+          <div className="pdp-product-sheet__search">
+            <FigmaAsset
+              src="/assets/figma/personalized-feed/search.svg"
+              alt=""
+              displayWidth={18}
+              displayHeight={18}
+            />
+            <span>Search materials</span>
+          </div>
+        </div>
+
+        <div className="pdp-product-sheet__action-bar">
+          <div
+            className="pdp-product-sheet__chips"
+            role="tablist"
+            aria-label="Material categories"
+          >
+            {constructionMaterialCategories.map((category) => (
+              <Chip
+                key={category.id}
+                selected={activeCategory === category.id}
+                className="pdp-product-sheet__chip"
+                onClick={() => setActiveCategory(category.id)}
+              >
+                {category.label}
+              </Chip>
+            ))}
+          </div>
+        </div>
+
+        <div className="pdp-product-sheet__grid">
+          {visibleMaterials.map((material) => (
+            <button
+              key={material.id}
+              type="button"
+              className="pdp-product-tile"
+              aria-label={`Add ${material.brand} ${material.name}`}
+              onClick={(event) => {
+                event.currentTarget.blur()
+                onAddMaterial(material)
+              }}
+            >
+              <span className="pdp-product-tile__thumb">
+                <FigmaAsset
+                  src={material.imageSrc}
+                  alt=""
+                  displayWidth={109}
+                  displayHeight={109}
+                  exportScale={1}
+                  className="pdp-product-tile__image"
+                />
+                <span className="pdp-product-tile__plus" aria-hidden="true" />
+              </span>
+              <span className="pdp-product-tile__title">{material.name}</span>
+              <span className="pdp-product-tile__price-row">
+                <span className="pdp-product-tile__price">
+                  {material.pricePerPyeong}
+                </span>
               </span>
             </button>
           ))}

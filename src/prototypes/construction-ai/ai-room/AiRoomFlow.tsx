@@ -11,6 +11,7 @@ import {
 } from './deps'
 import { ConstructionSelectPhotoScreen } from './AiRoomSelectorScreen'
 import { ConstructionPlaceObjectScreen } from './AiRoomPlaceObjectScreen'
+import '../../pdp/pdp.css'
 
 type ConstructionFlowScreen = 'selector' | 'placer'
 

@@ -27,11 +27,13 @@ import {
   type PdpSelectableSpace,
 } from './deps'
 import {
+  ConstructionMaterialsSheet,
   PdpGeneratingStopIcon,
   PdpPlacementArrowUpIcon,
   PdpPlacementPlusIcon,
   PdpPlacementQuickMenu,
   PdpProductArchiveSheet,
+  type ConstructionPlacementMenuItemId,
 } from './AiRoomPlacementSheets'
 import { PdpThinkingStatus } from './AiRoomThinkingStatus'
 
@@ -58,8 +60,9 @@ export function ConstructionPlaceObjectScreen({
   const [hasSeenAddProductTooltip, setHasSeenAddProductTooltip] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false)
+  const [isMaterialsSheetOpen, setIsMaterialsSheetOpen] = useState(false)
   const [isPlusButtonPressed, setIsPlusButtonPressed] = useState(false)
-  const [pressedMenuItemId, setPressedMenuItemId] = useState<PdpPlacementMenuItemId | null>(null)
+  const [pressedMenuItemId, setPressedMenuItemId] = useState<ConstructionPlacementMenuItemId | null>(null)
   const [phase, setPhase] = useState<PdpPlacementPhase>('placing')
   const [renderReturnPhase, setRenderReturnPhase] = useState<PdpPlacementPhase>('placing')
   const [resultSlides, setResultSlides] = useState<PdpGeneratedSlide[]>(() => [
@@ -356,6 +359,20 @@ export function ConstructionPlaceObjectScreen({
 
   function closeProductSheet() {
     setIsProductSheetOpen(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function openMaterialsSheet() {
+    setIsMenuOpen(false)
+    setIsMaterialsSheetOpen(true)
+    setShowAddProductTooltip(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function closeMaterialsSheet() {
+    setIsMaterialsSheetOpen(false)
     setIsPlusButtonPressed(false)
     setPressedMenuItemId(null)
   }
@@ -763,6 +780,7 @@ export function ConstructionPlaceObjectScreen({
           onPressItemStart={setPressedMenuItemId}
           onPressItemEnd={() => setPressedMenuItemId(null)}
           onOpenProductSheet={openProductSheet}
+          onOpenMaterialsSheet={openMaterialsSheet}
         />
       </div>
 
@@ -770,6 +788,14 @@ export function ConstructionPlaceObjectScreen({
         isOpen={isProductSheetOpen && !isRendering}
         onClose={closeProductSheet}
         onAddProduct={addArchiveProductToRoom}
+      />
+
+      <ConstructionMaterialsSheet
+        isOpen={isMaterialsSheetOpen && !isRendering}
+        onClose={closeMaterialsSheet}
+        onAddMaterial={() => {
+          closeMaterialsSheet()
+        }}
       />
 
       <div
