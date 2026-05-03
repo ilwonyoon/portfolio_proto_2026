@@ -1,3 +1,27 @@
+// Adds iOS-style inertial wheel scrolling to a scrollable container.
+//
+// Gotchas observed in this project:
+// - The container element MUST be the actual `overflow-y: auto` scroller.
+//   If you point the ref at a wrapper that doesn't itself scroll, the wheel
+//   listener attaches but native scroll happens on a different element and
+//   the inertia animation never runs.
+// - Apply the `prototype-screen__scroll-region` class on the same node you
+//   pass via `ref`. Without it some bottom-sheet / push-page wrappers swallow
+//   the wheel event before it reaches this hook's listener (in particular
+//   inside `<BottomSheet>` panels which set `overflow: hidden` on the
+//   wrapping panel — the inner body needs an explicit native-scroll style).
+// - Set `enabled` to the screen's "active" / sheet's "open" flag. The hook
+//   only attaches the wheel listener while enabled, so toggling this prop
+//   when the surface is hidden avoids stale listeners and lets the listener
+//   re-bind after the sheet animates in.
+// - The listener uses `{ passive: false }` because it calls
+//   `event.preventDefault()`. If a parent registers its own
+//   `{ passive: true }` wheel handler that calls `stopPropagation`, this
+//   hook will silently no-op. Keep parents passive-friendly or attach this
+//   hook on the same node.
+// - Skips entirely when `prefers-reduced-motion: reduce` is on (system
+//   accessibility setting). That's intentional, not a bug — verify the OS
+//   setting before debugging missing inertia.
 import { useEffect, type RefObject } from 'react'
 import {
   resolveScrollPhysicsConfig,

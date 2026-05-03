@@ -1,0 +1,118 @@
+{
+  "category": "마루",
+  "categoryType": 1,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=1",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "649920fd345adf77ecc78a2a",
+      "brand": "동화자연마루",
+      "title": "[동화자연마루]마루/나투스진 그란데/사하라라이트",
+      "price": "109,000~119,000",
+      "rating": "5.0 (리뷰 7)",
+      "styling": "스타일링샷 10,372",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/167876004312953991.PNG?w=1080",
+      "imageFile": "01_나투스진_그란데_사하라라이트.png"
+    },
+    {
+      "rank": 2,
+      "id": "649920fd345adf77ecc78a2c",
+      "brand": "동화자연마루",
+      "title": "[동화자연마루]마루/나투스진 그란데/이모션 블랑",
+      "price": "109,000~119,000",
+      "rating": "5.0 (리뷰 5)",
+      "styling": "스타일링샷 7,546",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/167894777245986886.PNG?w=1080",
+      "imageFile": "02_나투스진_그란데_이모션블랑.png"
+    },
+    {
+      "rank": 3,
+      "id": "66875129ac2cd80f1079403f",
+      "brand": "구정마루",
+      "title": "[구정마루]마루/마뷸러스 젠/젠틀판타지",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 2,284",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/commerce/catalog/admin/item/v1-299191778091008.png?w=1080",
+      "imageFile": "03_마뷸러스_젠_젠틀판타지.png"
+    },
+    {
+      "rank": 4,
+      "id": "64992105345adf77ecc78a42",
+      "brand": "구정마루",
+      "title": "[구정마루]마루/강마루 텍스쳐/그랜드 스테디",
+      "price": "129,000~141,000",
+      "rating": "3.5 (리뷰 2)",
+      "styling": "스타일링샷 2,199",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/169986091574338381.PNG?w=1080",
+      "imageFile": "04_강마루_텍스쳐_그랜드스테디.png"
+    },
+    {
+      "rank": 5,
+      "id": "64992109345adf77ecc78a4d",
+      "brand": "동화자연마루",
+      "title": "[동화자연마루]마루/나투스진 그란데/콰이엇 웨이브",
+      "price": "109,000~119,000",
+      "rating": null,
+      "styling": "스타일링샷 1,587",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/commerce/catalog/admin/item/v1-276944825507840.jpg?w=1080",
+      "imageFile": "05_나투스진_그란데_콰이엇웨이브.jpg"
+    },
+    {
+      "rank": 6,
+      "id": "672366c2d41bf117c9b48670",
+      "brand": "구정마루",
+      "title": "[구정마루]마루/마뷸러스 젠/모로칸 크림",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,493",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/commerce/catalog/admin/item/v1-296780910723136.png?w=1080",
+      "imageFile": "06_마뷸러스_젠_모로칸크림.png"
+    },
+    {
+      "rank": 7,
+      "id": "6530cea523cd2f106d690fa3",
+      "brand": "한솔홈데코",
+      "title": "[한솔홈데코]마루/sb스톤/마테라베이지",
+      "price": "75,000",
+      "rating": "5.0 (리뷰 3)",
+      "styling": "스타일링샷 1,484",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/17836875/1696895196989.jpg?w=1080",
+      "imageFile": "07_sb스톤_마테라베이지.jpg"
+    },
+    {
+      "rank": 8,
+      "id": "6530ea5423cd2f106d690fab",
+      "brand": "한솔홈데코",
+      "title": "[한솔홈데코]마루/sb스톤/무이네화이트",
+      "price": "75,000",
+      "rating": null,
+      "styling": "스타일링샷 1,327",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/17836875/1696895206330.jpg?w=1080",
+      "imageFile": "08_sb스톤_무이네화이트.jpg"
+    },
+    {
+      "rank": 9,
+      "id": "6723667dd41bf117c9b4866f",
+      "brand": "구정마루",
+      "title": "[구정마루]마루/마뷸러스 젠/웜브리즈",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,281",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/171109598432564729.jpg?w=1080",
+      "imageFile": "09_마뷸러스_젠_웜브리즈.jpg"
+    },
+    {
+      "rank": 10,
+      "id": "649920fe345adf77ecc78a2e",
+      "brand": "구정마루",
+      "title": "[구정마루]마루/프레스티지/오크",
+      "price": "164,000~178,000",
+      "rating": "4.5 (리뷰 4)",
+      "styling": "스타일링샷 992",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/170297421520306420.PNG?w=1080",
+      "imageFile": "10_프레스티지_오크.png"
+    }
+  ]
+}

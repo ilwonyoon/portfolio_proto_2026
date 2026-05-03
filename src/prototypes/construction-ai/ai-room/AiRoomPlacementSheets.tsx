@@ -127,12 +127,14 @@ export function PdpPlacementQuickMenu({
   onPressItemEnd,
   onOpenProductSheet,
   onOpenMaterialsSheet,
+  onSelectStyleTransfer,
 }: {
   pressedItemId: ConstructionPlacementMenuItemId | null
   onPressItemStart: (itemId: ConstructionPlacementMenuItemId) => void
   onPressItemEnd: () => void
   onOpenProductSheet: () => void
   onOpenMaterialsSheet?: () => void
+  onSelectStyleTransfer?: () => void
 }) {
   return (
     <div
@@ -165,7 +167,7 @@ export function PdpPlacementQuickMenu({
         isPressed={pressedItemId === 'style-transfer'}
         onPressStart={() => onPressItemStart('style-transfer')}
         onPressEnd={onPressItemEnd}
-        onSelect={onPressItemEnd}
+        onSelect={onSelectStyleTransfer ?? onPressItemEnd}
       />
     </div>
   )
@@ -224,7 +226,7 @@ export function PdpProductArchiveSheet({
 
       <div
         ref={productSheetBodyRef}
-        className="pdp-product-sheet__body"
+        className="pdp-product-sheet__body prototype-screen__scroll-region"
         data-inertial-scroll={isOpen ? 'true' : undefined}
       >
         <div className="pdp-product-sheet__search-wrap">
@@ -313,7 +315,7 @@ export function ConstructionMaterialsSheet({
   onAddMaterial: (material: ConstructionMaterial) => void
 }) {
   const [activeCategory, setActiveCategory] =
-    useState<ConstructionMaterialCategory>('wallpaper')
+    useState<ConstructionMaterialCategory>('floor')
   const sheetBodyRef = useRef<HTMLDivElement | null>(null)
   const sheetDragGesture = useSheetDragGesture({
     open: isOpen,
@@ -325,12 +327,12 @@ export function ConstructionMaterialsSheet({
   })
   useInertialScroll(sheetBodyRef, {
     enabled: isOpen,
-    preset: 'ios-feed',
+    preset: 'ios-detail',
   })
 
   useEffect(() => {
     if (isOpen) {
-      setActiveCategory('wallpaper')
+      setActiveCategory('floor')
     }
   }, [isOpen])
 
@@ -359,7 +361,7 @@ export function ConstructionMaterialsSheet({
 
       <div
         ref={sheetBodyRef}
-        className="pdp-product-sheet__body"
+        className="pdp-product-sheet__body prototype-screen__scroll-region"
         data-inertial-scroll={isOpen ? 'true' : undefined}
       >
         <div className="pdp-product-sheet__search-wrap">
@@ -416,10 +418,12 @@ export function ConstructionMaterialsSheet({
                 />
                 <span className="pdp-product-tile__plus" aria-hidden="true" />
               </span>
-              <span className="pdp-product-tile__title">{material.name}</span>
+              <span className="pdp-product-tile__title">
+                {material.brand} · {material.name}
+              </span>
               <span className="pdp-product-tile__price-row">
                 <span className="pdp-product-tile__price">
-                  {material.pricePerPyeong}
+                  {material.priceLabel}
                 </span>
               </span>
             </button>

@@ -1157,7 +1157,16 @@ export default function ConstructionAiPrototype({
             className="construction-ai-flow__page"
             state={activeScreen === 'ai-room' ? 'center' : 'offscreen-right'}
           >
-            <ConstructionRoomFlowContent mode={mode} data={constructionAiRoomData} />
+            <ConstructionRoomFlowContent
+              mode={mode}
+              data={constructionAiRoomData}
+              initialMode="style-transfer"
+              referenceMedia={{
+                id: `style-${selectedPhoto.id}`,
+                src: selectedPhoto.src,
+                label: 'Style Reference',
+              }}
+            />
           </PushPage>
         </div>
       </PrototypeScreen>

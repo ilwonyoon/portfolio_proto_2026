@@ -10,7 +10,11 @@ import {
   type PdpSelectableSpace,
 } from './deps'
 import { ConstructionSelectPhotoScreen } from './AiRoomSelectorScreen'
-import { ConstructionPlaceObjectScreen } from './AiRoomPlaceObjectScreen'
+import {
+  ConstructionPlaceObjectScreen,
+  type ConstructionAttachedMedia,
+  type ConstructionPlaceObjectMode,
+} from './AiRoomPlaceObjectScreen'
 import '../../pdp/pdp.css'
 
 type ConstructionFlowScreen = 'selector' | 'placer'
@@ -18,11 +22,15 @@ type ConstructionFlowScreen = 'selector' | 'placer'
 type ConstructionRoomFlowProps = {
   mode?: 'full' | 'thumbnail'
   data?: PdpAiRoomDataOverrides
+  initialMode?: ConstructionPlaceObjectMode
+  referenceMedia?: ConstructionAttachedMedia
 }
 
 export function ConstructionRoomFlowContent({
   mode = 'full',
   data,
+  initialMode = 'add-products',
+  referenceMedia,
 }: ConstructionRoomFlowProps) {
   const isThumbnail = mode === 'thumbnail'
   const [activeScreen, setActiveScreen] =
@@ -56,6 +64,8 @@ export function ConstructionRoomFlowContent({
         <ConstructionPlaceObjectScreen
           isActive={activeScreen === 'placer'}
           selectedSpace={selectedSpace}
+          initialMode={initialMode}
+          referenceMedia={referenceMedia}
           onBack={() => setActiveScreen('selector')}
         />
       </PushPage>

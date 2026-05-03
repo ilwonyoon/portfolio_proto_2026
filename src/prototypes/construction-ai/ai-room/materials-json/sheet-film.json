@@ -1,0 +1,118 @@
+{
+  "category": "시트/필름",
+  "categoryType": 9,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=9",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "65d8279f5ed088742444d8bf",
+      "brand": "영림",
+      "title": "[영림]필름/PS035/베이지",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 912",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/166072501472013317.PNG?w=1080",
+      "imageFile": "01_PS035_베이지.png"
+    },
+    {
+      "rank": 2,
+      "id": "65d83262ec54b3423fb3d570",
+      "brand": "인쇼스토어",
+      "title": "[인쇼스토어]필름/INSHOW Film/종합컬러",
+      "price": null,
+      "rating": "5.0 (리뷰 2)",
+      "styling": "스타일링샷 889",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/commerce/catalog/admin/item/v1-289663706824704.png?w=1080",
+      "imageFile": "02_INSHOW_종합컬러.png"
+    },
+    {
+      "rank": 3,
+      "id": "65d833a888a0bea473e1638 1f",
+      "brand": "레놀릿",
+      "title": "[레놀릿]필름/세레나/오크내추럴",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 866",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/161360614048735875.png?w=1080",
+      "imageFile": "03_세레나_오크내추럴.png"
+    },
+    {
+      "rank": 4,
+      "id": "65d83260ec54b3423fb3d56f",
+      "brand": "영림",
+      "title": "[영림]필름/PS130/크림백색",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 706",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/166503512829774259.png?w=1080",
+      "imageFile": "04_PS130_크림백색.png"
+    },
+    {
+      "rank": 5,
+      "id": "65d8203a88bf70303358 4240",
+      "brand": "영림산업",
+      "title": "[영림]필름/PS010/중백색",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 688",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/159307423452797872.png?w=1080",
+      "imageFile": "05_PS010_중백색.png"
+    },
+    {
+      "rank": 6,
+      "id": "65d83266ec54b3423fb3d576",
+      "brand": "레놀릿",
+      "title": "[레놀릿]필름/S-490364/샌드링햄 오크 그레이",
+      "price": "22,000~24,000",
+      "rating": null,
+      "styling": "스타일링샷 533",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162141452300986115.png?w=1080",
+      "imageFile": "06_S490364_샌드링햄오크그레이.png"
+    },
+    {
+      "rank": 7,
+      "id": "65d83265ec54b3423fb3d572",
+      "brand": "레놀릿",
+      "title": "[레놀릿]필름/S-490466/콘크리트화이트(2type)",
+      "price": "22,000~24,000",
+      "rating": null,
+      "styling": "스타일링샷 459",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/165779515712608193.png?w=1080",
+      "imageFile": "07_S490466_콘크리트화이트.png"
+    },
+    {
+      "rank": 8,
+      "id": "65ea8eed529ae503897ea49d",
+      "brand": "한솔홈데코",
+      "title": "[한솔홈데코]PET보드/스토리보드/도브화이트SM",
+      "price": null,
+      "rating": "4.5 (리뷰 2)",
+      "styling": "스타일링샷 341",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/167273450403412570.PNG?w=1080",
+      "imageFile": "08_PET보드_스토리보드_도브화이트SM.png"
+    },
+    {
+      "rank": 9,
+      "id": "65d827a85ed088742444d8c8",
+      "brand": "영림",
+      "title": "[영림]필름/영림132/PW845/우드",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 308",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/170254329803303046.JPG?w=1080",
+      "imageFile": "09_영림132_PW845_우드.jpg"
+    },
+    {
+      "rank": 10,
+      "id": "65d83266ec54b3423fb3d575",
+      "brand": "영림",
+      "title": "[영림]필름/영림109/PW835/우드",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 280",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162264262601655008.png?w=1080",
+      "imageFile": "10_영림109_PW835_우드.png"
+    }
+  ]
+}

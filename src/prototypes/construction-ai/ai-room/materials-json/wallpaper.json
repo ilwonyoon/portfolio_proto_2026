@@ -1,0 +1,118 @@
+{
+  "category": "벽지",
+  "categoryType": 3,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=3",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "6499213a345adf77ecc78ae3",
+      "brand": "개나리벽지",
+      "title": "[개나리벽지]벽지/로하스/화이트/54160-1",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 2,283",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/158883302555614426.png?w=1080",
+      "imageFile": "01_로하스_화이트.png"
+    },
+    {
+      "rank": 2,
+      "id": "6499213c345adf77ecc78ae8",
+      "brand": "LX지인",
+      "title": "[LX]벽지/디아망/모던회벽 화이트/PR028-01",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,777",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/166173446829108732.jpg?w=1080",
+      "imageFile": "02_디아망_모던회벽_화이트.jpg"
+    },
+    {
+      "rank": 3,
+      "id": "64992139345adf77ecc78ade",
+      "brand": "신한벽지",
+      "title": "[신한벽지]벽지/스케치/조용한사색 화이트/15053-1",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,758",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156897289127144356.JPG?w=1080",
+      "imageFile": "03_스케치_조용한사색_화이트.jpg"
+    },
+    {
+      "rank": 4,
+      "id": "6499213a345adf77ecc78ae1",
+      "brand": "LX지인",
+      "title": "[LX]벽지/방염 테라피/슈가 화이트/F8190-01",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,630",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/158383720797189346.png?w=1080",
+      "imageFile": "04_방염테라피_슈가_화이트.png"
+    },
+    {
+      "rank": 5,
+      "id": "64992139345adf77ecc78ae0",
+      "brand": "개나리벽지",
+      "title": "[개나리벽지]벽지/아트북/화이트/57160-1",
+      "price": null,
+      "rating": "5.0 (리뷰 3)",
+      "styling": "스타일링샷 1,430",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/167351488889137932.PNG?w=1080",
+      "imageFile": "05_아트북_화이트.png"
+    },
+    {
+      "rank": 6,
+      "id": "6499213e345adf77ecc78aed",
+      "brand": "LG하우시스",
+      "title": "[LX]벽지/방염 테라피/슈가/F8190-01",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 1,118",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/163245501684781913.png?w=1080",
+      "imageFile": "06_방염테라피_슈가.png"
+    },
+    {
+      "rank": 7,
+      "id": "64992140345adf77ecc78af3",
+      "brand": "LX지인",
+      "title": "[LX]벽지/디아망/회벽 화이트/PR002-01",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 1,011",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/166436780303132977.PNG?w=1080",
+      "imageFile": "07_디아망_회벽_화이트.png"
+    },
+    {
+      "rank": 8,
+      "id": "6499213b345adf77ecc78ae4",
+      "brand": "LX Z:IN",
+      "title": "[LX]벽지/테라피/슈가 화이트/8190-1",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 962",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156350599330854793.png?w=1080",
+      "imageFile": "08_테라피_슈가_화이트.png"
+    },
+    {
+      "rank": 9,
+      "id": "64992147345adf77ecc78b0a",
+      "brand": "LX Z:IN",
+      "title": "[LX]벽지/베스띠/테라코타 화이트/82526-01",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 714",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/165328572419263674.PNG?w=1080",
+      "imageFile": "09_베스띠_테라코타_화이트.png"
+    },
+    {
+      "rank": 10,
+      "id": "6499213f345adf77ecc78af0",
+      "brand": "개나리벽지",
+      "title": "[개나리벽지]벽지/에비뉴/화이트/77282-1",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 710",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/163091733043126414.jpg?w=1080",
+      "imageFile": "10_에비뉴_화이트.jpg"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "category": "도기",
+  "categoryType": 8,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=8",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "64e598d5df0b04535b25b9bc",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]세면대/CCASF516 플랫",
+      "price": "261,000~285,000",
+      "rating": "4.9 (리뷰 57)",
+      "styling": "스타일링샷 2,374",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/13520752/1709102201284.jpg?w=1080",
+      "imageFile": "01_세면대_CCASF516_플랫.jpg"
+    },
+    {
+      "rank": 2,
+      "id": "64e598d5df0b04535b25b9bd",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]세면대/CCASF515 플랫 R",
+      "price": "256,000~280,000",
+      "rating": "4.9 (리뷰 64)",
+      "styling": "스타일링샷 1,675",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/13520752/1709102548691.jpg?w=1080",
+      "imageFile": "02_세면대_CCASF515_플랫R.jpg"
+    },
+    {
+      "rank": 3,
+      "id": "64e598d5df0b04535b25b9be",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/C319500A/C437500T 웨이브 S",
+      "price": "332,000~362,000",
+      "rating": "4.9 (리뷰 33)",
+      "styling": "스타일링샷 1,090",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162201963813770280.png?w=1080",
+      "imageFile": "03_양변기_C319500A_웨이브S.png"
+    },
+    {
+      "rank": 4,
+      "id": "64e598d6df0b04535b25b9bf",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/C319500A/C427500T 웨이브 R",
+      "price": "325,000~355,000",
+      "rating": "4.9 (리뷰 22)",
+      "styling": "스타일링샷 907",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162132260076135502.png?w=1080",
+      "imageFile": "04_양변기_C319500A_웨이브R.png"
+    },
+    {
+      "rank": 5,
+      "id": "64e598d6df0b04535b25b9c0",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/C209600C 웨이브 S",
+      "price": "522,000~570,000",
+      "rating": "4.9 (리뷰 15)",
+      "styling": "스타일링샷 875",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/13520752/1709100121146.jpg?w=1080",
+      "imageFile": "05_양변기_C209600C_웨이브S.jpg"
+    },
+    {
+      "rank": 6,
+      "id": "64e598dddf0b04535b25b9fb",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/C427500T",
+      "price": "384,500",
+      "rating": "4.7 (리뷰 3)",
+      "styling": "스타일링샷 603",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/165510680947576641.jpg?w=1080",
+      "imageFile": "06_양변기_C427500T.jpg"
+    },
+    {
+      "rank": 7,
+      "id": "64e598d6df0b04535b25b9c1",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]세면대/C151500L 웨이브 R",
+      "price": "230,000~251,000",
+      "rating": "5.0 (리뷰 20)",
+      "styling": "스타일링샷 455",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/13520752/1709094815160.jpg?w=1080",
+      "imageFile": "07_세면대_C151500L_웨이브R.jpg"
+    },
+    {
+      "rank": 8,
+      "id": "64e598d6df0b04535b25b9c2",
+      "brand": "쿠세라",
+      "title": "[쿠세라]세면대/CC-3000",
+      "price": "148,000~162,000",
+      "rating": "5.0 (리뷰 9)",
+      "styling": "스타일링샷 426",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/1554292360838_Nnu.jpg?w=1080",
+      "imageFile": "08_쿠세라_세면대_CC3000.jpg"
+    },
+    {
+      "rank": 9,
+      "id": "64e598d6df0b04535b25b9c3",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/플랫 비데일체형",
+      "price": "1,251,000~1,365,000",
+      "rating": "5.0 (리뷰 3)",
+      "styling": "스타일링샷 386",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162279273787350384.png?w=1080",
+      "imageFile": "09_양변기_플랫_비데일체형.png"
+    },
+    {
+      "rank": 10,
+      "id": "64e598f6df0b04535b25ba8f",
+      "brand": "아메리칸스탠다드",
+      "title": "[아메리칸스탠다드]양변기/스탠리",
+      "price": "673,750",
+      "rating": "5.0 (리뷰 2)",
+      "styling": "스타일링샷 298",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/19676832/1747620430904.jpg?w=1080",
+      "imageFile": "10_양변기_스탠리.jpg"
+    }
+  ]
+}

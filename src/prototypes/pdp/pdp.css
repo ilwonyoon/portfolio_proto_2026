@@ -1081,7 +1081,7 @@
 
 .pdp-placement-panel__input {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
   padding: 10px 10px 10px 20px;
   transition: padding 260ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -1091,18 +1091,78 @@
   margin: 0;
   min-width: 0;
   flex: 1 1 auto;
-  overflow: hidden;
-  color: #828c94;
+  border: 0;
+  background: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  color: #2f3438;
+  font-family: inherit;
   font-size: 16px;
   line-height: 21px;
   letter-spacing: -0.4px;
   font-weight: 400;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  resize: none;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
   transition:
     font-size 220ms ease,
     line-height 220ms ease,
     letter-spacing 220ms ease;
+}
+
+.pdp-placement-panel__prompt::placeholder {
+  color: #828c94;
+}
+
+.pdp-placement-panel__prompt:disabled {
+  color: #828c94;
+}
+
+.pdp-placement-panel {
+  overflow: visible;
+}
+
+.pdp-placement-suggestion-chips {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  pointer-events: auto;
+}
+
+.pdp-placement-suggestion-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.pdp-placement-suggestion-chip {
+  flex: 0 0 auto;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #2f3438;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.2px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.pdp-placement-suggestion-chip:active {
+  background: #f4f6f7;
 }
 
 .pdp-placement-panel--input .pdp-placement-panel__prompt {
@@ -1569,13 +1629,20 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  overflow: hidden;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pdp-product-sheet__chips::-webkit-scrollbar {
+  display: none;
 }
 
 .pdp-product-sheet__chip {
   border: 0;
   background: #f7f9fa;
   color: #2f3438;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .pdp-product-sheet__chip.ds-chip--selected {

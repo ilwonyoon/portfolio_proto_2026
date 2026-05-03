@@ -1,0 +1,118 @@
+{
+  "category": "스위치/콘센트",
+  "categoryType": 5,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=5",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "649921a8345adf77ecc78c32",
+      "brand": "융",
+      "title": "LS990 듀로플라스틱 유럽형 2회로 스위치(단로)",
+      "price": "57,200",
+      "rating": "4.8 (리뷰 68)",
+      "styling": "스타일링샷 2,767",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/161551553618610368.jpg?w=1080",
+      "imageFile": "01_LS990_2회로스위치.jpg"
+    },
+    {
+      "rank": 2,
+      "id": "649921ab345adf77ecc78c3b",
+      "brand": "르그랑코리아",
+      "title": "아펠라 콘센트 2구",
+      "price": "3,700",
+      "rating": "4.9 (리뷰 501)",
+      "styling": "스타일링샷 2,641",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162969496724521968.jpg?w=1080",
+      "imageFile": "02_아펠라_콘센트2구.jpg"
+    },
+    {
+      "rank": 3,
+      "id": "649921a6345adf77ecc78c2c",
+      "brand": "융",
+      "title": "LS990 듀로플라스틱 유럽형 1회로 스위치",
+      "price": "44,000",
+      "rating": "4.7 (리뷰 102)",
+      "styling": "스타일링샷 2,637",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/161551403596504264.jpg?w=1080",
+      "imageFile": "03_LS990_1회로스위치.jpg"
+    },
+    {
+      "rank": 4,
+      "id": "649921a8345adf77ecc78c34",
+      "brand": "융",
+      "title": "LS990 듀로플라스틱 유럽형 콘센트_220V",
+      "price": "37,400",
+      "rating": "4.8 (리뷰 94)",
+      "styling": "스타일링샷 2,372",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/161551777403635514.jpg?w=1080",
+      "imageFile": "04_LS990_콘센트_220V.jpg"
+    },
+    {
+      "rank": 5,
+      "id": "649921aa345adf77ecc78c38",
+      "brand": "르그랑코리아",
+      "title": "엑셀 스위치 3구",
+      "price": "42,000",
+      "rating": "4.8 (리뷰 216)",
+      "styling": "스타일링샷 1,221",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/169796818133961695.jpg?w=1080",
+      "imageFile": "05_엑셀_스위치3구.jpg"
+    },
+    {
+      "rank": 6,
+      "id": "649921a5345adf77ecc78c2b",
+      "brand": "제일전기공업",
+      "title": "디아트 콘센트 2구(45도)",
+      "price": "2,600",
+      "rating": null,
+      "styling": "스타일링샷 1,116",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-409276219981952.jpg?w=1080",
+      "imageFile": "06_디아트_콘센트2구_45도.jpg"
+    },
+    {
+      "rank": 7,
+      "id": "649921a9345adf77ecc78c36",
+      "brand": "르그랑코리아",
+      "title": "엑셀 스위치 2구",
+      "price": "30,600",
+      "rating": "4.9 (리뷰 275)",
+      "styling": "스타일링샷 996",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/169796807226357920.jpg?w=1080",
+      "imageFile": "07_엑셀_스위치2구.jpg"
+    },
+    {
+      "rank": 8,
+      "id": "649921af345adf77ecc78c4a",
+      "brand": "르그랑코리아",
+      "title": "아펠라 스위치 단로2구",
+      "price": "4,700",
+      "rating": "4.8 (리뷰 297)",
+      "styling": "스타일링샷 970",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162969367239730439.jpg?w=1080",
+      "imageFile": "08_아펠라_스위치단로2구.jpg"
+    },
+    {
+      "rank": 9,
+      "id": "649921aa345adf77ecc78c39",
+      "brand": "제일전기공업",
+      "title": "디아트 스위치 1구",
+      "price": "2,300",
+      "rating": null,
+      "styling": "스타일링샷 837",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-409330615283712.jpg?w=1080",
+      "imageFile": "09_디아트_스위치1구.jpg"
+    },
+    {
+      "rank": 10,
+      "id": "649921a9345adf77ecc78c37",
+      "brand": "제일전기공업",
+      "title": "디아트 스위치 2구",
+      "price": null,
+      "rating": null,
+      "styling": "스타일링샷 824",
+      "imageUrl": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-409329930780800.jpg?w=1080",
+      "imageFile": "10_디아트_스위치2구.jpg"
+    }
+  ]
+}

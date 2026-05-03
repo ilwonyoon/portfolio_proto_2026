@@ -1,0 +1,118 @@
+{
+  "category": "타일",
+  "categoryType": 7,
+  "source": "https://o2o.ohou.se/remodeling/goods/ranks?categoryType=7",
+  "collectedAt": "2026-05-02",
+  "items": [
+    {
+      "rank": 1,
+      "id": "649920fd345adf77ecc78a2b",
+      "brand": "윤현상재",
+      "title": "[윤현상재]타일/600*600mm/이모션 화이트",
+      "price": "99,000~108,000",
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 2,630",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/163772537085854657.PNG?w=1080",
+      "imageFile": "01_600x600_이모션화이트.png"
+    },
+    {
+      "rank": 2,
+      "id": "64992103345adf77ecc78a3b",
+      "brand": "윤현상재",
+      "title": "[윤현상재]타일/600*600mm/이모션 라이트 그레이",
+      "price": "99,000~108,000",
+      "rating": null,
+      "styling": "스타일링샷 348",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/170857951541700940.PNG?w=1080",
+      "imageFile": "02_600x600_이모션라이트그레이.png"
+    },
+    {
+      "rank": 3,
+      "id": "64992104345adf77ecc78a40",
+      "brand": "하우스톤",
+      "title": "[하우스톤] 타일/테라코타",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 300",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/159402428480995601.jpg?w=1080",
+      "imageFile": "03_하우스톤_테라코타.jpg"
+    },
+    {
+      "rank": 4,
+      "id": "64992107345adf77ecc78a46",
+      "brand": "LX하우시스",
+      "title": "[LX]타일/스타일/화이트 베실리우스",
+      "price": "63,000~69,000",
+      "rating": null,
+      "styling": "스타일링샷 190",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156889760545791178.png?w=1080",
+      "imageFile": "04_LX_스타일_화이트베실리우스.png"
+    },
+    {
+      "rank": 5,
+      "id": "64992102345adf77ecc78a39",
+      "brand": "토도",
+      "title": "[토도]타일/600*600mm/테라조",
+      "price": "108,000~118,000",
+      "rating": "4.0 (리뷰 1)",
+      "styling": "스타일링샷 129",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156330753733262521.png?w=1080",
+      "imageFile": "05_토도_600x600_테라조.png"
+    },
+    {
+      "rank": 6,
+      "id": "6499210c345adf77ecc78a55",
+      "brand": "어반테고",
+      "title": "[어반테고]타일/테라조 타일/마시멜로우",
+      "price": "108,000~117,000",
+      "rating": null,
+      "styling": "스타일링샷 59",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/164488779612481939.jpg?w=1080",
+      "imageFile": "06_어반테고_테라조_마시멜로우.jpg"
+    },
+    {
+      "rank": 7,
+      "id": "6499210e345adf77ecc78a5c",
+      "brand": "HY",
+      "title": "[HY]타일/600*600mm/ZH6950",
+      "price": "151,000~165,000",
+      "rating": null,
+      "styling": "스타일링샷 54",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156376893599410791.JPG?w=1080",
+      "imageFile": "07_HY_600x600_ZH6950.jpg"
+    },
+    {
+      "rank": 8,
+      "id": "64992111345adf77ecc78a65",
+      "brand": "윤현상재",
+      "title": "[윤현상재]타일/GATSBY/WHITE",
+      "price": "207,000~226,000",
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 44",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/159238270982978944.jpg?w=1080",
+      "imageFile": "08_윤현상재_GATSBY_WHITE.jpg"
+    },
+    {
+      "rank": 9,
+      "id": "6499210c345adf77ecc78a57",
+      "brand": "웜세라믹",
+      "title": "[웜세라믹]타일/대리석 바닥타일/비앙코카라라 유,무광",
+      "price": null,
+      "rating": "5.0 (리뷰 1)",
+      "styling": "스타일링샷 43",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/1519787099823_Lmr.jpg?w=1080",
+      "imageFile": "09_웜세라믹_비앙코카라라.jpg"
+    },
+    {
+      "rank": 10,
+      "id": "64992116345adf77ecc78a75",
+      "brand": "승원바스",
+      "title": "[승원바스]타일/600*600mm/ZF6622",
+      "price": "83,000~90,000",
+      "rating": null,
+      "styling": "스타일링샷 38",
+      "imageUrl": "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/159280213198325806.jpg?w=1080",
+      "imageFile": "10_승원바스_600x600_ZF6622.jpg"
+    }
+  ]
+}
