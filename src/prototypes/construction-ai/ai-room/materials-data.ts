@@ -17,14 +17,35 @@ export const constructionMaterialCategories: Array<{
   id: ConstructionMaterialCategory
   label: string
 }> = [
-  { id: 'floor', label: 'Floor' },
   { id: 'wallpaper', label: 'Wallpaper' },
+  { id: 'floor', label: 'Floor' },
   { id: 'sheet-film', label: 'Sheet Film' },
   { id: 'tile', label: 'Tile' },
   { id: 'ceramic', label: 'Sanitary Ware' },
   { id: 'faucet', label: 'Faucet' },
   { id: 'switch', label: 'Switch & Outlet' },
 ]
+
+export function getConstructionMaterialCategoryLabel(
+  category: ConstructionMaterialCategory,
+): string {
+  return (
+    constructionMaterialCategories.find((entry) => entry.id === category)
+      ?.label ?? 'Material'
+  )
+}
+
+// Surface-style materials (wall/floor finishes) get a different prompt vs.
+// fixture-style materials (sinks, faucets, switches) so the placeholder
+// matches what the user is actually doing.
+const surfaceMaterialCategories: ReadonlySet<ConstructionMaterialCategory> =
+  new Set(['wallpaper', 'floor', 'sheet-film', 'tile'])
+
+export function isConstructionSurfaceMaterial(
+  category: ConstructionMaterialCategory,
+): boolean {
+  return surfaceMaterialCategories.has(category)
+}
 
 export type ConstructionMaterial = {
   id: string

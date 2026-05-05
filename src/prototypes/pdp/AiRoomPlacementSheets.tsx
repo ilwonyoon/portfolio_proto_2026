@@ -105,11 +105,15 @@ export function PdpPlacementQuickMenu({
   onPressItemStart,
   onPressItemEnd,
   onOpenProductSheet,
+  onOpenMaterialsSheet,
+  onSelectStyleTransfer,
 }: {
   pressedItemId: PdpPlacementMenuItemId | null
   onPressItemStart: (itemId: PdpPlacementMenuItemId) => void
   onPressItemEnd: () => void
   onOpenProductSheet: () => void
+  onOpenMaterialsSheet?: () => void
+  onSelectStyleTransfer?: () => void
 }) {
   return (
     <div
@@ -127,13 +131,22 @@ export function PdpPlacementQuickMenu({
         onSelect={onOpenProductSheet}
       />
       <PdpPlacementQuickMenuItem
+        icon={<PdpPlacementMenuBagIcon />}
+        title="Apply materials"
+        description="Swap finishes like floors, walls, and fixtures"
+        isPressed={pressedItemId === 'apply-materials'}
+        onPressStart={() => onPressItemStart('apply-materials')}
+        onPressEnd={onPressItemEnd}
+        onSelect={onOpenMaterialsSheet ?? onPressItemEnd}
+      />
+      <PdpPlacementQuickMenuItem
         icon={<PdpPlacementMenuPhotoIcon />}
         title="Style from photo"
         description="Restyle your room from an image"
         isPressed={pressedItemId === 'style-transfer'}
         onPressStart={() => onPressItemStart('style-transfer')}
         onPressEnd={onPressItemEnd}
-        onSelect={onPressItemEnd}
+        onSelect={onSelectStyleTransfer ?? onPressItemEnd}
       />
     </div>
   )

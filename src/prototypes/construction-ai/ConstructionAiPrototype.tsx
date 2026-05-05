@@ -123,7 +123,7 @@ const portfolioCases: PortfolioCase[] = [
     views: '100',
     isFeatured: true,
     photos: makePortfolioCasePhotos('case-01', 24),
-    cover: `${caseCoverRoot}/case-cover-01.avif`,
+    cover: `${o2oRoot}/contractor-01-1.avif`,
   },
   {
     id: 'case-02',
@@ -802,7 +802,9 @@ function ContractorPortfolioScreen({
             <span
               className="construction-ai-portfolio-category__image"
               style={{
-                backgroundImage: `url(${portfolioAssetRoot}/categories/cases-thumb.avif)`,
+                backgroundImage: contractor.photos[0]
+                  ? `url(${contractor.photos[0].src})`
+                  : `url(${portfolioAssetRoot}/categories/cases-thumb.avif)`,
               }}
             />
             <span className="construction-ai-portfolio-category__label">
@@ -822,7 +824,9 @@ function ContractorPortfolioScreen({
             <span
               className="construction-ai-portfolio-category__image"
               style={{
-                backgroundImage: `url(${portfolioAssetRoot}/categories/photos-thumb.avif)`,
+                backgroundImage: portfolioAllPhotos[0]
+                  ? `url(${portfolioAllPhotos[0]})`
+                  : `url(${portfolioAssetRoot}/categories/photos-thumb.avif)`,
               }}
             />
             <span className="construction-ai-portfolio-category__label">
@@ -1161,10 +1165,16 @@ export default function ConstructionAiPrototype({
               mode={mode}
               data={constructionAiRoomData}
               initialMode="style-transfer"
+              navTitle="Bathroom design"
               referenceMedia={{
                 id: `style-${selectedPhoto.id}`,
                 src: selectedPhoto.src,
                 label: 'Style Reference',
+              }}
+              resultContractor={{
+                name: contractors[0].name,
+                rating: contractors[0].rating,
+                reviewCount: contractors[0].reviewCount,
               }}
             />
           </PushPage>

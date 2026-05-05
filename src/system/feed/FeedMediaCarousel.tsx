@@ -279,6 +279,14 @@ export function FeedMediaCarousel({
       return
     }
 
+    // Don't capture pointer when the press starts on an interactive element
+    // overlaid on the carousel (e.g. Try-in-room button, product tag).
+    // Pointer capture redirects the subsequent click away from those targets.
+    const target = event.target as HTMLElement | null
+    if (target && target.closest('button, a, [role="button"]')) {
+      return
+    }
+
     event.currentTarget.setPointerCapture(event.pointerId)
     pointerIdRef.current = event.pointerId
     startXRef.current = event.clientX
@@ -357,7 +365,7 @@ export function FeedMediaCarousel({
           ))}
         </div>
 
-        {hasSlides && showCounter ? (
+        {hasSlides && showCounter && slides.length > 1 ? (
           <MediaCounter
             current={Number(currentLabel)}
             total={Number(displayTotal)}
@@ -405,7 +413,7 @@ export function FeedMediaCarousel({
             ))
           : null}
 
-        {hasSlides && showDots ? (
+        {hasSlides && showDots && slides.length > 1 ? (
           <div className="ds-feed-media__dots" aria-hidden="true">
             <div className="ds-feed-media__dots-track" style={{ width: dotTrackWidth }}>
               {dotDescriptors.map((dot, index) => {

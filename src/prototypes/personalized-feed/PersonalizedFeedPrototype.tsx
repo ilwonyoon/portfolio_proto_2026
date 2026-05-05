@@ -30,18 +30,20 @@ type PersonalizedFeedPrototypeProps = {
   mode?: 'full' | 'thumbnail'
   initialTopTab?: 'for-you' | 'discover'
   scrollableTopTabs?: boolean
+  feedItemsOverride?: HomeFeedItem[]
 }
 
 function PersonalizedFeedPrototype({
   initialTopTab = 'for-you',
   mode = 'full',
   scrollableTopTabs = false,
+  feedItemsOverride,
 }: PersonalizedFeedPrototypeProps) {
   const [activeTopTab, setActiveTopTab] = useState<'for-you' | 'discover'>(
     initialTopTab,
   )
-  const [feedItems, setFeedItems] = useState<HomeFeedItem[]>(
-    getInitialPersonalizedFeedItems,
+  const [feedItems, setFeedItems] = useState<HomeFeedItem[]>(() =>
+    feedItemsOverride ?? getInitialPersonalizedFeedItems(),
   )
   const [activeProductSheetItemId, setActiveProductSheetItemId] = useState<
     string | null
@@ -53,6 +55,11 @@ function PersonalizedFeedPrototype({
   const discoverDetailOpenFrameRef = useRef<number | null>(null)
 
   useEffect(() => {
+    if (feedItemsOverride) {
+      setFeedItems(feedItemsOverride)
+      return
+    }
+
     let cancelled = false
 
     void fetchPersonalizedFeedItems().then((items) => {
@@ -64,7 +71,7 @@ function PersonalizedFeedPrototype({
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [feedItemsOverride])
 
   useEffect(() => {
     return () => {

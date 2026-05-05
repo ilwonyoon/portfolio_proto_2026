@@ -36,7 +36,7 @@ export function FigmaAsset({
   return (
     <img
       src={src}
-      srcSet={exportScale === 2 ? `${src} 2x` : undefined}
+      srcSet={exportScale === 2 ? `${src} 1x, ${src} 2x` : undefined}
       alt={alt}
       width={displayWidth}
       height={displayHeight}

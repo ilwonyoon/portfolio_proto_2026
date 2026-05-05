@@ -315,7 +315,7 @@ export function ConstructionMaterialsSheet({
   onAddMaterial: (material: ConstructionMaterial) => void
 }) {
   const [activeCategory, setActiveCategory] =
-    useState<ConstructionMaterialCategory>('floor')
+    useState<ConstructionMaterialCategory>('wallpaper')
   const sheetBodyRef = useRef<HTMLDivElement | null>(null)
   const sheetDragGesture = useSheetDragGesture({
     open: isOpen,
@@ -332,7 +332,7 @@ export function ConstructionMaterialsSheet({
 
   useEffect(() => {
     if (isOpen) {
-      setActiveCategory('floor')
+      setActiveCategory('wallpaper')
     }
   }, [isOpen])
 

@@ -798,6 +798,13 @@
   pointer-events: none;
 }
 
+.ds-feed-card__try-in-room-slot {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  pointer-events: auto;
+}
+
 .ds-feed-media__tag {
   position: absolute;
   width: 18px;

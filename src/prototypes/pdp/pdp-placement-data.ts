@@ -16,7 +16,7 @@ export type PdpGeneratedSlide = {
   hasProductTag: boolean
 }
 
-export type PdpPlacementMenuItemId = 'add-products' | 'style-transfer'
+export type PdpPlacementMenuItemId = 'add-products' | 'apply-materials' | 'style-transfer'
 
 const assetRoot = '/assets/figma/pdp'
 

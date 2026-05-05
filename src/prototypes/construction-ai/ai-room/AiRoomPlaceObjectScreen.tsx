@@ -35,6 +35,10 @@ import {
   PdpProductArchiveSheet,
   type ConstructionPlacementMenuItemId,
 } from './AiRoomPlacementSheets'
+import {
+  getConstructionMaterialCategoryLabel,
+  isConstructionSurfaceMaterial,
+} from './materials-data'
 import { PdpThinkingStatus } from './AiRoomThinkingStatus'
 
 const assetRoot = '/assets/figma/pdp'
@@ -52,18 +56,52 @@ export type ConstructionAttachedMedia = {
   label: string
 }
 
+export type ConstructionResultContractor = {
+  name: string
+  rating: string
+  reviewCount: number
+}
+
 export function ConstructionPlaceObjectScreen({
   isActive,
   selectedSpace,
   onBack,
   initialMode = 'add-products',
+  navTitle,
   referenceMedia,
+  resultContractor,
+  styleTransferResultSrc,
+  styleTransferResultSrcSequence,
+  styleTransferPlaceholder,
+  styleTransferChips: styleTransferChipsOverride,
+  styleTransferResultTags,
+  styleTransferResultProducts,
+  styleTransferResultTagSequence,
+  styleTransferResultProductsSequence,
 }: {
   isActive: boolean
   selectedSpace: PdpSelectableSpace
   onBack: () => void
   initialMode?: ConstructionPlaceObjectMode
+  navTitle?: string
   referenceMedia?: ConstructionAttachedMedia
+  resultContractor?: ConstructionResultContractor
+  styleTransferResultSrc?: string
+  styleTransferResultSrcSequence?: string[]
+  styleTransferPlaceholder?: string
+  styleTransferChips?: Array<{ id: string; label: string; prompt: string }>
+  styleTransferResultTags?: Array<{
+    id: string
+    productId: string
+    label: string
+    x: number
+    y: number
+  }>
+  styleTransferResultProducts?: FeedProduct[]
+  styleTransferResultTagSequence?: Array<
+    Array<{ id: string; productId: string; label: string; x: number; y: number }>
+  >
+  styleTransferResultProductsSequence?: FeedProduct[][]
 }) {
   // For Add Products entry, seed with the default Moss Rug. For other modes
   // (Style Transfer, Apply Materials triggered from elsewhere), no
@@ -114,6 +152,10 @@ export function ConstructionPlaceObjectScreen({
   const [pressedMenuItemId, setPressedMenuItemId] = useState<ConstructionPlacementMenuItemId | null>(null)
   const [phase, setPhase] = useState<PdpPlacementPhase>('placing')
   const [renderReturnPhase, setRenderReturnPhase] = useState<PdpPlacementPhase>('placing')
+  const [stageSrc, setStageSrc] = useState<string>(selectedSpace.src)
+  const [activeMaterialKind, setActiveMaterialKind] = useState<
+    'surface' | 'fixture' | null
+  >(null)
   const [resultSlides, setResultSlides] = useState<PdpGeneratedSlide[]>(() => [
     createOriginalResultSlide(selectedSpace),
   ])
@@ -142,6 +184,19 @@ export function ConstructionPlaceObjectScreen({
   const activeResultSlide = resultSlides[activeResultSlideIndex] ?? resultSlides[0]
   const comparisonResultSlide =
     activeResultSlideIndex > 0 ? resultSlides[activeResultSlideIndex - 1] : null
+  // For style-transfer with a sequence of generated images, the consumer can
+  // also pass a per-render sequence of tags and products. activeResultSlide
+  // index 0 is the original photo, so the generated index is index - 1.
+  const styleTransferGeneratedIndex = Math.max(activeResultSlideIndex - 1, 0)
+  const activeStyleTransferTags =
+    styleTransferResultTagSequence?.[styleTransferGeneratedIndex] ??
+    styleTransferResultTags
+  // Each generated slide carries its own product strip. Swiping between
+  // slides shows the products tied to that render (e.g. desk-cluster strip on
+  // the first generated slide, curtain on the second).
+  const activeStyleTransferProducts =
+    styleTransferResultProductsSequence?.[styleTransferGeneratedIndex] ??
+    styleTransferResultProducts
   const activePlacementItem =
     placementItems.find((item) => item.id === activePlacementItemId) ?? placementItems[0] ?? null
   const markerPosition = activePlacementItem?.position ?? pdpDefaultPlacementPosition
@@ -157,7 +212,7 @@ export function ConstructionPlaceObjectScreen({
   }))
   const hasPendingPlacement = placementItems.some((item) => item.position === null)
   const canStartRendering = placementItems.length > 0 && !hasPendingPlacement
-  const isProductSheetLayoutOpen = isProductSheetOpen && !isRendering && !isResult
+  const isProductSheetLayoutOpen = isProductSheetOpen && !isRendering
   const shouldShowInstruction = Boolean(
     activePlacementItem &&
       activePlacementItem.position === null &&
@@ -175,21 +230,27 @@ export function ConstructionPlaceObjectScreen({
   const hasPlacementItem = placementItems.length > 0
   const hasUnplacedItem = placementItems.some((item) => item.position === null)
 
-  const [promptValue, setPromptValue] = useState('')
+  // Each phase has its own prompt input. They don't share text — placing
+  // is "what to generate", result is "what to change about the result".
+  const [placingPrompt, setPlacingPrompt] = useState('')
+  const [resultPrompt, setResultPrompt] = useState('')
 
-  function getPlaceholderText() {
-    if (isRendering) return 'Generating your design'
-    if (isResult) return 'Describe what you want to change'
-
+  function getPlacingPlaceholder() {
     if (activeMode === 'apply-materials') {
-      return 'Apply this material to your room'
+      if (activeMaterialKind === 'surface') {
+        return 'Apply this finish to the wall or floor'
+      }
+      if (activeMaterialKind === 'fixture') {
+        return 'Place this fixture in your room'
+      }
+      return 'Pick a material to apply to your room'
     }
-
     if (activeMode === 'style-transfer') {
-      return 'Transfer the overall style of this reference'
+      return (
+        styleTransferPlaceholder ??
+        'Transfer the overall style of this reference, keeping the existing layout'
+      )
     }
-
-    // add-products (default)
     if (!hasPlacementItem) {
       return 'Pick a product to add to your room'
     }
@@ -199,32 +260,91 @@ export function ConstructionPlaceObjectScreen({
     return pdpPlacementPromptText
   }
 
-  const placeholderText = getPlaceholderText()
+  // Active value/placeholder change with phase. Rendering shows neither
+  // a user value nor an editable placeholder — only a status placeholder.
+  const inputValue = isRendering ? '' : isResult ? resultPrompt : placingPrompt
+  function getRenderingPlaceholder() {
+    if (activeMode === 'apply-materials') {
+      if (activeMaterialKind === 'fixture') return 'Placing the fixture in your room'
+      return 'Applying the new finish to your room'
+    }
+    if (activeMode === 'style-transfer') return 'Transferring the style to your room'
+    return 'Generating your design'
+  }
+
+  const thinkingTextsByMode: Record<ConstructionPlaceObjectMode, string[]> = {
+    'add-products': [
+      'Analyzing your room',
+      'Matching product scale',
+      'Blending light and shadows',
+      'Generating your design',
+    ],
+    'apply-materials':
+      activeMaterialKind === 'fixture'
+        ? [
+            'Mapping the fixture into place',
+            'Matching plumbing and proportions',
+            'Blending light and reflections',
+            'Generating your design',
+          ]
+        : [
+            'Reading your walls and floors',
+            'Mapping the new finish',
+            'Adjusting tone and texture',
+            'Generating your design',
+          ],
+    'style-transfer': [
+      'Studying the reference style',
+      'Reading your room layout',
+      'Translating the look into your space',
+      'Generating your design',
+    ],
+  }
+  const activeThinkingTexts = thinkingTextsByMode[activeMode]
+
+  const placeholderText = isRendering
+    ? getRenderingPlaceholder()
+    : isResult
+      ? 'Describe what you want to change'
+      : getPlacingPlaceholder()
+  const handleInputChange = (next: string) => {
+    if (isRendering) return
+    if (isResult) {
+      setResultPrompt(next)
+    } else {
+      setPlacingPrompt(next)
+    }
+  }
 
   // Style transfer suggestion chips. When user taps one, the chip's full
   // prompt sentence is dropped into the input as the actual value (chips
-  // hide). Clearing the input restores the chip group.
-  const styleTransferChips: Array<{ id: string; label: string; prompt: string }> = [
-    {
-      id: 'furniture-decor',
-      label: 'Furniture & Decor',
-      prompt: 'Apply furniture and decor style from this reference',
-    },
-    {
-      id: 'finishes',
-      label: 'Finishes',
-      prompt: 'Apply finishes from this reference',
-    },
-    {
-      id: 'layout',
-      label: 'Layout',
-      prompt: 'Apply layout from this reference',
-    },
-  ]
+  // hide). Clearing the input restores the chip group. Verb-form labels keep
+  // intent legible; consumers (e.g. content-style-transfer) override these.
+  const styleTransferChips: Array<{ id: string; label: string; prompt: string }> =
+    styleTransferChipsOverride ?? [
+      {
+        id: 'match-the-vibe',
+        label: 'Match the vibe',
+        prompt:
+          'Match the overall mood of this reference in my bathroom — color palette, materials, and lighting feel. Keep the existing layout and fixture positions.',
+      },
+      {
+        id: 'swap-the-finishes',
+        label: 'Swap the finishes',
+        prompt:
+          'Apply finishes from this reference — wall tiles, floor, and surface materials only — without moving the existing fixtures or layout.',
+      },
+      {
+        id: 'rework-the-layout',
+        label: 'Rework the layout',
+        prompt:
+          'Reorganize the layout to match this reference — keep the same fixtures and finishes but rearrange the placement.',
+      },
+    ]
 
   const showStyleTransferChips =
     activeMode === 'style-transfer' &&
-    promptValue.length === 0 &&
+    placingPrompt.length === 0 &&
     !isRendering &&
     !isResult
 
@@ -235,7 +355,8 @@ export function ConstructionPlaceObjectScreen({
       setPlacementItems(seedItems)
       setActivePlacementItemId(seedItems[0]?.id ?? 'placeholder')
       setActiveMode(initialMode)
-      setPromptValue('')
+      setPlacingPrompt('')
+      setResultPrompt('')
       setShowSubmitHint(false)
       setShowAddProductTooltip(false)
       setHasSeenPlacementInstruction(false)
@@ -253,6 +374,8 @@ export function ConstructionPlaceObjectScreen({
       setLoadedResultSlideIds([])
       setVisibleResultTagSlideId(null)
       revealedResultSlideIdsRef.current = new Set()
+      setStageSrc(selectedSpace.src)
+      setActiveMaterialKind(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive, selectedSpace.id, initialMode, referenceMedia?.id])
@@ -268,13 +391,55 @@ export function ConstructionPlaceObjectScreen({
 
     const timeoutId = window.setTimeout(() => {
       const nextSlideIndex = resultSlides.length
+      // For style-transfer, the consumer can supply a sequence of generated
+      // images so the second/third render shows a different result. The
+      // sequence index is (nextSlideIndex - 1) because slide[0] is the
+      // original photo. Falls back to styleTransferResultSrc, then to the
+      // construction-ai default asset.
+      const styleTransferGeneratedSrc = (() => {
+        if (
+          styleTransferResultSrcSequence &&
+          styleTransferResultSrcSequence.length > 0
+        ) {
+          const seqIndex = Math.min(
+            Math.max(nextSlideIndex - 1, 0),
+            styleTransferResultSrcSequence.length - 1,
+          )
+          return styleTransferResultSrcSequence[seqIndex]
+        }
+        return (
+          styleTransferResultSrc ??
+          '/assets/figma/construction-ai/ai-room/style-transfer-result.jpg'
+        )
+      })()
+
+      // When the consumer passes a sequence (content-style-transfer), every
+      // render — regardless of mode — pulls from that sequence so the
+      // experience stays a single style-transfer arc instead of falling back
+      // to bathroom or PDP defaults when the user returns via add-products /
+      // apply-materials menus.
+      const generatedSrc = styleTransferResultSrcSequence
+        ? styleTransferGeneratedSrc
+        : activeMode === 'style-transfer'
+          ? styleTransferGeneratedSrc
+          : activeMode === 'apply-materials'
+            ? '/assets/figma/construction-ai/ai-room/bathroom_result_2.jpeg'
+            : pdpGeneratedResultSrc
+      const generatedAlt =
+        activeMode === 'style-transfer'
+          ? 'Generated room with the reference style applied'
+          : activeMode === 'apply-materials'
+            ? activeMaterialKind === 'fixture'
+              ? 'Generated room with the new fixture placed'
+              : 'Generated room with the new finish applied'
+            : 'Generated room image with the moss rug placed'
 
       setResultSlides((currentSlides) => [
         ...currentSlides,
         {
           id: `generated-${currentSlides.length}`,
-          src: pdpGeneratedResultSrc,
-          alt: 'Generated room image with the moss rug placed',
+          src: generatedSrc,
+          alt: generatedAlt,
           hasProductTag: true,
         },
       ])
@@ -296,6 +461,18 @@ export function ConstructionPlaceObjectScreen({
 
     return () => window.clearTimeout(timeoutId)
   }, [showSubmitHint])
+
+  useEffect(() => {
+    if (!showAddProductTooltip) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowAddProductTooltip(false)
+    }, 3600)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [showAddProductTooltip])
 
   useEffect(() => {
     if (resultTagRevealTimeoutRef.current !== null) {
@@ -455,7 +632,27 @@ export function ConstructionPlaceObjectScreen({
     setPhase(renderReturnPhase === 'result' ? 'result' : 'placing')
   }
 
+  function carryResultIntoPlacing(nextMode: ConstructionPlaceObjectMode) {
+    if (!isResult) return
+    // Use the current generated result as the new stage background — the user
+    // continues editing on top of the previous render. Clear placements so
+    // the next item (product or material) starts fresh.
+    const snapshotSrc = activeResultSlide?.src
+    if (snapshotSrc) {
+      setStageSrc(snapshotSrc)
+    }
+    setPlacementItems([])
+    setActivePlacementItemId(null)
+    setActiveMaterialKind(null)
+    setPhase('placing')
+    setRenderReturnPhase('placing')
+    setActiveMode(nextMode)
+    setPlacingPrompt('')
+    setResultPrompt('')
+  }
+
   function openProductSheet() {
+    if (isResult) carryResultIntoPlacing('add-products')
     setActiveMode('add-products')
     setIsMenuOpen(false)
     setIsProductSheetOpen(true)
@@ -471,6 +668,7 @@ export function ConstructionPlaceObjectScreen({
   }
 
   function openMaterialsSheet() {
+    if (isResult) carryResultIntoPlacing('apply-materials')
     setActiveMode('apply-materials')
     setIsMenuOpen(false)
     setIsMaterialsSheetOpen(true)
@@ -625,7 +823,11 @@ export function ConstructionPlaceObjectScreen({
               />
             </button>
           }
-          center={<h1>Place {activePlacementItem?.category.toLowerCase() ?? 'item'}</h1>}
+          center={
+            <h1>
+              {navTitle ?? `Place ${activePlacementItem?.category.toLowerCase() ?? 'item'}`}
+            </h1>
+          }
         />
       </header>
 
@@ -706,7 +908,43 @@ export function ConstructionPlaceObjectScreen({
               ) : null}
               {activeResultSlide?.hasProductTag &&
               visibleResultTagSlideId === activeResultSlide.id &&
-              !isComparingResult
+              !isComparingResult &&
+              (activeMode === 'style-transfer' || styleTransferResultSrcSequence) &&
+              activeStyleTransferTags &&
+              activeStyleTransferTags.length > 0
+                ? activeStyleTransferTags.map((tag) => (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className="pdp-placement-result-tag ds-feed-media__tag"
+                      style={{
+                        left: `${tag.x}px`,
+                        top: `${tag.y}px`,
+                      }}
+                      aria-label={`View tagged ${tag.label}`}
+                    >
+                      <FigmaAsset
+                        src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
+                        alt=""
+                        displayWidth={18}
+                        displayHeight={18}
+                        className="ds-feed-media__tag-bg"
+                      />
+                      <FigmaAsset
+                        src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
+                        alt=""
+                        displayWidth={7.71429}
+                        displayHeight={7.71429}
+                        className="ds-feed-media__tag-plus"
+                      />
+                    </button>
+                  ))
+                : null}
+              {activeResultSlide?.hasProductTag &&
+              visibleResultTagSlideId === activeResultSlide.id &&
+              !isComparingResult &&
+              activeMode === 'add-products' &&
+              !styleTransferResultSrcSequence
                 ? placedItems.map((item, index) => {
                     const tagPosition =
                       pdpResultTagPositions[index] ?? item.position ?? pdpDefaultPlacementPosition
@@ -759,7 +997,7 @@ export function ConstructionPlaceObjectScreen({
           ) : (
             <>
               <FigmaAsset
-                src={selectedSpace.src}
+                src={stageSrc}
                 alt=""
                 displayWidth={343}
                 displayHeight={343}
@@ -786,9 +1024,13 @@ export function ConstructionPlaceObjectScreen({
               </div>
             </>
           )}
-          {!isRendering && !isResult && activeMode === 'add-products'
+          {!isRendering && !isResult && (activeMode === 'add-products' || activeMode === 'apply-materials')
             ? placementItems
-                .filter((item) => item.position || item.id === activePlacementItemId)
+                .filter(
+                  (item) =>
+                    item.category !== 'Reference' &&
+                    (item.position || item.id === activePlacementItemId),
+                )
                 .map((item) => {
                   const isActive = item.id === activePlacementItemId
                   const itemPosition = item.position ?? pdpDefaultPlacementPosition
@@ -825,7 +1067,7 @@ export function ConstructionPlaceObjectScreen({
                   )
                 })
             : null}
-          {shouldShowInstruction && !isRendering && !isResult && activeMode === 'add-products' ? (
+          {shouldShowInstruction && !isRendering && !isResult && (activeMode === 'add-products' || activeMode === 'apply-materials') ? (
             <div
               className="pdp-placement-coachmark"
               aria-hidden="true"
@@ -834,15 +1076,64 @@ export function ConstructionPlaceObjectScreen({
                 top: `${markerPosition.y + 31}px`,
               }}
             >
-              <p>Move the pin to place your item</p>
+              <p>
+                {activeMode === 'apply-materials'
+                  ? activeMaterialKind === 'fixture'
+                    ? 'Move the pin to where this fixture should go'
+                    : 'Move the pin to the wall or floor you want to change'
+                  : 'Move the pin to place your item'}
+              </p>
             </div>
           ) : null}
         </section>
-        {isRendering ? <PdpThinkingStatus /> : null}
+        {isRendering ? <PdpThinkingStatus texts={activeThinkingTexts} /> : null}
         {!isRendering && !isResult ? <span className="pdp-placement-render-dot" aria-hidden="true" /> : null}
         {isResult ? (
           <>
-            {activeResultSlide?.hasProductTag && resultProducts.length > 0 ? (
+            {(activeMode === 'style-transfer' || styleTransferResultSrcSequence) &&
+            activeStyleTransferProducts &&
+            activeStyleTransferProducts.length > 0 ? (
+              <div className="pdp-placement-result-product">
+                <FeedProductStrip
+                  products={activeStyleTransferProducts}
+                  mode="rail"
+                  thumbnailSize={48}
+                  thumbnailRadius={12}
+                  topPadding={0}
+                  bottomPadding={16}
+                  contentPaddingX={16}
+                  itemGap={4}
+                  rowHeight={64}
+                  showRightFade={activeStyleTransferProducts.length > 4}
+                />
+              </div>
+            ) : activeMode === 'style-transfer' && resultContractor ? (
+              <div className="pdp-placement-result-contractor">
+                <button type="button" className="pdp-placement-result-contractor__card">
+                  <div className="pdp-placement-result-contractor__info">
+                    <p className="pdp-placement-result-contractor__name">
+                      {resultContractor.name}
+                    </p>
+                    <div className="pdp-placement-result-contractor__rating">
+                      <span
+                        className="pdp-placement-result-contractor__star"
+                        aria-hidden="true"
+                      >
+                        ★
+                      </span>
+                      <strong>{resultContractor.rating}</strong>
+                      <span className="pdp-placement-result-contractor__reviews">
+                        Reviews {resultContractor.reviewCount}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="pdp-placement-result-contractor__action">
+                    View more
+                    <span aria-hidden="true">›</span>
+                  </span>
+                </button>
+              </div>
+            ) : activeResultSlide?.hasProductTag && resultProducts.length > 0 ? (
               <div className="pdp-placement-result-product">
                 <FeedProductStrip
                   products={resultProducts}
@@ -890,6 +1181,7 @@ export function ConstructionPlaceObjectScreen({
           onOpenProductSheet={openProductSheet}
           onOpenMaterialsSheet={openMaterialsSheet}
           onSelectStyleTransfer={() => {
+            if (isResult) carryResultIntoPlacing('style-transfer')
             setActiveMode('style-transfer')
             setIsMenuOpen(false)
             setShowAddProductTooltip(false)
@@ -908,7 +1200,28 @@ export function ConstructionPlaceObjectScreen({
       <ConstructionMaterialsSheet
         isOpen={isMaterialsSheetOpen && !isRendering}
         onClose={closeMaterialsSheet}
-        onAddMaterial={() => {
+        onAddMaterial={(material) => {
+          const categoryLabel = getConstructionMaterialCategoryLabel(material.category)
+          const nextItem: PdpPlacementItem = {
+            id: `material-${material.id}-${placementInstanceCounterRef.current}`,
+            product: {
+              id: material.id,
+              tabIds: ['saved'],
+              brand: material.brand,
+              name: material.name,
+              category: categoryLabel,
+              price: material.priceLabel,
+              imageSrc: material.imageSrc,
+            },
+            category: categoryLabel,
+            position: pdpDefaultPlacementPosition,
+          }
+          placementInstanceCounterRef.current += 1
+          setPlacementItems((current) => [...current, nextItem])
+          setActivePlacementItemId(nextItem.id)
+          setActiveMaterialKind(
+            isConstructionSurfaceMaterial(material.category) ? 'surface' : 'fixture',
+          )
           closeMaterialsSheet()
         }}
       />
@@ -934,7 +1247,7 @@ export function ConstructionPlaceObjectScreen({
                 key={chip.id}
                 type="button"
                 className="pdp-placement-suggestion-chip"
-                onClick={() => setPromptValue(chip.prompt)}
+                onClick={() => setPlacingPrompt(chip.prompt)}
               >
                 {chip.label}
               </button>
@@ -993,8 +1306,8 @@ export function ConstructionPlaceObjectScreen({
           <textarea
             className="pdp-placement-panel__prompt"
             placeholder={placeholderText}
-            value={promptValue}
-            onChange={(event) => setPromptValue(event.target.value)}
+            value={inputValue}
+            onChange={(event) => handleInputChange(event.target.value)}
             disabled={isRendering}
             rows={1}
             ref={(node) => {
@@ -1008,7 +1321,11 @@ export function ConstructionPlaceObjectScreen({
           <div className="pdp-placement-panel__plus-wrap">
             {shouldShowAddProductTooltip ? (
               <div className="pdp-placement-add-tooltip" role="status">
-                Add more products
+                {activeMode === 'apply-materials'
+                  ? 'Add more materials'
+                  : activeMode === 'style-transfer'
+                    ? 'Try a different style or finish'
+                    : 'Add more products'}
               </div>
             ) : null}
             <button

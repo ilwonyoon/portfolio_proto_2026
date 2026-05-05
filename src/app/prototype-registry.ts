@@ -11,6 +11,7 @@ const CreatorProfileContentPrototype = lazy(() => import('../prototypes/creator-
 const CreatorProgramDashboardPrototype = lazy(() => import('../prototypes/creator-program-dashboard'))
 const AiRoomFlowPrototype = lazy(() => import('../prototypes/ai-room-flow'))
 const ConstructionAiPrototype = lazy(() => import('../prototypes/construction-ai'))
+const ContentStyleTransferPrototype = lazy(() => import('../prototypes/content-style-transfer'))
 const PdpPrototype = lazy(() => import('../prototypes/pdp'))
 const UploadPrototype = lazy(() => import('../prototypes/upload'))
 
@@ -138,5 +139,13 @@ export const prototypeRegistry: PrototypeDefinition[] = [
     status: 'Active build',
     screens: ['Pros', 'Project photo', 'AI room flow'],
     Component: ConstructionAiPrototype,
+  },
+  {
+    id: 'content-style-transfer',
+    title: 'Content style transfer',
+    description: 'Personalized feed shell with a Try-in-your-room CTA on user uploaded posts.',
+    status: 'Scaffold',
+    screens: ['Feed'],
+    Component: ContentStyleTransferPrototype,
   },
 ]

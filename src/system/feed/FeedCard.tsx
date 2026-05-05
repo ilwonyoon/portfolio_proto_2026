@@ -14,6 +14,7 @@ import type { FeedReactionBarProps } from './FeedReactionBar'
 import { FeedRecommendationTitle } from './FeedRecommendationTitle'
 import type { FeedRecommendationTitleProps } from './FeedRecommendationTitle'
 import { resolveFeedPreviewProducts } from './feedProductUtils'
+import { TryInRoomButton } from '../primitives'
 
 export type FeedCardProductsSection = {
   catalog: FeedProduct[]
@@ -47,6 +48,10 @@ export type FeedCardProps = {
   reactions?: FeedReactionBarProps
   comments?: FeedCardCommentsSection
   contentsInfo?: string
+  tryInRoom?: {
+    label?: string
+    onClick?: () => void
+  }
   onOpenProductSheet?: () => void
   onOpenProductDetail?: (productId: string) => void
   onToggleSave?: (isSaved: boolean) => void
@@ -62,6 +67,7 @@ export function FeedCard({
   reactions,
   comments,
   contentsInfo,
+  tryInRoom,
   onOpenProductSheet,
   onOpenProductDetail,
   onToggleSave,
@@ -98,6 +104,16 @@ export function FeedCard({
         imageHeight={media.imageHeight}
         topPadding={media.topPadding}
         onSelectTag={onOpenProductDetail}
+        overlay={
+          tryInRoom ? (
+            <div className="ds-feed-card__try-in-room-slot">
+              <TryInRoomButton
+                label={tryInRoom.label ?? 'Try in your room'}
+                onClick={tryInRoom.onClick}
+              />
+            </div>
+          ) : undefined
+        }
       />
       {shouldRenderProductStrip ? (
         <FeedProductStrip

@@ -81,7 +81,7 @@ function PdpSelectorPhotoSection({
             <PdpSelectorCameraIcon />
           </span>
         </button>
-        {photos.map((photo) => (
+        {photos.map((photo, index) => (
           <button
             key={photo.id}
             type="button"
@@ -94,6 +94,9 @@ function PdpSelectorPhotoSection({
               displayWidth={75}
               displayHeight={75}
               exportScale={2}
+              loading="eager"
+              decoding="async"
+              fetchPriority={index < 5 ? 'high' : 'low'}
             />
           </button>
         ))}
@@ -161,7 +164,7 @@ function PdpSelectorSampleSpacesSection({
             key={columnIndex === 0 ? 'left-column' : 'right-column'}
             className="pdp-selector-grid__column"
           >
-            {columnItems.map((item) => {
+            {columnItems.map((item, rowIndex) => {
               const displayHeight = getPdpSampleSpaceDisplayHeight(item)
 
               return (
@@ -180,6 +183,9 @@ function PdpSelectorSampleSpacesSection({
                     displayWidth={pdpSampleSpaceCardWidth}
                     displayHeight={displayHeight}
                     exportScale={2}
+                    loading={rowIndex < 3 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchPriority={rowIndex < 3 ? 'high' : 'low'}
                   />
                 </button>
               )
@@ -196,12 +202,14 @@ export function ConstructionSelectPhotoScreen({
   onClose,
   onSelectSpace,
   data,
+  title = 'New Design',
 }: {
   isActive: boolean
   isThumbnail: boolean
   onClose: () => void
   onSelectSpace: (space: PdpSelectableSpace) => void
   data?: PdpAiRoomDataOverrides
+  title?: string
 }) {
   const selectorScrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -240,7 +248,7 @@ export function ConstructionSelectPhotoScreen({
               </button>
             </div>
           }
-          center={<h1>New Design</h1>}
+          center={<h1>{title}</h1>}
         />
       </header>
 

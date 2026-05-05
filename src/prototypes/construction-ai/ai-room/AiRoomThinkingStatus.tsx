@@ -1,10 +1,13 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
+import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 import {
   pdpAiCirclePath,
   pdpAiStarPath,
   pdpThinkingStatusTexts,
 } from './deps'
+
+gsap.registerPlugin(MorphSVGPlugin)
 
 function PdpThinkingStatusIcon() {
   const shapeRef = useRef<SVGPathElement | null>(null)
@@ -226,7 +229,12 @@ function PdpThinkingStatusIcon() {
   )
 }
 
-export function PdpThinkingStatus() {
+export function PdpThinkingStatus({
+  texts,
+}: {
+  texts?: string[]
+}) {
+  const items = texts && texts.length > 0 ? texts : pdpThinkingStatusTexts
   return (
     <div className="pdp-thinking-status" role="status" aria-live="polite">
       <span className="pdp-thinking-status__icon">
@@ -234,19 +242,15 @@ export function PdpThinkingStatus() {
       </span>
       <span className="pdp-thinking-status__viewport" aria-hidden="true">
         <span className="pdp-thinking-status__track">
-          {pdpThinkingStatusTexts.map((text) => (
+          {items.map((text) => (
             <span key={text} className="pdp-thinking-status__text">
               {text}
             </span>
           ))}
-          <span className="pdp-thinking-status__text">
-            {pdpThinkingStatusTexts[0]}
-          </span>
+          <span className="pdp-thinking-status__text">{items[0]}</span>
         </span>
       </span>
-      <span className="pdp-thinking-status__sr">
-        {pdpThinkingStatusTexts[0]}
-      </span>
+      <span className="pdp-thinking-status__sr">{items[0]}</span>
     </div>
   )
 }

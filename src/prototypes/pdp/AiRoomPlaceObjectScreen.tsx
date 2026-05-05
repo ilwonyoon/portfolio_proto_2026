@@ -37,6 +37,11 @@ import {
   PdpPlacementQuickMenu,
   PdpProductArchiveSheet,
 } from './AiRoomPlacementSheets'
+import { ConstructionMaterialsSheet } from '../construction-ai/ai-room/AiRoomPlacementSheets'
+import {
+  getConstructionMaterialCategoryLabel,
+  isConstructionSurfaceMaterial,
+} from '../construction-ai/ai-room/materials-data'
 import { PdpThinkingStatus } from './AiRoomThinkingStatus'
 
 const assetRoot = '/assets/figma/pdp'
@@ -62,6 +67,10 @@ export function PdpPlaceObjectScreen({
   const [hasSeenAddProductTooltip, setHasSeenAddProductTooltip] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false)
+  const [isMaterialsSheetOpen, setIsMaterialsSheetOpen] = useState(false)
+  const [activeMaterialKind, setActiveMaterialKind] = useState<
+    'surface' | 'fixture' | null
+  >(null)
   const [isPlusButtonPressed, setIsPlusButtonPressed] = useState(false)
   const [pressedMenuItemId, setPressedMenuItemId] = useState<PdpPlacementMenuItemId | null>(null)
   const [phase, setPhase] = useState<PdpPlacementPhase>('placing')
@@ -124,8 +133,13 @@ export function PdpPlaceObjectScreen({
     !isResult &&
     !isMenuOpen &&
     !isProductSheetOpen
-  const panelPromptText =
-    isRendering || isResult ? 'Describe what you want to change' : pdpPlacementPromptText
+  const panelPromptText = isRendering || isResult
+    ? 'Describe what you want to change'
+    : activeMaterialKind === 'surface'
+      ? 'Apply this finish to the wall or floor'
+      : activeMaterialKind === 'fixture'
+        ? 'Place this fixture in your room'
+        : pdpPlacementPromptText
 
   useEffect(() => {
     if (isActive) {
@@ -191,6 +205,18 @@ export function PdpPlaceObjectScreen({
 
     return () => window.clearTimeout(timeoutId)
   }, [showSubmitHint])
+
+  useEffect(() => {
+    if (!showAddProductTooltip) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowAddProductTooltip(false)
+    }, 3600)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [showAddProductTooltip])
 
   useEffect(() => {
     if (resultTagRevealTimeoutRef.current !== null) {
@@ -360,6 +386,20 @@ export function PdpPlaceObjectScreen({
 
   function closeProductSheet() {
     setIsProductSheetOpen(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function openMaterialsSheet() {
+    setIsMenuOpen(false)
+    setIsMaterialsSheetOpen(true)
+    setShowAddProductTooltip(false)
+    setIsPlusButtonPressed(false)
+    setPressedMenuItemId(null)
+  }
+
+  function closeMaterialsSheet() {
+    setIsMaterialsSheetOpen(false)
     setIsPlusButtonPressed(false)
     setPressedMenuItemId(null)
   }
@@ -767,6 +807,7 @@ export function PdpPlaceObjectScreen({
           onPressItemStart={setPressedMenuItemId}
           onPressItemEnd={() => setPressedMenuItemId(null)}
           onOpenProductSheet={openProductSheet}
+          onOpenMaterialsSheet={openMaterialsSheet}
         />
       </div>
 
@@ -774,6 +815,35 @@ export function PdpPlaceObjectScreen({
         isOpen={isProductSheetOpen && !isRendering}
         onClose={closeProductSheet}
         onAddProduct={addArchiveProductToRoom}
+      />
+
+      <ConstructionMaterialsSheet
+        isOpen={isMaterialsSheetOpen && !isRendering}
+        onClose={closeMaterialsSheet}
+        onAddMaterial={(material) => {
+          const categoryLabel = getConstructionMaterialCategoryLabel(material.category)
+          const nextItem: PdpPlacementItem = {
+            id: `material-${material.id}-${placementInstanceCounterRef.current}`,
+            product: {
+              id: material.id,
+              tabIds: ['saved'],
+              brand: material.brand,
+              name: material.name,
+              category: categoryLabel,
+              price: material.priceLabel,
+              imageSrc: material.imageSrc,
+            },
+            category: categoryLabel,
+            position: pdpDefaultPlacementPosition,
+          }
+          placementInstanceCounterRef.current += 1
+          setPlacementItems((current) => [...current, nextItem])
+          setActivePlacementItemId(nextItem.id)
+          setActiveMaterialKind(
+            isConstructionSurfaceMaterial(material.category) ? 'surface' : 'fixture',
+          )
+          closeMaterialsSheet()
+        }}
       />
 
       <div

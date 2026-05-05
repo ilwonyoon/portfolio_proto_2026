@@ -876,6 +876,87 @@
   background: transparent;
 }
 
+.pdp-placement-result-contractor {
+  width: 100%;
+  margin: 0;
+  padding: 0 20px;
+  background: transparent;
+  border-radius: 0;
+}
+
+.pdp-placement-result-contractor__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pdp-placement-result-contractor__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pdp-placement-result-contractor__name {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  color: #2f3438;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdp-placement-result-contractor__rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  color: #828c94;
+}
+
+.pdp-placement-result-contractor__star {
+  color: var(--color-brand);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.pdp-placement-result-contractor__rating strong {
+  color: #2f3438;
+  font-weight: 700;
+}
+
+.pdp-placement-result-contractor__reviews {
+  color: #828c94;
+}
+
+.pdp-placement-result-contractor__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.4px;
+  color: #2f3438;
+  white-space: nowrap;
+}
+
 .pdp-placement-marker {
   position: absolute;
   z-index: 2;
@@ -1104,6 +1185,7 @@
   font-weight: 400;
   resize: none;
   overflow-y: auto;
+  scrollbar-width: none;
   white-space: pre-wrap;
   word-break: break-word;
   transition:
@@ -1114,6 +1196,10 @@
 
 .pdp-placement-panel__prompt::placeholder {
   color: #828c94;
+}
+
+.pdp-placement-panel__prompt::-webkit-scrollbar {
+  display: none;
 }
 
 .pdp-placement-panel__prompt:disabled {
