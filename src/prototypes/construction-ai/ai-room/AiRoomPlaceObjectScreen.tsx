@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { FigmaAsset } from '../../../prototype/FigmaAsset'
 import {
   FeedProductStrip,
@@ -18,10 +18,8 @@ import {
   pdpResultImageSize,
   pdpResultSwipeThreshold,
   pdpResultTagPositions,
-  pdpResultTagRevealDelayMs,
   type PdpGeneratedSlide,
   type PdpPlacementItem,
-  type PdpPlacementMenuItemId,
   type PdpPlacementPhase,
   type PdpProductArchiveItem,
   type PdpSelectableSpace,
@@ -61,6 +59,25 @@ export type ConstructionResultContractor = {
   rating: string
   reviewCount: number
 }
+
+type ConstructionResultTag = {
+  id: string
+  productId: string
+  label: string
+  x: number
+  y: number
+}
+
+type ConstructionGeneratedSlide = PdpGeneratedSlide & {
+  resultTags?: ConstructionResultTag[]
+  resultProducts?: FeedProduct[]
+}
+
+const contentStyleTransferProductTagPositions = [
+  { x: 285, y: 95 },
+]
+const resultTagRevealBaseDelayMs = 240
+const resultTagRevealStaggerMs = 150
 
 export function ConstructionPlaceObjectScreen({
   isActive,
@@ -136,7 +153,7 @@ export function ConstructionPlaceObjectScreen({
   const [placementItems, setPlacementItems] = useState<PdpPlacementItem[]>(
     buildInitialItems,
   )
-  const [activePlacementItemId, setActivePlacementItemId] = useState<string>(
+  const [activePlacementItemId, setActivePlacementItemId] = useState<string | null>(
     () => buildInitialItems()[0]?.id ?? 'placeholder',
   )
   const [showSubmitHint, setShowSubmitHint] = useState(false)
@@ -156,13 +173,13 @@ export function ConstructionPlaceObjectScreen({
   const [activeMaterialKind, setActiveMaterialKind] = useState<
     'surface' | 'fixture' | null
   >(null)
-  const [resultSlides, setResultSlides] = useState<PdpGeneratedSlide[]>(() => [
+  const [resultSlides, setResultSlides] = useState<ConstructionGeneratedSlide[]>(() => [
     createOriginalResultSlide(selectedSpace),
   ])
   const [activeResultSlideIndex, setActiveResultSlideIndex] = useState(0)
   const [isComparingResult, setIsComparingResult] = useState(false)
   const [loadedResultSlideIds, setLoadedResultSlideIds] = useState<string[]>([])
-  const [visibleResultTagSlideId, setVisibleResultTagSlideId] = useState<string | null>(null)
+  const [visibleResultTagCount, setVisibleResultTagCount] = useState(0)
   const dragRef = useRef<{
     pointerId: number
     offsetX: number
@@ -178,7 +195,7 @@ export function ConstructionPlaceObjectScreen({
     startClientX: number
   } | null>(null)
   const revealedResultSlideIdsRef = useRef<Set<string>>(new Set())
-  const resultTagRevealTimeoutRef = useRef<number | null>(null)
+  const resultTagRevealTimeoutsRef = useRef<number[]>([])
   const isRendering = phase === 'rendering'
   const isResult = phase === 'result'
   const activeResultSlide = resultSlides[activeResultSlideIndex] ?? resultSlides[0]
@@ -200,16 +217,40 @@ export function ConstructionPlaceObjectScreen({
   const activePlacementItem =
     placementItems.find((item) => item.id === activePlacementItemId) ?? placementItems[0] ?? null
   const markerPosition = activePlacementItem?.position ?? pdpDefaultPlacementPosition
-  const placedItems = placementItems.filter((item) => item.position !== null)
-  const resultProducts: FeedProduct[] = placedItems.map((item) => ({
-    id: item.id,
-    thumbnailSrc: item.product.imageSrc,
-    thumbnailAlt: item.product.name,
-    name: item.product.name,
-    priceLabel: item.product.price,
-    discountLabel: item.product.discountRate,
-    thumbnailRadius: 12,
-  }))
+  const placedItems = useMemo(
+    () => placementItems.filter((item) => item.position !== null),
+    [placementItems],
+  )
+  const placedProductItems = useMemo(
+    () => placedItems.filter((item) => item.category !== 'Reference'),
+    [placedItems],
+  )
+  const resultProducts: FeedProduct[] = useMemo(
+    () =>
+      placedProductItems.map((item) => ({
+        id: item.id,
+        thumbnailSrc: item.product.imageSrc,
+        thumbnailAlt: item.product.name,
+        name: item.product.name,
+        priceLabel: item.product.price,
+        discountLabel: item.product.discountRate,
+        thumbnailRadius: 12,
+      })),
+    [placedProductItems],
+  )
+  const activeResultTags =
+    activeResultSlide?.resultTags ??
+    (activeResultSlide?.hasProductTag && activeMode === 'style-transfer'
+      ? activeStyleTransferTags
+      : undefined)
+  const activeResultProducts =
+    activeResultSlide?.resultProducts ??
+    (activeResultSlide?.hasProductTag
+      ? activeMode === 'style-transfer'
+        ? activeStyleTransferProducts
+        : resultProducts
+      : undefined)
+  const visibleResultTags = activeResultTags?.slice(0, visibleResultTagCount) ?? []
   const hasPendingPlacement = placementItems.some((item) => item.position === null)
   const canStartRendering = placementItems.length > 0 && !hasPendingPlacement
   const isProductSheetLayoutOpen = isProductSheetOpen && !isRendering
@@ -348,6 +389,40 @@ export function ConstructionPlaceObjectScreen({
     !isRendering &&
     !isResult
 
+  function getStyleTransferTagsForGeneratedIndex(generatedIndex: number) {
+    return (
+      styleTransferResultTagSequence?.[generatedIndex] ??
+      styleTransferResultTags
+    )
+  }
+
+  function getStyleTransferProductsForGeneratedIndex(generatedIndex: number) {
+    return (
+      styleTransferResultProductsSequence?.[generatedIndex] ??
+      styleTransferResultProducts
+    )
+  }
+
+  function buildPlacedItemResultTags(): ConstructionResultTag[] {
+    return placedProductItems.map((item, index) => {
+      const tagPosition =
+        (styleTransferResultSrcSequence
+          ? contentStyleTransferProductTagPositions[index]
+          : undefined) ??
+        pdpResultTagPositions[index] ??
+        item.position ??
+        pdpDefaultPlacementPosition
+
+      return {
+        id: `result-tag-${item.id}`,
+        productId: item.product.id,
+        label: item.category,
+        x: tagPosition.x,
+        y: tagPosition.y,
+      }
+    })
+  }
+
   useEffect(() => {
     if (isActive) {
       const seedItems = buildInitialItems()
@@ -372,7 +447,7 @@ export function ConstructionPlaceObjectScreen({
       setActiveResultSlideIndex(0)
       setIsComparingResult(false)
       setLoadedResultSlideIds([])
-      setVisibleResultTagSlideId(null)
+      setVisibleResultTagCount(0)
       revealedResultSlideIdsRef.current = new Set()
       setStageSrc(selectedSpace.src)
       setActiveMaterialKind(null)
@@ -391,6 +466,7 @@ export function ConstructionPlaceObjectScreen({
 
     const timeoutId = window.setTimeout(() => {
       const nextSlideIndex = resultSlides.length
+      const generatedIndex = Math.max(nextSlideIndex - 1, 0)
       // For style-transfer, the consumer can supply a sequence of generated
       // images so the second/third render shows a different result. The
       // sequence index is (nextSlideIndex - 1) because slide[0] is the
@@ -402,7 +478,7 @@ export function ConstructionPlaceObjectScreen({
           styleTransferResultSrcSequence.length > 0
         ) {
           const seqIndex = Math.min(
-            Math.max(nextSlideIndex - 1, 0),
+            generatedIndex,
             styleTransferResultSrcSequence.length - 1,
           )
           return styleTransferResultSrcSequence[seqIndex]
@@ -433,6 +509,14 @@ export function ConstructionPlaceObjectScreen({
               ? 'Generated room with the new fixture placed'
               : 'Generated room with the new finish applied'
             : 'Generated room image with the moss rug placed'
+      const generatedResultTags =
+        activeMode === 'style-transfer'
+          ? getStyleTransferTagsForGeneratedIndex(generatedIndex)
+          : buildPlacedItemResultTags()
+      const generatedResultProducts =
+        activeMode === 'style-transfer'
+          ? getStyleTransferProductsForGeneratedIndex(generatedIndex)
+          : resultProducts
 
       setResultSlides((currentSlides) => [
         ...currentSlides,
@@ -441,6 +525,14 @@ export function ConstructionPlaceObjectScreen({
           src: generatedSrc,
           alt: generatedAlt,
           hasProductTag: true,
+          resultTags:
+            generatedResultTags && generatedResultTags.length > 0
+              ? generatedResultTags
+              : undefined,
+          resultProducts:
+            generatedResultProducts && generatedResultProducts.length > 0
+              ? generatedResultProducts
+              : undefined,
         },
       ])
       setActiveResultSlideIndex(nextSlideIndex)
@@ -475,40 +567,59 @@ export function ConstructionPlaceObjectScreen({
   }, [showAddProductTooltip])
 
   useEffect(() => {
-    if (resultTagRevealTimeoutRef.current !== null) {
-      window.clearTimeout(resultTagRevealTimeoutRef.current)
-      resultTagRevealTimeoutRef.current = null
-    }
+    resultTagRevealTimeoutsRef.current.forEach((timeoutId) => {
+      window.clearTimeout(timeoutId)
+    })
+    resultTagRevealTimeoutsRef.current = []
 
-    if (!isResult || !activeResultSlide?.hasProductTag) {
-      setVisibleResultTagSlideId(null)
+    if (!isResult || !activeResultSlide?.hasProductTag || !activeResultTags) {
+      setVisibleResultTagCount(0)
       return
     }
 
     if (!loadedResultSlideIds.includes(activeResultSlide.id)) {
-      setVisibleResultTagSlideId(null)
+      setVisibleResultTagCount(0)
       return
     }
 
     if (revealedResultSlideIdsRef.current.has(activeResultSlide.id)) {
-      setVisibleResultTagSlideId(activeResultSlide.id)
+      const timeoutId = window.setTimeout(() => {
+        setVisibleResultTagCount(activeResultTags.length)
+      }, 0)
+      resultTagRevealTimeoutsRef.current.push(timeoutId)
+
       return
     }
 
-    setVisibleResultTagSlideId(null)
-    resultTagRevealTimeoutRef.current = window.setTimeout(() => {
+    if (activeResultTags.length === 0) {
+      setVisibleResultTagCount(0)
       revealedResultSlideIdsRef.current.add(activeResultSlide.id)
-      setVisibleResultTagSlideId(activeResultSlide.id)
-      resultTagRevealTimeoutRef.current = null
-    }, pdpResultTagRevealDelayMs)
+
+      return
+    }
+
+    setVisibleResultTagCount(0)
+    activeResultTags.forEach((_, index) => {
+      const timeoutId = window.setTimeout(
+        () => {
+          setVisibleResultTagCount(index + 1)
+
+          if (index === activeResultTags.length - 1) {
+            revealedResultSlideIdsRef.current.add(activeResultSlide.id)
+          }
+        },
+        resultTagRevealBaseDelayMs + index * resultTagRevealStaggerMs,
+      )
+      resultTagRevealTimeoutsRef.current.push(timeoutId)
+    })
 
     return () => {
-      if (resultTagRevealTimeoutRef.current !== null) {
-        window.clearTimeout(resultTagRevealTimeoutRef.current)
-        resultTagRevealTimeoutRef.current = null
-      }
+      resultTagRevealTimeoutsRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId)
+      })
+      resultTagRevealTimeoutsRef.current = []
     }
-  }, [activeResultSlide, isResult, loadedResultSlideIds])
+  }, [activeResultSlide, activeResultTags, isResult, loadedResultSlideIds])
 
   function updatePosition(clientX: number, clientY: number, element: HTMLElement) {
     const stage = element.closest('.pdp-placement-stage')
@@ -724,7 +835,13 @@ export function ConstructionPlaceObjectScreen({
     )
   }
 
+  function selectResultSlide(index: number) {
+    setVisibleResultTagCount(0)
+    setActiveResultSlideIndex(index)
+  }
+
   function moveResultSlide(direction: 'next' | 'previous') {
+    setVisibleResultTagCount(0)
     setActiveResultSlideIndex((currentIndex) => {
       if (direction === 'next') {
         return Math.min(currentIndex + 1, resultSlides.length - 1)
@@ -907,12 +1024,9 @@ export function ConstructionPlaceObjectScreen({
                 </>
               ) : null}
               {activeResultSlide?.hasProductTag &&
-              visibleResultTagSlideId === activeResultSlide.id &&
               !isComparingResult &&
-              (activeMode === 'style-transfer' || styleTransferResultSrcSequence) &&
-              activeStyleTransferTags &&
-              activeStyleTransferTags.length > 0
-                ? activeStyleTransferTags.map((tag) => (
+              visibleResultTags.length > 0
+                ? visibleResultTags.map((tag) => (
                     <button
                       key={tag.id}
                       type="button"
@@ -940,44 +1054,6 @@ export function ConstructionPlaceObjectScreen({
                     </button>
                   ))
                 : null}
-              {activeResultSlide?.hasProductTag &&
-              visibleResultTagSlideId === activeResultSlide.id &&
-              !isComparingResult &&
-              activeMode === 'add-products' &&
-              !styleTransferResultSrcSequence
-                ? placedItems.map((item, index) => {
-                    const tagPosition =
-                      pdpResultTagPositions[index] ?? item.position ?? pdpDefaultPlacementPosition
-
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className="pdp-placement-result-tag ds-feed-media__tag"
-                        style={{
-                          left: `${tagPosition.x}px`,
-                          top: `${tagPosition.y}px`,
-                        }}
-                        aria-label={`View tagged ${item.category}`}
-                      >
-                        <FigmaAsset
-                          src="/assets/figma/personalized-feed/feed-card/product-tag-bg.svg"
-                          alt=""
-                          displayWidth={18}
-                          displayHeight={18}
-                          className="ds-feed-media__tag-bg"
-                        />
-                        <FigmaAsset
-                          src="/assets/figma/personalized-feed/feed-card/product-tag-plus.svg"
-                          alt=""
-                          displayWidth={7.71429}
-                          displayHeight={7.71429}
-                          className="ds-feed-media__tag-plus"
-                        />
-                      </button>
-                    )
-                  })
-                : null}
               <div className="pdp-placement-result-dots" aria-label="Generated image carousel">
                 {resultSlides.map((slide, index) => (
                   <button
@@ -989,7 +1065,7 @@ export function ConstructionPlaceObjectScreen({
                         : 'pdp-placement-result-dot'
                     }
                     aria-label={index === 0 ? 'Show original image' : `Show generated image ${index}`}
-                    onClick={() => setActiveResultSlideIndex(index)}
+                    onClick={() => selectResultSlide(index)}
                   />
                 ))}
               </div>
@@ -1090,12 +1166,10 @@ export function ConstructionPlaceObjectScreen({
         {!isRendering && !isResult ? <span className="pdp-placement-render-dot" aria-hidden="true" /> : null}
         {isResult ? (
           <>
-            {(activeMode === 'style-transfer' || styleTransferResultSrcSequence) &&
-            activeStyleTransferProducts &&
-            activeStyleTransferProducts.length > 0 ? (
+            {activeResultProducts && activeResultProducts.length > 0 ? (
               <div className="pdp-placement-result-product">
                 <FeedProductStrip
-                  products={activeStyleTransferProducts}
+                  products={activeResultProducts}
                   mode="rail"
                   thumbnailSize={48}
                   thumbnailRadius={12}
@@ -1104,7 +1178,7 @@ export function ConstructionPlaceObjectScreen({
                   contentPaddingX={16}
                   itemGap={4}
                   rowHeight={64}
-                  showRightFade={activeStyleTransferProducts.length > 4}
+                  showRightFade={activeResultProducts.length > 4}
                 />
               </div>
             ) : activeMode === 'style-transfer' && resultContractor ? (
@@ -1388,4 +1462,3 @@ export function ConstructionPlaceObjectScreen({
     </div>
   )
 }
-
